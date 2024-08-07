@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Authentication/Register_Screen.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -69,8 +71,12 @@ class HomePage extends StatelessWidget {
                 // Create new account link
                 TextButton(
                   onPressed: () {
-                    // Add functionality for creating a new account
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );// Add functionality for creating a new account
                   },
+                    
                   child: Column(
                     children: [
                       Text(
