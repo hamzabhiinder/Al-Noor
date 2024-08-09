@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomInputField extends StatelessWidget {
   final String hintText;
@@ -28,7 +27,7 @@ class CustomInputField extends StatelessWidget {
           hintText: hintText,
           prefixIcon: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: SvgPicture.asset(iconAssetPath, width: 24, height: 24),
+            child: Image.asset(iconAssetPath),
           ),
           filled: true,
           fillColor: Colors.white.withOpacity(0.8),
@@ -42,4 +41,3 @@ class CustomInputField extends StatelessWidget {
     );
   }
 }
-
