@@ -1,3 +1,4 @@
+import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import '../../utils/validators.dart';
@@ -29,6 +30,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -121,8 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                         onPressed: () {
                           Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterScreen()));
                         },
                         child: const Text(
                           "Don't have an account? Register here",

@@ -1,10 +1,27 @@
 import 'package:alnoor/Screens/Authentication/Login_Screen.dart';
+import 'package:alnoor/blocs/category_bloc.dart';
+import 'package:alnoor/blocs/product_bloc.dart';
+import 'package:alnoor/repositories/category_repository.dart';
+import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../Authentication/Register_Screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CategoryBloc(CategoryRepository()),
+        ),
+        BlocProvider(
+          create: (context) => ProductBloc(ProductRepository()),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -43,12 +60,12 @@ class HomePage extends StatelessWidget {
                 // Buttons
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Color(0xFFFFFFFF), // Text color
+                    foregroundColor: Colors.black,
+                    backgroundColor: Color(0xFFFFFFFF), // Text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
@@ -62,7 +79,8 @@ class HomePage extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, // Text color
-                    backgroundColor: Colors.transparent, // Button background color
+                    backgroundColor:
+                        Colors.transparent, // Button background color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5.0),
                       side: BorderSide(color: Colors.white), // Border color
@@ -77,9 +95,8 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => RegisterScreen()),
-                    );// Add functionality for creating a new account
+                    ); // Add functionality for creating a new account
                   },
-                    
                   child: Column(
                     children: [
                       Text(
@@ -97,7 +114,8 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],),
+              ],
+            ),
           ),
         ],
       ),
