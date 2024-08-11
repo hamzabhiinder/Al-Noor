@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'product_detail.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -290,15 +292,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       child:
                                                                           Stack(
                                                                         children: [
-                                                                          ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(12.0),
-                                                                            child:
-                                                                                Image.network(
-                                                                              product.thumbnailImage,
-                                                                              fit: BoxFit.cover,
-                                                                              width: double.infinity,
-                                                                              height: double.infinity,
+                                                                          GestureDetector(
+                                                                            onTap: () {
+                                                                             Navigator.push(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                              builder: (context) => ProductDetailScreen(product: product),
+                                                                                            ),
+                                                                                          );
+                                                                            },
+                                                                            child: ClipRRect(
+                                                                              borderRadius:
+                                                                                  BorderRadius.circular(12.0),
+                                                                              child:
+                                                                                  Image.network(
+                                                                                product.thumbnailImage,
+                                                                                fit: BoxFit.cover,
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                           Positioned(

@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   google_fonts: ^4.0.3
   http: ^1.2.2
+  share_plus: ^10.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
