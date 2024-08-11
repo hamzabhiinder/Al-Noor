@@ -197,12 +197,14 @@
 //     );
 //   }
 // }
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:alnoor/models/product.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -293,7 +295,9 @@ class ProductDetailScreen extends StatelessWidget {
                     _buildIconButton(
                         iconPath: 'assets/images/Download.png',
                         label: "Download\nCatalogue",
-                        onPressed: () {},
+                        onPressed: () {
+                          _downloadImage(context);
+                        },
                         constraints: constraints),
                   ],
                 ),
@@ -340,6 +344,27 @@ class ProductDetailScreen extends StatelessWidget {
   void _shareProduct(BuildContext context) {
     final String imageUrl = "https://alnoormdf.com/" + product.productImage;
     Share.share(imageUrl, subject: product.productName);
+  }
+
+  Future<void> _downloadImage(BuildContext context) async {
+    final String imageUrl = "https://alnoormdf.com/" + product.productImage;
+    try {
+      // Get the directory to store the file.
+      Directory directory = await getApplicationDocumentsDirectory();
+      String filePath = '${directory.path}/${product.productName}.jpg';
+
+      // Download the image file.
+      Dio dio = Dio();
+      await dio.download(imageUrl, filePath);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Downloaded to $filePath"),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to download image."),
+      ));
+    }
   }
 
   Widget _buildIconButton({
