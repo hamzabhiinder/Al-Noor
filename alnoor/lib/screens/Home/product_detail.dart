@@ -214,7 +214,6 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -231,7 +230,8 @@ class ProductDetailScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.menu, color: Colors.black, size: screenWidth * 0.08),
+            icon:
+                Icon(Icons.menu, color: Colors.black, size: screenWidth * 0.08),
             onPressed: () {
               // Handle drawer or menu
             },
@@ -303,7 +303,8 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
                 SizedBox(height: constraints.maxHeight * 0.02),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth * 0.05),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.05),
                   child: Center(
                     child: Text(
                       product.productShortDesc,
@@ -317,7 +318,8 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(height: constraints.maxHeight * 0.02),
                 Center(
                   child: SizedBox(
-                    width: constraints.maxWidth * 0.6, // Adjust button width based on screen width
+                    width: constraints.maxWidth *
+                        0.6, // Adjust button width based on screen width
                     child: ElevatedButton(
                       onPressed: () {
                         // Handle navigation to more decor
