@@ -7,13 +7,16 @@ class ProductRepository {
     var response = null;
     if (search != "") {
       response = await http
-          .get(Uri.parse("https://alnoormdf.com/alnoor/search/${search}"));
+          .get(Uri.parse("https://alnoormdf.com/alnoor/search/${search}"))
+          .timeout(Duration(seconds: 60));
     } else if (category != "") {
-      response = await http.get(
-          Uri.parse("https://alnoormdf.com/api/products?c_id=${category}"));
+      response = await http
+          .get(Uri.parse("https://alnoormdf.com/api/products?c_id=${category}"))
+          .timeout(Duration(seconds: 60));
     } else {
       response = await http
-          .get(Uri.parse('https://alnoormdf.com/alnoor/all-products'));
+          .get(Uri.parse('https://alnoormdf.com/alnoor/all-products'))
+          .timeout(Duration(seconds: 60));
     }
 
     if (response.statusCode == 200) {

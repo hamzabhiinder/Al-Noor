@@ -1,5 +1,6 @@
 import 'package:alnoor/models/product.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
+import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:alnoor/widgets/Paginator.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,16 @@ class _ProductGridState extends State<ProductGrid> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<ImageProvider> loadImage(String url) async {
+    try {
+      final image = NetworkImage(url);
+      await precacheImage(image, context);
+      return image;
+    } catch (e) {
+      return AssetImage('assets/images/Logo.png');
+    }
   }
 
   @override
@@ -67,11 +78,29 @@ class _ProductGridState extends State<ProductGrid> {
                         opacity: 0.7,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.0),
-                          child: Image.network(
-                            product.thumbnailImage,
-                            fit: BoxFit.cover,
-                            width: 100,
-                            height: 100,
+                          child: FutureBuilder<ImageProvider>(
+                            future: loadImage(product.thumbnailImage),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasError) {
+                                  return Image.asset(
+                                    'assets/images/Logo.png',
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                  );
+                                }
+                                return Image(
+                                  image: snapshot.data!,
+                                  fit: BoxFit.cover,
+                                  width: 100,
+                                  height: 100,
+                                );
+                              } else {
+                                return ImageSkeleton(width: 100, height: 100);
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -89,11 +118,31 @@ class _ProductGridState extends State<ProductGrid> {
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12.0),
-                              child: Image.network(
-                                product.thumbnailImage,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
+                              child: FutureBuilder<ImageProvider>(
+                                future: loadImage(product.thumbnailImage),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    if (snapshot.hasError) {
+                                      return Image.asset(
+                                        'assets/images/Logo.png',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      );
+                                    }
+                                    return Image(
+                                      image: snapshot.data!,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
+                                  } else {
+                                    return ImageSkeleton(
+                                        width: double.infinity,
+                                        height: double.infinity);
+                                  }
+                                },
                               ),
                             ),
                           ),
