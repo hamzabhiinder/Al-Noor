@@ -27,8 +27,7 @@ class AddToCompareRow extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-              height: 10), // Add spacing between the two rows if needed
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

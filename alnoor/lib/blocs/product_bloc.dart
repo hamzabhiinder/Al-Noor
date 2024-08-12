@@ -7,7 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Events
 abstract class ProductEvent {}
 
-class LoadProducts extends ProductEvent {}
+class LoadProducts extends ProductEvent {
+  final String search;
+  final String category;
+
+  LoadProducts({required this.search, required this.category});
+}
 
 // States
 abstract class ProductState {}
@@ -38,7 +43,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       LoadProducts event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
     try {
-      final products = await repository.fetchProducts();
+      final products =
+          await repository.fetchProducts(event.search, event.category);
       emit(ProductLoaded(products));
     } catch (e) {
       emit(ProductError('Failed to load categories'));
