@@ -3,6 +3,7 @@ import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/repositories/category_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
+import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Authentication/Register_Screen.dart';
@@ -74,7 +75,8 @@ class StartScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                    // Add functionality for guest login
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white, // Text color

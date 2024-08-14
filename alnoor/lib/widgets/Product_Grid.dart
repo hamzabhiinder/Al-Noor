@@ -7,8 +7,12 @@ import 'package:flutter/material.dart';
 class ProductGrid extends StatefulWidget {
   final List<Product> products;
   final int totalPages;
+  final int itemsInAPage;
 
-  ProductGrid({required this.products, required this.totalPages});
+  ProductGrid(
+      {required this.products,
+      required this.totalPages,
+      required this.itemsInAPage});
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -56,10 +60,11 @@ class _ProductGridState extends State<ProductGrid> {
               },
               itemCount: widget.totalPages,
               itemBuilder: (context, pageIndex) {
-                int startIndex = pageIndex * 8;
-                int endIndex = (startIndex + 8 > widget.products.length)
-                    ? widget.products.length
-                    : startIndex + 8;
+                int startIndex = pageIndex * widget.itemsInAPage;
+                int endIndex =
+                    (startIndex + widget.itemsInAPage > widget.products.length)
+                        ? widget.products.length
+                        : startIndex + widget.itemsInAPage;
                 var pageProducts =
                     widget.products.sublist(startIndex, endIndex);
 

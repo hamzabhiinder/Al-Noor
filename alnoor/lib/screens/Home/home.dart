@@ -1,5 +1,6 @@
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
+import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:alnoor/widgets/Product_Grid.dart';
 import 'package:flutter/material.dart';
@@ -44,16 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _focusNode.unfocus();
   }
 
-  void handleDrop(String imageUrl, int containerIndex, int imageIndex) {
-    setState(() {
-      if (containerIndex == 1) {
-        imagesInContainer1[imageIndex] = imageUrl;
-      } else if (containerIndex == 2) {
-        imagesInContainer2[imageIndex] = imageUrl;
-      }
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -68,22 +59,40 @@ class _HomeScreenState extends State<HomeScreen> {
         _focusNode.unfocus();
       },
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            },
+            child: SvgPicture.asset(
+              'assets/images/Logo_Black.svg',
+              width: 47,
+              height: 47,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: SvgPicture.asset(
+                'assets/images/menu.svg',
+                width: 30,
+                height: 30,
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/Logo_Black.svg',
-                        width: 45,
-                        height: 45,
-                      ),
-                    ],
-                  ),
                   Row(
                     children: [
                       Expanded(
@@ -138,7 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(width: 10),
                       IconButton(
                         icon: Icon(Icons.favorite),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Favourites()),
+                          );
+                        },
                       ),
                       SizedBox(width: 10),
                       GestureDetector(
@@ -224,6 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }).toList(),
                                 ),
                               ),
+                              SizedBox(height: 20),
                               Expanded(
                                 child: BlocBuilder<ProductBloc, ProductState>(
                                   builder: (context, state) {
@@ -238,6 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return ProductGrid(
                                         products: state.products,
                                         totalPages: totalPages,
+                                        itemsInAPage: 8,
                                       );
                                     } else {
                                       return SizedBox.shrink();
@@ -258,7 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        bottomNavigationBar: AddToCompareRow(),
+        bottomNavigationBar: AddToCompareRow(
+          showCamera: true,
+        ),
       ),
     );
   }
