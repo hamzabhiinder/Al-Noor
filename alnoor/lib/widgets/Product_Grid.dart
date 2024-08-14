@@ -3,7 +3,6 @@ import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:alnoor/widgets/Paginator.dart';
 import 'package:flutter/material.dart';
-
 import '../screens/Home/show_product.dart';
 
 class ProductGrid extends StatefulWidget {
@@ -192,9 +191,22 @@ class _ProductGridState extends State<ProductGrid> {
                             child: CircleAvatar(
                               radius: 5,
                               backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.search_outlined,
-                                size: 9,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.search_outlined,
+                                  size: 9,
+                                ),
+                                onPressed: () {
+                                   Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ShowProductScreen(product: product),
+                                ),
+                              );
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
                               ),
                             ),
                           ),
