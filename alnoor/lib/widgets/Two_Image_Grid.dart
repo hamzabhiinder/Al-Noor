@@ -1,3 +1,4 @@
+import 'dart:io'; // Add this import for File
 
 import 'package:flutter/material.dart';
 
@@ -35,26 +36,25 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => TwoImageScreen(
               initialImage1: _image1,
               initialImage2: _image2,
-              onClearImage1: () {
-                _clearImage1();
-                setState(() {}); // Update DragTargetContainer1 UI
-              },
-              onClearImage2: () {
-                _clearImage2();
-                setState(() {}); // Update DragTargetContainer1 UI
-              },
+              onClearImage1: _clearImage1,
+              onClearImage2: _clearImage2,
             ),
           ),
-        ).then((_) {
-          setState(() {}); // Update DragTargetContainer1 UI when returning
-        });
+        );
+
+        if (result != null && result is List<String?>) {
+          setState(() {
+            _image1 = result[0];
+            _image2 = result[1];
+          });
+        }
       },
       child: DragTarget<String>(
         onWillAccept: (data) {
@@ -85,11 +85,17 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
               children: [
                 Expanded(
                   child: _image1 != null
-                      ? Image.network(
-                          _image1!,
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                        )
+                      ? (Uri.parse(_image1!).isAbsolute && _image1!.startsWith('http'))
+                          ? Image.network(
+                              _image1!,
+                              fit: BoxFit.cover,
+                              height: double.infinity,
+                            )
+                          : Image.file(
+                              File(_image1!),
+                              fit: BoxFit.cover,
+                              height: double.infinity,
+                            )
                       : Container(),
                 ),
                 Container(
@@ -98,11 +104,17 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
                 ),
                 Expanded(
                   child: _image2 != null
-                      ? Image.network(
-                          _image2!,
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                        )
+                      ? (Uri.parse(_image2!).isAbsolute && _image2!.startsWith('http'))
+                          ? Image.network(
+                              _image2!,
+                              fit: BoxFit.cover,
+                              height: double.infinity,
+                            )
+                          : Image.file(
+                              File(_image2!),
+                              fit: BoxFit.cover,
+                              height: double.infinity,
+                            )
                       : Container(),
                 ),
               ],

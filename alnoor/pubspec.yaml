@@ -77,7 +77,7 @@ flutter:
     - assets/images/Logo_Black.svg
     - assets/images/Noticeboard.svg
     - assets/images/Upload.svg
-    
+    - assets/images/Clear.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

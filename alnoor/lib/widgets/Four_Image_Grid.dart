@@ -1,6 +1,6 @@
 
+import 'dart:io';
 import 'package:flutter/material.dart';
-
 import '../screens/Home/four_image_moodboard.dart';
 
 class FourImageDragTargetContainer extends StatefulWidget {
@@ -19,18 +19,49 @@ class _FourImageDragTargetContainerState
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final images = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => FourImageScreen(
-              image1: _imageUrl1,
-              image2: _imageUrl2,
-              image3: _imageUrl3,
-              image4: _imageUrl4,
+              initialImage1: _imageUrl1,
+              initialImage2: _imageUrl2,
+              initialImage3: _imageUrl3,
+              initialImage4: _imageUrl4,
+              // Clear image callbacks
+              onClearImage1: () {
+                setState(() {
+                  _imageUrl1 = null;
+                });
+              },
+              onClearImage2: () {
+                setState(() {
+                  _imageUrl2 = null;
+                });
+              },
+              onClearImage3: () {
+                setState(() {
+                  _imageUrl3 = null;
+                });
+              },
+              onClearImage4: () {
+                setState(() {
+                  _imageUrl4 = null;
+                });
+              },
             ),
           ),
         );
+        
+        // Update image URLs after returning from FourImageScreen
+        if (images != null && images is List<String?>) {
+          setState(() {
+            _imageUrl1 = images[0];
+            _imageUrl2 = images[1];
+            _imageUrl3 = images[2];
+            _imageUrl4 = images[3];
+          });
+        }
       },
       child: DragTarget<String>(
         onWillAccept: (data) {
@@ -66,26 +97,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _imageUrl1 != null
-                            ? Image.network(
-                                _imageUrl1!,
-                                fit: BoxFit.cover,
-                                height: double.infinity,
-                              )
-                            : Container(),
+                        child: _displayImage(_imageUrl1),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _imageUrl2 != null
-                            ? Image.network(
-                                _imageUrl2!,
-                                fit: BoxFit.cover,
-                                height: double.infinity,
-                              )
-                            : Container(),
+                        child: _displayImage(_imageUrl2),
                       ),
                     ],
                   ),
@@ -98,26 +117,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _imageUrl3 != null
-                            ? Image.network(
-                                _imageUrl3!,
-                                fit: BoxFit.cover,
-                                height: double.infinity,
-                              )
-                            : Container(),
+                        child: _displayImage(_imageUrl3),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _imageUrl4 != null
-                            ? Image.network(
-                                _imageUrl4!,
-                                fit: BoxFit.cover,
-                                height: double.infinity,
-                              )
-                            : Container(),
+                        child: _displayImage(_imageUrl4),
                       ),
                     ],
                   ),
@@ -128,5 +135,26 @@ class _FourImageDragTargetContainerState
         },
       ),
     );
+  }
+
+  Widget _displayImage(String? imageUrl) {
+    if (imageUrl == null) {
+      return Container(); // Empty container for null images
+    } else if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
+      // Network image
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(child: Text('Failed to load image'));
+        },
+      );
+    } else {
+      // Local file image
+      return Image.file(
+        File(imageUrl),
+        fit: BoxFit.cover,
+      );
+    }
   }
 }
