@@ -1,9 +1,24 @@
+// ignore_for_file: deprecated_member_use
 
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../screens/Home/four_image_moodboard.dart';
 
+// ignore: must_be_immutable
 class FourImageDragTargetContainer extends StatefulWidget {
+  final void Function(int, dynamic) setImageCallback;
+  var imageUrl1;
+  var imageUrl2;
+  var imageUrl3;
+  var imageUrl4;
+
+  FourImageDragTargetContainer(
+      {required this.setImageCallback,
+      required this.imageUrl1,
+      required this.imageUrl2,
+      required this.imageUrl3,
+      required this.imageUrl4});
+
   @override
   _FourImageDragTargetContainerState createState() =>
       _FourImageDragTargetContainerState();
@@ -11,11 +26,6 @@ class FourImageDragTargetContainer extends StatefulWidget {
 
 class _FourImageDragTargetContainerState
     extends State<FourImageDragTargetContainer> {
-  String? _imageUrl1;
-  String? _imageUrl2;
-  String? _imageUrl3;
-  String? _imageUrl4;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,43 +34,31 @@ class _FourImageDragTargetContainerState
           context,
           MaterialPageRoute(
             builder: (context) => FourImageScreen(
-              initialImage1: _imageUrl1,
-              initialImage2: _imageUrl2,
-              initialImage3: _imageUrl3,
-              initialImage4: _imageUrl4,
-              // Clear image callbacks
+              initialImage1: widget.imageUrl1,
+              initialImage2: widget.imageUrl2,
+              initialImage3: widget.imageUrl3,
+              initialImage4: widget.imageUrl4,
               onClearImage1: () {
-                setState(() {
-                  _imageUrl1 = null;
-                });
+                widget.setImageCallback(3, "");
               },
               onClearImage2: () {
-                setState(() {
-                  _imageUrl2 = null;
-                });
+                widget.setImageCallback(4, "");
               },
               onClearImage3: () {
-                setState(() {
-                  _imageUrl3 = null;
-                });
+                widget.setImageCallback(5, "");
               },
               onClearImage4: () {
-                setState(() {
-                  _imageUrl4 = null;
-                });
+                widget.setImageCallback(6, "");
               },
             ),
           ),
         );
-        
-        // Update image URLs after returning from FourImageScreen
+
         if (images != null && images is List<String?>) {
-          setState(() {
-            _imageUrl1 = images[0];
-            _imageUrl2 = images[1];
-            _imageUrl3 = images[2];
-            _imageUrl4 = images[3];
-          });
+          widget.setImageCallback(3, images[0]);
+          widget.setImageCallback(4, images[1]);
+          widget.setImageCallback(5, images[2]);
+          widget.setImageCallback(6, images[3]);
         }
       },
       child: DragTarget<String>(
@@ -70,16 +68,16 @@ class _FourImageDragTargetContainerState
         onAcceptWithDetails: (DragTargetDetails<String> details) {
           final String newImageUrl = details.data;
           setState(() {
-            if (_imageUrl1 == null || _imageUrl1!.isEmpty) {
-              _imageUrl1 = newImageUrl;
-            } else if (_imageUrl2 == null || _imageUrl2!.isEmpty) {
-              _imageUrl2 = newImageUrl;
-            } else if (_imageUrl3 == null || _imageUrl3!.isEmpty) {
-              _imageUrl3 = newImageUrl;
-            } else if (_imageUrl4 == null || _imageUrl4!.isEmpty) {
-              _imageUrl4 = newImageUrl;
+            if (widget.imageUrl1 == null || widget.imageUrl1!.isEmpty) {
+              widget.setImageCallback(3, newImageUrl);
+            } else if (widget.imageUrl2 == null || widget.imageUrl2!.isEmpty) {
+              widget.setImageCallback(4, newImageUrl);
+            } else if (widget.imageUrl3 == null || widget.imageUrl3!.isEmpty) {
+              widget.setImageCallback(5, newImageUrl);
+            } else if (widget.imageUrl4 == null || widget.imageUrl4!.isEmpty) {
+              widget.setImageCallback(6, newImageUrl);
             } else {
-              _imageUrl1 = newImageUrl;
+              widget.setImageCallback(3, newImageUrl);
             }
           });
         },
@@ -97,14 +95,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(_imageUrl1),
+                        child: _displayImage(widget.imageUrl1),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(_imageUrl2),
+                        child: _displayImage(widget.imageUrl2),
                       ),
                     ],
                   ),
@@ -117,14 +115,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(_imageUrl3),
+                        child: _displayImage(widget.imageUrl3),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(_imageUrl4),
+                        child: _displayImage(widget.imageUrl4),
                       ),
                     ],
                   ),
@@ -139,9 +137,8 @@ class _FourImageDragTargetContainerState
 
   Widget _displayImage(String? imageUrl) {
     if (imageUrl == null) {
-      return Container(); // Empty container for null images
+      return Container();
     } else if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
-      // Network image
       return Image.network(
         imageUrl,
         fit: BoxFit.cover,
@@ -150,7 +147,6 @@ class _FourImageDragTargetContainerState
         },
       );
     } else {
-      // Local file image
       return Image.file(
         File(imageUrl),
         fit: BoxFit.cover,

@@ -124,15 +124,10 @@
 //   }
 // }
 
-
-
-
-import 'package:alnoor/Screens/Authentication/Login_Screen.dart';
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/repositories/category_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
-import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';

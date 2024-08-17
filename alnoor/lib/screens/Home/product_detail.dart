@@ -1,16 +1,49 @@
+import 'package:alnoor/screens/Home/home.dart';
+import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:alnoor/models/product.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final Product product;
 
   ProductDetailScreen({required this.product});
+
+  @override
+  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  late Future<ImageProvider> _imageFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Any other initialization code
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _imageFuture =
+        _loadImage("https://alnoormdf.com/" + widget.product.productImage);
+  }
+
+  Future<ImageProvider> _loadImage(String url) async {
+    try {
+      final image = NetworkImage(url);
+      await precacheImage(image, context);
+      return image;
+    } catch (e) {
+      print("Hello");
+      print(e);
+      return AssetImage('assets/images/Logo.png');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +61,33 @@ class ProductDetailScreen extends StatelessWidget {
                     Container(
                       height: constraints.maxHeight * 0.4,
                       width: double.infinity,
-                      child: Image.network(
-                        "https://alnoormdf.com/" + product.productImage,
-                        fit: BoxFit.cover,
+                      child: FutureBuilder<ImageProvider>(
+                        future: _imageFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) {
+                              print(snapshot.error);
+                              return Image.asset(
+                                'assets/images/Logo.png',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              );
+                            }
+                            return Image(
+                              image: snapshot.data!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            );
+                          } else {
+                            return ImageSkeleton(
+                              width: double.infinity,
+                              height: double.infinity,
+                            );
+                          }
+                        },
                       ),
                     ),
                     Positioned(
@@ -47,17 +104,20 @@ class ProductDetailScreen extends StatelessWidget {
                             IconButton(
                               icon: SvgPicture.asset(
                                 'assets/images/Logo_Black.svg',
-                                width: screenWidth * 0.08, // Adjust icon size based on screen width
+                                width: 47,
+                                height: 47,
                               ),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                             ),
                             IconButton(
-                              icon: Icon(Icons.menu, color: Colors.white, size: screenWidth * 0.08),
-                              onPressed: () {
-                                // Handle drawer or menu
-                              },
+                              icon: SvgPicture.asset(
+                                'assets/images/menu.svg',
+                                width: 30,
+                                height: 30,
+                              ),
+                              onPressed: () {},
                             ),
                           ],
                         ),
@@ -68,7 +128,7 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(height: constraints.maxHeight * 0.02),
                 Center(
                   child: Text(
-                    product.productName,
+                    widget.product.productName,
                     style: GoogleFonts.poppins(
                       fontSize: constraints.maxWidth * 0.05,
                       fontWeight: FontWeight.bold,
@@ -77,7 +137,7 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    "Decor Type: ${product.productType}",
+                    "Decor Type: ${widget.product.productType}",
                     style: GoogleFonts.poppins(
                       fontSize: constraints.maxWidth * 0.035,
                       color: Colors.grey,
@@ -120,7 +180,7 @@ class ProductDetailScreen extends StatelessWidget {
                       horizontal: constraints.maxWidth * 0.05),
                   child: Center(
                     child: Text(
-                      product.productShortDesc,
+                      widget.product.productShortDesc,
                       style: GoogleFonts.poppins(
                         fontSize: constraints.maxWidth * 0.035,
                       ),
@@ -131,10 +191,15 @@ class ProductDetailScreen extends StatelessWidget {
                 SizedBox(height: constraints.maxHeight * 0.02),
                 Center(
                   child: SizedBox(
-                    width: constraints.maxWidth * 0.6, // Adjust button width based on screen width
+                    width: constraints.maxWidth * 0.6,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle navigation to more decor
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF222020),
@@ -156,18 +221,18 @@ class ProductDetailScreen extends StatelessWidget {
   }
 
   void _shareProduct(BuildContext context) {
-    final String imageUrl = "https://alnoormdf.com/" + product.productImage;
-    Share.share(imageUrl, subject: product.productName);
+    final String imageUrl =
+        "https://alnoormdf.com/" + widget.product.productImage;
+    Share.share(imageUrl, subject: widget.product.productName);
   }
 
   Future<void> _downloadImage(BuildContext context) async {
-    final String imageUrl = "https://alnoormdf.com/" + product.productImage;
+    final String imageUrl =
+        "https://alnoormdf.com/" + widget.product.productImage;
     try {
-      // Get the directory to store the file.
-      Directory directory = await getApplicationDocumentsDirectory();
-      String filePath = '${directory.path}/${product.productName}.jpg';
-
-      // Download the image file.
+      Directory directory = Directory('/storage/emulated/0/Download');
+      String filePath = '${directory.path}/${widget.product.productName}.jpg';
+      print(filePath);
       Dio dio = Dio();
       await dio.download(imageUrl, filePath);
 
@@ -207,5 +272,3 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 }
-
-

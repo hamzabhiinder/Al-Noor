@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 import 'dart:io';
 
@@ -59,14 +61,16 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                   child: Stack(
                     children: [
                       if (image1 != null)
-                        (Uri.parse(image1!).isAbsolute && image1!.startsWith('http'))
+                        (Uri.parse(image1!).isAbsolute &&
+                                image1!.startsWith('http'))
                             ? Image.network(
                                 image1!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Center(child: Text('Failed to load image'));
+                                  return Center(
+                                      child: Text('Failed to load image'));
                                 },
                               )
                             : Image.file(
@@ -110,14 +114,16 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                   child: Stack(
                     children: [
                       if (image2 != null)
-                        (Uri.parse(image2!).isAbsolute && image2!.startsWith('http'))
+                        (Uri.parse(image2!).isAbsolute &&
+                                image2!.startsWith('http'))
                             ? Image.network(
                                 image2!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return Center(child: Text('Failed to load image'));
+                                  return Center(
+                                      child: Text('Failed to load image'));
                                 },
                               )
                             : Image.file(
@@ -171,8 +177,8 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
             ),
             if (image1 != null && image2 != null)
               Positioned(
-                top: MediaQuery.of(context).size.height / 2 - 25,
-                left: MediaQuery.of(context).size.width / 2 - 25,
+                top: MediaQuery.of(context).size.height / 2 - 40,
+                left: MediaQuery.of(context).size.width / 2 - 40,
                 child: GestureDetector(
                   onTap: _swapImages,
                   child: Container(
@@ -180,11 +186,11 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.swap_vert,
-                      color: Colors.black,
-                      size: 50,
+                    padding: EdgeInsets.all(16),
+                    child: SvgPicture.asset(
+                      'assets/images/reverse.svg',
+                      width: 50,
+                      height: 50,
                     ),
                   ),
                 ),
@@ -199,10 +205,6 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.transparent,
-        image: DecorationImage(
-          image: AssetImage('assets/images/image.png'),
-          fit: BoxFit.cover,
-        ),
       ),
       child: Center(
         child: Column(

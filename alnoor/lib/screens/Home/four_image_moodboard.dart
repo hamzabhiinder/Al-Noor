@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_member_use
 
 import 'dart:io';
 import 'dart:ui';
@@ -17,7 +18,11 @@ class FourImageScreen extends StatefulWidget {
     this.initialImage1,
     this.initialImage2,
     this.initialImage3,
-    this.initialImage4, required Null Function() onClearImage1, required Null Function() onClearImage2, required Null Function() onClearImage3, required Null Function() onClearImage4,
+    this.initialImage4,
+    required Null Function() onClearImage1,
+    required Null Function() onClearImage2,
+    required Null Function() onClearImage3,
+    required Null Function() onClearImage4,
   }) : super(key: key);
 
   @override
@@ -51,7 +56,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
           children: [
             GridView.count(
               crossAxisCount: 2,
-              childAspectRatio: MediaQuery.of(context).size.width / MediaQuery.of(context).size.height,
+              childAspectRatio: MediaQuery.of(context).size.width /
+                  MediaQuery.of(context).size.height,
               padding: EdgeInsets.zero,
               children: [
                 _buildImageContainer(context, image1, 1),
@@ -76,77 +82,73 @@ class _FourImageScreenState extends State<FourImageScreen> {
     );
   }
 
-  Widget _buildImageContainer(BuildContext context, String? imageUrl, int targetImage) {
-  return Stack(
-    children: [
-      Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: imageUrl != null
-            ? (Uri.parse(imageUrl).isAbsolute && imageUrl.startsWith('http'))
-                ? Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(child: Text('Failed to load image'));
-                    },
-                  )
-                : Image.file(
-                    File(imageUrl),
-                    fit: BoxFit.cover,
-                  )
-            : _buildPlaceholder(context, targetImage),
-      ),
-      if (imageUrl != null)
-        Positioned(
-          top: 25,
-          left: 15,
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                switch (targetImage) {
-                  case 1:
-                    image1 = null;
-                    break;
-                  case 2:
-                    image2 = null;
-                    break;
-                  case 3:
-                    image3 = null;
-                    break;
-                  case 4:
-                    image4 = null;
-                    break;
-                }
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              padding: EdgeInsets.all(8),
-              child: Icon(
-                Icons.backspace,
-                color: Colors.black,
-                size: 15,
+  Widget _buildImageContainer(
+      BuildContext context, String? imageUrl, int targetImage) {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: imageUrl != null
+              ? (Uri.parse(imageUrl).isAbsolute && imageUrl.startsWith('http'))
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(child: Text('Failed to load image'));
+                      },
+                    )
+                  : Image.file(
+                      File(imageUrl),
+                      fit: BoxFit.cover,
+                    )
+              : _buildPlaceholder(context, targetImage),
+        ),
+        if (imageUrl != null)
+          Positioned(
+            top: 25,
+            left: 15,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  switch (targetImage) {
+                    case 1:
+                      image1 = null;
+                      break;
+                    case 2:
+                      image2 = null;
+                      break;
+                    case 3:
+                      image3 = null;
+                      break;
+                    case 4:
+                      image4 = null;
+                      break;
+                  }
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                padding: EdgeInsets.all(8),
+                child: Icon(
+                  Icons.backspace,
+                  color: Colors.black,
+                  size: 15,
+                ),
               ),
             ),
           ),
-        ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 
   Widget _buildPlaceholder(BuildContext context, int targetImage) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.transparent,
-        image: DecorationImage(
-          image: AssetImage('assets/images/image.png'),
-          fit: BoxFit.cover,
-        ),
       ),
       child: Center(
         child: Column(
@@ -199,7 +201,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
                   Colors.white,
                   Colors.black,
                   () async {
-                    Navigator.of(context).pop(await picker.pickImage(source: ImageSource.gallery));
+                    Navigator.of(context).pop(
+                        await picker.pickImage(source: ImageSource.gallery));
                   },
                 ),
                 const SizedBox(height: 10),
@@ -209,7 +212,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
                   Colors.black,
                   Colors.white,
                   () async {
-                    Navigator.of(context).pop(await picker.pickImage(source: ImageSource.camera));
+                    Navigator.of(context).pop(
+                        await picker.pickImage(source: ImageSource.camera));
                   },
                 ),
               ],
@@ -239,7 +243,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
     }
   }
 
-  Widget _buildButton(BuildContext context, String text, Color backgroundColor, Color textColor, VoidCallback onPressed) {
+  Widget _buildButton(BuildContext context, String text, Color backgroundColor,
+      Color textColor, VoidCallback onPressed) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: ElevatedButton(

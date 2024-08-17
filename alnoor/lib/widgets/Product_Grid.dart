@@ -1,4 +1,5 @@
 import 'package:alnoor/models/product.dart';
+import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:alnoor/widgets/Paginator.dart';
@@ -179,31 +180,40 @@ class _ProductGridState extends State<ProductGrid> {
                           Positioned(
                             top: 10,
                             right: 10,
-                            child: Icon(
-                              Icons.add_circle_outline,
-                              size: 10,
-                              color: Colors.white,
-                            ),
+                            child: GestureDetector(
+                                onTap: () => {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddToFavourites()),
+                                      )
+                                    },
+                                child: Icon(
+                                  Icons.add_circle_outline,
+                                  size: 20,
+                                  color: Colors.white,
+                                )),
                           ),
                           Positioned(
                             bottom: 10,
                             right: 10,
                             child: CircleAvatar(
-                              radius: 5,
+                              radius: 8,
                               backgroundColor: Colors.white,
                               child: IconButton(
                                 icon: Icon(
                                   Icons.search_outlined,
-                                  size: 9,
+                                  size: 15,
                                 ),
                                 onPressed: () {
-                                   Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ShowProductScreen(product: product),
-                                ),
-                              );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ShowProductScreen(product: product),
+                                    ),
+                                  );
                                 },
                                 padding: EdgeInsets.zero,
                                 constraints: BoxConstraints(),
