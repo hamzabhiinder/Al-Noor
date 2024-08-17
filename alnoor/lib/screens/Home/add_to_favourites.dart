@@ -30,6 +30,13 @@ class _AddToFavouritesState extends State<AddToFavourites> {
     setState(() {
       filterIndex = value;
     });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Favourites(
+                index: value,
+              )),
+    );
   }
 
   @override
@@ -87,9 +94,13 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("Choose The Collection In Which To Add:")
+                        Text(
+                          "Choose A Collection:",
+                          style: GoogleFonts.poppins(
+                              fontSize: 14.0, fontWeight: FontWeight.w600),
+                        )
                       ]),
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
                   SizedBox(
                     height: 142,
                     child: Row(
@@ -98,13 +109,6 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                           child: GestureDetector(
                             onTap: () {
                               print('MY KITCHEN tapped');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Favourites(
-                                          index: 0,
-                                        )),
-                              );
                             },
                             child: OverlappingImagesWidget(
                                 imageUrls: [

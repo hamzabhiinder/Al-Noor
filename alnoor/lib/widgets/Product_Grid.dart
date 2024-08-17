@@ -10,11 +10,13 @@ class ProductGrid extends StatefulWidget {
   final List<Product> products;
   final int totalPages;
   final int itemsInAPage;
+  final bool isFavourites;
 
   ProductGrid(
       {required this.products,
       required this.totalPages,
-      required this.itemsInAPage});
+      required this.itemsInAPage,
+      required this.isFavourites});
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -159,42 +161,53 @@ class _ProductGridState extends State<ProductGrid> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  product.productName,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 7,
+                                Container(
+                                  width: 80,
+                                  child: Text(
+                                    product.productName,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 7,
+                                    ),
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
                                   ),
                                 ),
-                                Text(
-                                  product.productType,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 5,
+                                Container(
+                                  width: 80,
+                                  child: Text(
+                                    product.productType,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 5,
+                                    ),
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: GestureDetector(
-                                onTap: () => {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddToFavourites()),
-                                      )
-                                    },
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  size: 20,
-                                  color: Colors.white,
-                                )),
-                          ),
+                          if (!widget.isFavourites)
+                            (Positioned(
+                              top: 10,
+                              right: 10,
+                              child: GestureDetector(
+                                  onTap: () => {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddToFavourites()),
+                                        )
+                                      },
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 20,
+                                    color: Colors.white,
+                                  )),
+                            )),
                           Positioned(
                             bottom: 10,
                             right: 10,

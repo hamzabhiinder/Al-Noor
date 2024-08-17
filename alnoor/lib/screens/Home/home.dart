@@ -338,6 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       int totalPages =
                                           (state.products.length / 8).ceil();
                                       return ProductGrid(
+                                        isFavourites: false,
                                         products: state.products,
                                         totalPages: totalPages,
                                         itemsInAPage: 8,

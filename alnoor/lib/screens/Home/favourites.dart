@@ -259,6 +259,7 @@ class _FavouritesState extends State<Favourites> {
                               int totalPages =
                                   (state.products.length / 4).ceil();
                               return ProductGrid(
+                                isFavourites: true,
                                 products: state.products,
                                 totalPages: totalPages,
                                 itemsInAPage: 4,
