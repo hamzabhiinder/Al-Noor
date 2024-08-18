@@ -200,7 +200,7 @@ class StartScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => HomeScreen(isGuestUser: true,),
                         ),
                       );
                     },

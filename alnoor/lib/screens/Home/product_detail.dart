@@ -637,11 +637,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     width: constraints.maxWidth * 0.6,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ),
+                        Navigator.pop(
+                          context        
                         );
                       },
                       style: ElevatedButton.styleFrom(

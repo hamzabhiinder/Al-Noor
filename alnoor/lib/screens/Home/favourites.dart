@@ -430,7 +430,7 @@ class _FavouritesState extends State<Favourites> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => HomeScreen(isGuestUser: true,)),
                     );
                   },
                   child: SvgPicture.asset(

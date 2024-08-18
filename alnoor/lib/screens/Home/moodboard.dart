@@ -182,34 +182,34 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
   }
 
   Widget _buildPlaceholder(BuildContext context, int targetImage) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () async {
-                await _showImagePicker(context, targetImage);
-              },
-              child: SvgPicture.asset(
+    return GestureDetector(
+      onTap: () async {
+        await _showImagePicker(context, targetImage);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
                 'assets/images/AddImage.svg',
                 width: 150,
                 height: 150,
                 color: Colors.black,
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'SELECT NEW DECOR',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 10),
+              Text(
+                'SELECT NEW DECOR',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

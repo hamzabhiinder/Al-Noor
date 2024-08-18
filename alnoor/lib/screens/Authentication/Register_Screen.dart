@@ -484,7 +484,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
+                                builder: (context) => HomeScreen( isGuestUser: false,),
                               ),
                             );
                           } else if (state is RegisterFailure) {
