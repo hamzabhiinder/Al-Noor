@@ -264,7 +264,7 @@ class _ProductGridState extends State<ProductGrid> {
                     : null,
               ),
               ...buildPageIndicators(
-                  widget.totalPages, currentPage, _pageController),
+                  widget.totalPages, currentPage, _pageController, context),
               IconButton(
                 icon: Icon(Icons.chevron_right),
                 onPressed: currentPage < widget.totalPages - 1

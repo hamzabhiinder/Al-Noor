@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../repositories/login_repository.dart';
 
 // Events
@@ -51,18 +50,19 @@ class LoginFailure extends LoginState {
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
 
-  LoginBloc({required this.loginRepository}) : super(LoginInitial());
+  LoginBloc({required this.loginRepository}) : super(LoginInitial()) {
+    on<LoginButtonPressed>(_onLoginButtonPressed);
+  }
 
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
-    if (event is LoginButtonPressed) {
-      yield LoginLoading();
+  Future<void> _onLoginButtonPressed(
+      LoginButtonPressed event, Emitter<LoginState> emit) async {
+    emit(LoginLoading());
 
-      try {
-        final data = await loginRepository.login(event.email, event.password);
-        yield LoginSuccess(data: data);
-      } catch (error) {
-        yield LoginFailure(error: error.toString());
-      }
+    try {
+      final data = await loginRepository.login(event.email, event.password);
+      emit(LoginSuccess(data: data));
+    } catch (error) {
+      emit(LoginFailure(error: error.toString()));
     }
   }
 }

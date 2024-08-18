@@ -15,9 +15,10 @@ class RegisterRepository {
         },
       );
 
-      if (response.statusCode == 200) {
-                print('API is hit');
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Body: ${response.body}');
 
+      if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
         // Handle specific error codes or extract error message from response
@@ -26,6 +27,7 @@ class RegisterRepository {
       }
     } catch (error) {
       // Handle network issues or unexpected errors
+      print('Registration failed: $error');
       throw Exception('Registration failed: $error');
     }
   }
