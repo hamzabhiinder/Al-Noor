@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
@@ -36,6 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
     imagesInContainer2 = List<String?>.filled(4, null);
     _focusNode.addListener(() {
       setState(() {});
+    });
+  }
+
+  void _updater() {
+    setState(() {
+      ImageManager().getImage(1);
+      ImageManager().getImage(2);
+      ImageManager().getImage(3);
+      ImageManager().getImage(4);
+      ImageManager().getImage(5);
+      ImageManager().getImage(6);
     });
   }
 

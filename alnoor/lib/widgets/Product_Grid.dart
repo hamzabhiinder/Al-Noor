@@ -120,8 +120,9 @@ class _ProductGridState extends State<ProductGrid> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetailScreen(product: product),
+                                  builder: (context) => ProductDetailScreen(
+                                      product: product,
+                                      isFavourites: widget.isFavourites),
                                 ),
                               );
                             },

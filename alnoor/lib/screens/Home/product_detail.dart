@@ -1,4 +1,5 @@
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,9 @@ import 'dart:io';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
+  final bool isFavourites;
 
-  ProductDetailScreen({required this.product});
+  ProductDetailScreen({required this.product, required this.isFavourites});
 
   @override
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
@@ -155,6 +157,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         onPressed: () {
                           ImageManager().setImageFromCamera(
                               widget.product.thumbnailImage);
+                          if (widget.isFavourites)
+                            (Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Favourites(
+                                        index: 0,
+                                      )),
+                            ));
+                          if (!widget.isFavourites) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()),
+                            );
+                          }
                         },
                         constraints: constraints),
                     _buildIconButton(
