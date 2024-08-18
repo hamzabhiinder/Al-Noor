@@ -2,33 +2,17 @@
 
 import 'dart:io';
 
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/Home/moodboard.dart';
 
 class DragTargetContainer1 extends StatefulWidget {
-  final void Function(int, dynamic) setImageCallback;
-  var image1;
-  var image2;
-
-  DragTargetContainer1(
-      {required this.setImageCallback,
-      required this.image1,
-      required this.image2});
-
   @override
   _DragTargetContainerState createState() => _DragTargetContainerState();
 }
 
 class _DragTargetContainerState extends State<DragTargetContainer1> {
-  void _clearImage1() {
-    widget.setImageCallback(1, "");
-  }
-
-  void _clearImage2() {
-    widget.setImageCallback(2, "");
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -36,19 +20,14 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TwoImageScreen(
-              initialImage1: widget.image1,
-              initialImage2: widget.image2,
-              onClearImage1: _clearImage1,
-              onClearImage2: _clearImage2,
-            ),
+            builder: (context) => TwoImageScreen(),
           ),
         );
 
         if (result != null && result is List<String?>) {
           setState(() {
-            widget.setImageCallback(1, result[0]);
-            widget.setImageCallback(2, result[1]);
+            ImageManager().setImage(1, result[0]);
+            ImageManager().setImage(2, result[1]);
           });
         }
       },
@@ -59,12 +38,14 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
         onAcceptWithDetails: (DragTargetDetails<String> details) {
           final String newImageUrl = details.data;
           setState(() {
-            if (widget.image1 == null || widget.image1.isEmpty) {
-              widget.setImageCallback(1, newImageUrl);
-            } else if (widget.image2 == null || widget.image2.isEmpty) {
-              widget.setImageCallback(2, newImageUrl);
+            if (ImageManager().getImage(1) == null ||
+                ImageManager().getImage(1) == null) {
+              ImageManager().setImage(1, newImageUrl);
+            } else if (ImageManager().getImage(2) == null ||
+                ImageManager().getImage(2) == null) {
+              ImageManager().setImage(2, newImageUrl);
             } else {
-              widget.setImageCallback(1, newImageUrl);
+              ImageManager().setImage(1, newImageUrl);
             }
           });
         },
@@ -80,16 +61,18 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  child: widget.image1 != null
-                      ? (Uri.parse(widget.image1).isAbsolute &&
-                              widget.image1.startsWith('http'))
+                  child: ImageManager().getImage(1) != null
+                      ? (Uri.parse(ImageManager().getImage(1) ?? "")
+                                  .isAbsolute &&
+                              (ImageManager().getImage(1) ?? "")
+                                  .startsWith('http'))
                           ? Image.network(
-                              widget.image1,
+                              (ImageManager().getImage(1) ?? ""),
                               fit: BoxFit.cover,
                               height: double.infinity,
                             )
                           : Image.file(
-                              File(widget.image1),
+                              File((ImageManager().getImage(1) ?? "")),
                               fit: BoxFit.cover,
                               height: double.infinity,
                             )
@@ -100,16 +83,18 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
                   color: Colors.black,
                 ),
                 Expanded(
-                  child: widget.image2 != null
-                      ? (Uri.parse(widget.image2).isAbsolute &&
-                              widget.image2.startsWith('http'))
+                  child: ImageManager().getImage(2) != null
+                      ? (Uri.parse(ImageManager().getImage(2) ?? "")
+                                  .isAbsolute &&
+                              (ImageManager().getImage(2) ?? "")
+                                  .startsWith('http'))
                           ? Image.network(
-                              widget.image2,
+                              (ImageManager().getImage(2) ?? ""),
                               fit: BoxFit.cover,
                               height: double.infinity,
                             )
                           : Image.file(
-                              File(widget.image2),
+                              File((ImageManager().getImage(2) ?? "")),
                               fit: BoxFit.cover,
                               height: double.infinity,
                             )

@@ -3,45 +3,28 @@
 import 'dart:ui';
 import 'dart:io';
 
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TwoImageScreen extends StatefulWidget {
-  final String? initialImage1;
-  final String? initialImage2;
-  final VoidCallback? onClearImage1;
-  final VoidCallback? onClearImage2;
-
-  const TwoImageScreen({
-    Key? key,
-    this.initialImage1,
-    this.initialImage2,
-    this.onClearImage1,
-    this.onClearImage2,
-  }) : super(key: key);
-
   @override
   _TwoImageScreenState createState() => _TwoImageScreenState();
 }
 
 class _TwoImageScreenState extends State<TwoImageScreen> {
-  String? image1;
-  String? image2;
-
   @override
   void initState() {
     super.initState();
-    image1 = widget.initialImage1;
-    image2 = widget.initialImage2;
   }
 
   void _swapImages() {
     setState(() {
-      final temp = image1;
-      image1 = image2;
-      image2 = temp;
+      final temp = ImageManager().getImage(1);
+      ImageManager().setImage(1, ImageManager().getImage(2));
+      ImageManager().setImage(2, temp);
     });
   }
 
@@ -49,7 +32,8 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop([image1, image2]);
+        Navigator.of(context)
+            .pop([ImageManager().getImage(1), ImageManager().getImage(2)]);
         return false;
       },
       child: Scaffold(
@@ -60,11 +44,11 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                 Expanded(
                   child: Stack(
                     children: [
-                      if (image1 != null)
-                        (Uri.parse(image1!).isAbsolute &&
-                                image1!.startsWith('http'))
+                      if (ImageManager().getImage(1) != null)
+                        (Uri.parse(ImageManager().getImage(1)!).isAbsolute &&
+                                ImageManager().getImage(1)!.startsWith('http'))
                             ? Image.network(
-                                image1!,
+                                ImageManager().getImage(1)!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -74,7 +58,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                                 },
                               )
                             : Image.file(
-                                File(image1!),
+                                File(ImageManager().getImage(1)!),
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -87,11 +71,8 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              image1 = null;
+                              ImageManager().setImage(1, null);
                             });
-                            if (widget.onClearImage1 != null) {
-                              widget.onClearImage1!();
-                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -113,11 +94,11 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                 Expanded(
                   child: Stack(
                     children: [
-                      if (image2 != null)
-                        (Uri.parse(image2!).isAbsolute &&
-                                image2!.startsWith('http'))
+                      if (ImageManager().getImage(2) != null)
+                        (Uri.parse(ImageManager().getImage(2)!).isAbsolute &&
+                                ImageManager().getImage(2)!.startsWith('http'))
                             ? Image.network(
-                                image2!,
+                                ImageManager().getImage(2)!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -127,7 +108,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                                 },
                               )
                             : Image.file(
-                                File(image2!),
+                                File(ImageManager().getImage(2)!),
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -140,11 +121,8 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              image2 = null;
+                              ImageManager().setImage(2, null);
                             });
-                            if (widget.onClearImage2 != null) {
-                              widget.onClearImage2!();
-                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -171,11 +149,13 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
               child: IconButton(
                 icon: Icon(Icons.close, color: Colors.black, size: 30),
                 onPressed: () {
-                  Navigator.of(context).pop([image1, image2]);
+                  Navigator.of(context).pop(
+                      [ImageManager().getImage(1), ImageManager().getImage(2)]);
                 },
               ),
             ),
-            if (image1 != null && image2 != null)
+            if (ImageManager().getImage(1) != null &&
+                ImageManager().getImage(2) != null)
               Positioned(
                 top: MediaQuery.of(context).size.height / 2 - 40,
                 left: MediaQuery.of(context).size.width / 2 - 40,
@@ -282,9 +262,9 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
     if (image != null) {
       setState(() {
         if (targetImage == 1) {
-          image1 = image.path;
+          ImageManager().setImage(1, image.path);
         } else if (targetImage == 2) {
-          image2 = image.path;
+          ImageManager().setImage(2, image.path);
         }
       });
     }

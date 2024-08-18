@@ -1,24 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:io';
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 import '../screens/Home/four_image_moodboard.dart';
 
 // ignore: must_be_immutable
 class FourImageDragTargetContainer extends StatefulWidget {
-  final void Function(int, dynamic) setImageCallback;
-  var imageUrl1;
-  var imageUrl2;
-  var imageUrl3;
-  var imageUrl4;
-
-  FourImageDragTargetContainer(
-      {required this.setImageCallback,
-      required this.imageUrl1,
-      required this.imageUrl2,
-      required this.imageUrl3,
-      required this.imageUrl4});
-
   @override
   _FourImageDragTargetContainerState createState() =>
       _FourImageDragTargetContainerState();
@@ -33,32 +21,22 @@ class _FourImageDragTargetContainerState
         final images = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FourImageScreen(
-              initialImage1: widget.imageUrl1,
-              initialImage2: widget.imageUrl2,
-              initialImage3: widget.imageUrl3,
-              initialImage4: widget.imageUrl4,
-              onClearImage1: () {
-                widget.setImageCallback(3, "");
-              },
-              onClearImage2: () {
-                widget.setImageCallback(4, "");
-              },
-              onClearImage3: () {
-                widget.setImageCallback(5, "");
-              },
-              onClearImage4: () {
-                widget.setImageCallback(6, "");
-              },
-            ),
+            builder: (context) => FourImageScreen(),
           ),
         );
 
         if (images != null && images is List<String?>) {
-          widget.setImageCallback(3, images[0]);
-          widget.setImageCallback(4, images[1]);
-          widget.setImageCallback(5, images[2]);
-          widget.setImageCallback(6, images[3]);
+          ImageManager().setImage(3, images[0]);
+          ImageManager().setImage(4, images[1]);
+          ImageManager().setImage(5, images[2]);
+          ImageManager().setImage(6, images[3]);
+
+          setState(() {
+            ImageManager().getImage(3);
+            ImageManager().getImage(4);
+            ImageManager().getImage(5);
+            ImageManager().getImage(6);
+          });
         }
       },
       child: DragTarget<String>(
@@ -68,16 +46,20 @@ class _FourImageDragTargetContainerState
         onAcceptWithDetails: (DragTargetDetails<String> details) {
           final String newImageUrl = details.data;
           setState(() {
-            if (widget.imageUrl1 == null || widget.imageUrl1!.isEmpty) {
-              widget.setImageCallback(3, newImageUrl);
-            } else if (widget.imageUrl2 == null || widget.imageUrl2!.isEmpty) {
-              widget.setImageCallback(4, newImageUrl);
-            } else if (widget.imageUrl3 == null || widget.imageUrl3!.isEmpty) {
-              widget.setImageCallback(5, newImageUrl);
-            } else if (widget.imageUrl4 == null || widget.imageUrl4!.isEmpty) {
-              widget.setImageCallback(6, newImageUrl);
+            if (ImageManager().getImage(3) == null ||
+                ImageManager().getImage(3) == "") {
+              ImageManager().setImage(3, newImageUrl);
+            } else if (ImageManager().getImage(4) == null ||
+                ImageManager().getImage(4) == "") {
+              ImageManager().setImage(4, newImageUrl);
+            } else if (ImageManager().getImage(5) == null ||
+                ImageManager().getImage(5) == "") {
+              ImageManager().setImage(5, newImageUrl);
+            } else if (ImageManager().getImage(6) == null ||
+                ImageManager().getImage(6) == "") {
+              ImageManager().setImage(6, newImageUrl);
             } else {
-              widget.setImageCallback(3, newImageUrl);
+              ImageManager().setImage(3, newImageUrl);
             }
           });
         },
@@ -95,14 +77,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(widget.imageUrl1),
+                        child: _displayImage(ImageManager().getImage(3)),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(widget.imageUrl2),
+                        child: _displayImage(ImageManager().getImage(4)),
                       ),
                     ],
                   ),
@@ -115,14 +97,14 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(widget.imageUrl3),
+                        child: _displayImage(ImageManager().getImage(5)),
                       ),
                       Container(
                         width: 1.0,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(widget.imageUrl4),
+                        child: _displayImage(ImageManager().getImage(6)),
                       ),
                     ],
                   ),
@@ -141,6 +123,8 @@ class _FourImageDragTargetContainerState
     } else if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
       return Image.network(
         imageUrl,
+        width: double.infinity,
+        height: double.infinity,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Center(child: Text('Failed to load image'));
@@ -148,6 +132,8 @@ class _FourImageDragTargetContainerState
       );
     } else {
       return Image.file(
+        width: double.infinity,
+        height: double.infinity,
         File(imageUrl),
         fit: BoxFit.cover,
       );

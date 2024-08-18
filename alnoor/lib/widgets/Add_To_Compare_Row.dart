@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/widgets/Four_Image_Grid.dart';
 import 'package:alnoor/widgets/Two_Image_Grid.dart';
 import 'package:flutter/material.dart';
@@ -14,73 +15,6 @@ class AddToCompareRow extends StatefulWidget {
 }
 
 class _AddToCompareRowState extends State<AddToCompareRow> {
-  var _image1;
-  var _image2;
-  var _image3;
-  var _image4;
-  var _image5;
-  var _image6;
-
-  void _setImagefromCamera(String path) {
-    if (_image1 == null || _image1!.isEmpty) {
-      setState(() {
-        _image1 = path;
-      });
-    } else if (_image2 == null || _image2!.isEmpty) {
-      setState(() {
-        _image2 = path;
-      });
-    } else if (_image3 == null || _image3!.isEmpty) {
-      setState(() {
-        _image3 = path;
-      });
-    } else if (_image4 == null || _image4!.isEmpty) {
-      setState(() {
-        _image4 = path;
-      });
-    } else if (_image5 == null || _image5!.isEmpty) {
-      setState(() {
-        _image5 = path;
-      });
-    } else if (_image6 == null || _image6!.isEmpty) {
-      setState(() {
-        _image6 = path;
-      });
-    } else {
-      setState(() {
-        _image1 = path;
-      });
-    }
-  }
-
-  void setImage(index, path) {
-    if (index == 1) {
-      setState(() {
-        _image1 = path;
-      });
-    } else if (index == 2) {
-      setState(() {
-        _image2 = path;
-      });
-    } else if (index == 3) {
-      setState(() {
-        _image3 = path;
-      });
-    } else if (index == 4) {
-      setState(() {
-        _image4 = path;
-      });
-    } else if (index == 5) {
-      setState(() {
-        _image5 = path;
-      });
-    } else {
-      setState(() {
-        _image6 = path;
-      });
-    }
-  }
-
   Future<void> _showImagePicker(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await showDialog<XFile>(
@@ -127,7 +61,15 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
 
     if (image != null) {
       print('Selected image path: ${image.path}');
-      _setImagefromCamera(image.path);
+      ImageManager().setImageFromCamera(image.path);
+      setState(() {
+        ImageManager().getImage(1);
+        ImageManager().getImage(2);
+        ImageManager().getImage(3);
+        ImageManager().getImage(4);
+        ImageManager().getImage(5);
+        ImageManager().getImage(6);
+      });
     }
   }
 
@@ -194,16 +136,9 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
                   ),
                 )),
               if (widget.showCamera) (const SizedBox(width: 20)),
-              DragTargetContainer1(
-                  setImageCallback: setImage, image1: _image1, image2: _image2),
+              DragTargetContainer1(),
               const SizedBox(width: 20),
-              FourImageDragTargetContainer(
-                setImageCallback: setImage,
-                imageUrl1: _image3,
-                imageUrl2: _image4,
-                imageUrl3: _image5,
-                imageUrl4: _image6,
-              ),
+              FourImageDragTargetContainer(),
             ],
           ),
         ],

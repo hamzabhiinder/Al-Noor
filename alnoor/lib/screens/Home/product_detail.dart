@@ -1,3 +1,4 @@
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +152,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     _buildIconButton(
                         iconPath: 'assets/images/Add New.png',
                         label: "Add to\nMoodboard",
-                        onPressed: () {},
+                        onPressed: () {
+                          ImageManager().setImageFromCamera(
+                              widget.product.thumbnailImage);
+                        },
                         constraints: constraints),
                     _buildIconButton(
                         iconPath: 'assets/images/Buy.png',

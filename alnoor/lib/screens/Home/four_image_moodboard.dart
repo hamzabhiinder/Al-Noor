@@ -3,52 +3,32 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FourImageScreen extends StatefulWidget {
-  final String? initialImage1;
-  final String? initialImage2;
-  final String? initialImage3;
-  final String? initialImage4;
-
-  const FourImageScreen({
-    Key? key,
-    this.initialImage1,
-    this.initialImage2,
-    this.initialImage3,
-    this.initialImage4,
-    required Null Function() onClearImage1,
-    required Null Function() onClearImage2,
-    required Null Function() onClearImage3,
-    required Null Function() onClearImage4,
-  }) : super(key: key);
-
   @override
   _FourImageScreenState createState() => _FourImageScreenState();
 }
 
 class _FourImageScreenState extends State<FourImageScreen> {
-  String? image1;
-  String? image2;
-  String? image3;
-  String? image4;
-
   @override
   void initState() {
     super.initState();
-    image1 = widget.initialImage1;
-    image2 = widget.initialImage2;
-    image3 = widget.initialImage3;
-    image4 = widget.initialImage4;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop([image1, image2, image3, image4]);
+        Navigator.of(context).pop([
+          ImageManager().getImage(3),
+          ImageManager().getImage(4),
+          ImageManager().getImage(5),
+          ImageManager().getImage(6)
+        ]);
         return false;
       },
       child: Scaffold(
@@ -60,10 +40,10 @@ class _FourImageScreenState extends State<FourImageScreen> {
                   MediaQuery.of(context).size.height,
               padding: EdgeInsets.zero,
               children: [
-                _buildImageContainer(context, image1, 1),
-                _buildImageContainer(context, image2, 2),
-                _buildImageContainer(context, image3, 3),
-                _buildImageContainer(context, image4, 4),
+                _buildImageContainer(context, ImageManager().getImage(3), 1),
+                _buildImageContainer(context, ImageManager().getImage(4), 2),
+                _buildImageContainer(context, ImageManager().getImage(5), 3),
+                _buildImageContainer(context, ImageManager().getImage(6), 4),
               ],
             ),
             Positioned(
@@ -72,7 +52,12 @@ class _FourImageScreenState extends State<FourImageScreen> {
               child: IconButton(
                 icon: Icon(Icons.close, color: Colors.black, size: 30),
                 onPressed: () {
-                  Navigator.of(context).pop([image1, image2, image3, image4]);
+                  Navigator.of(context).pop([
+                    ImageManager().getImage(3),
+                    ImageManager().getImage(4),
+                    ImageManager().getImage(5),
+                    ImageManager().getImage(6)
+                  ]);
                 },
               ),
             ),
@@ -113,16 +98,20 @@ class _FourImageScreenState extends State<FourImageScreen> {
                 setState(() {
                   switch (targetImage) {
                     case 1:
-                      image1 = null;
+                      ImageManager().setImage(3, null);
+                      ;
                       break;
                     case 2:
-                      image2 = null;
+                      ImageManager().setImage(4, null);
+                      ;
                       break;
                     case 3:
-                      image3 = null;
+                      ImageManager().setImage(5, null);
+                      ;
                       break;
                     case 4:
-                      image4 = null;
+                      ImageManager().setImage(6, null);
+                      ;
                       break;
                   }
                 });
@@ -227,16 +216,16 @@ class _FourImageScreenState extends State<FourImageScreen> {
       setState(() {
         switch (targetImage) {
           case 1:
-            image1 = image.path;
+            ImageManager().setImage(3, image.path);
             break;
           case 2:
-            image2 = image.path;
+            ImageManager().setImage(4, image.path);
             break;
           case 3:
-            image3 = image.path;
+            ImageManager().setImage(5, image.path);
             break;
           case 4:
-            image4 = image.path;
+            ImageManager().setImage(6, image.path);
             break;
         }
       });
