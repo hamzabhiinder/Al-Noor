@@ -11,12 +11,14 @@ class ProductGrid extends StatefulWidget {
   final int totalPages;
   final int itemsInAPage;
   final bool isFavourites;
+  final Function(dynamic) updater;
 
   ProductGrid(
       {required this.products,
       required this.totalPages,
       required this.itemsInAPage,
-      required this.isFavourites});
+      required this.isFavourites,
+      required this.updater});
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -116,8 +118,8 @@ class _ProductGridState extends State<ProductGrid> {
                       child: Stack(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProductDetailScreen(
@@ -125,6 +127,11 @@ class _ProductGridState extends State<ProductGrid> {
                                       isFavourites: widget.isFavourites),
                                 ),
                               );
+
+                              if (result != null && result is List<String?>) {
+                                print("hiii");
+                                widget.updater(result);
+                              }
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12.0),

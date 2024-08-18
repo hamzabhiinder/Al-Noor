@@ -1,4 +1,5 @@
 import 'package:alnoor/blocs/product_bloc.dart';
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:alnoor/widgets/Image_Collection.dart';
@@ -57,6 +58,17 @@ class _FavouritesState extends State<Favourites> {
       filterIndex = -1;
     });
     _focusNode.unfocus();
+  }
+
+  void _updater(result) {
+    setState(() {
+      ImageManager().setImage(1, result[0]);
+      ImageManager().setImage(2, result[1]);
+      ImageManager().setImage(3, result[2]);
+      ImageManager().setImage(4, result[3]);
+      ImageManager().setImage(5, result[4]);
+      ImageManager().setImage(6, result[5]);
+    });
   }
 
   @override
@@ -259,6 +271,7 @@ class _FavouritesState extends State<Favourites> {
                               int totalPages =
                                   (state.products.length / 4).ceil();
                               return ProductGrid(
+                                updater: _updater,
                                 isFavourites: true,
                                 products: state.products,
                                 totalPages: totalPages,

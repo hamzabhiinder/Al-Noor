@@ -40,17 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _updater() {
-    setState(() {
-      ImageManager().getImage(1);
-      ImageManager().getImage(2);
-      ImageManager().getImage(3);
-      ImageManager().getImage(4);
-      ImageManager().getImage(5);
-      ImageManager().getImage(6);
-    });
-  }
-
   void _onSearchSubmit() {
     setState(() {
       filterIndex = -1;
@@ -59,6 +48,17 @@ class _HomeScreenState extends State<HomeScreen> {
         .read<ProductBloc>()
         .add(LoadProducts(search: _searchText, category: ""));
     _focusNode.unfocus();
+  }
+
+  void _updater(result) {
+    setState(() {
+      ImageManager().setImage(1, result[0]);
+      ImageManager().setImage(2, result[1]);
+      ImageManager().setImage(3, result[2]);
+      ImageManager().setImage(4, result[3]);
+      ImageManager().setImage(5, result[4]);
+      ImageManager().setImage(6, result[5]);
+    });
   }
 
   @override
@@ -350,6 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       int totalPages =
                                           (state.products.length / 8).ceil();
                                       return ProductGrid(
+                                        updater: _updater,
                                         isFavourites: false,
                                         products: state.products,
                                         totalPages: totalPages,

@@ -1,5 +1,4 @@
 import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/material.dart';
@@ -157,21 +156,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         onPressed: () {
                           ImageManager().setImageFromCamera(
                               widget.product.thumbnailImage);
-                          if (widget.isFavourites)
-                            (Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Favourites(
-                                        index: 0,
-                                      )),
-                            ));
-                          if (!widget.isFavourites) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen()),
-                            );
-                          }
+                          Navigator.of(context).pop([
+                            ImageManager().getImage(1),
+                            ImageManager().getImage(2),
+                            ImageManager().getImage(3),
+                            ImageManager().getImage(4),
+                            ImageManager().getImage(5),
+                            ImageManager().getImage(6)
+                          ]);
+                          // if (widget.isFavourites)
+                          //   (Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => Favourites(
+                          //               index: 0,
+                          //             )),
+                          //   ));
+                          // if (!widget.isFavourites) {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => HomeScreen()),
+                          //   );
+                          // }
                         },
                         constraints: constraints),
                     _buildIconButton(
