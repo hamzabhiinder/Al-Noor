@@ -241,14 +241,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(width: 10),
                       IconButton(
                         icon: Icon(Icons.favorite),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 builder: (context) => Favourites(
-                                      index: 0,
-                                    )),
-                          );
+                                  index: 0,
+                                ),
+                              ));
+
+                          if (result != null && result is List<String?>) {
+                            print("hiii");
+                            setState(() {
+                              ImageManager().getImage(1);
+                              ImageManager().getImage(2);
+                              ImageManager().getImage(3);
+                              ImageManager().getImage(4);
+                              ImageManager().getImage(5);
+                              ImageManager().getImage(6);
+                            });
+                          }
                         },
                       ),
                       SizedBox(width: 10),
