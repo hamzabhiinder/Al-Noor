@@ -425,13 +425,14 @@ class _FavouritesState extends State<Favourites> {
                 backgroundColor: Colors.transparent,
                 leading: GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                                isGuestUser: true,
-                              )),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => HomeScreen(
+                    //             isGuestUser: true,
+                    //           )),
+                    // );
+                    Navigator.pop(context);
                   },
                   child: SvgPicture.asset(
                     'assets/images/Logo_Black.svg',

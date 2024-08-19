@@ -807,9 +807,7 @@
 //     );
 //   }
 // }
-
 import 'dart:ui';
-
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
@@ -833,7 +831,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin<HomeScreen> {
   int filterIndex = -1;
   int currentPage = 0;
   late PageController _pageController;
@@ -855,27 +853,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _onSearchSubmit() {
-    setState(() {
-      filterIndex = -1;
-    });
-    context
-        .read<ProductBloc>()
-        .add(LoadProducts(search: _searchText, category: ""));
-    _focusNode.unfocus();
-  }
-
-  void _updater(result) {
-    setState(() {
-      ImageManager().setImage(1, result[0]);
-      ImageManager().setImage(2, result[1]);
-      ImageManager().setImage(3, result[2]);
-      ImageManager().setImage(4, result[3]);
-      ImageManager().setImage(5, result[4]);
-      ImageManager().setImage(6, result[5]);
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -883,87 +860,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _showImagePicker(BuildContext context) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await showDialog<XFile>(
-      context: context,
-      builder: (BuildContext context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            contentPadding: EdgeInsets.zero,
-            backgroundColor: Colors.transparent,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildButton(
-                  context,
-                  "Upload From Gallery",
-                  Colors.white,
-                  Colors.black,
-                  () async {
-                    Navigator.of(context).pop(
-                        await picker.pickImage(source: ImageSource.gallery));
-                  },
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                _buildButton(
-                  context,
-                  "Take Photo",
-                  Colors.black,
-                  Colors.white,
-                  () async {
-                    Navigator.of(context).pop(
-                        await picker.pickImage(source: ImageSource.camera));
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (image != null) {
-      print('Selected image path: ${image.path}');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AddToFavourites()),
-      );
-    }
-  }
-
-  Widget _buildButton(BuildContext context, String text, Color backgroundColor,
-      Color textColor, VoidCallback onPressed) {
-    final screenSize = MediaQuery.of(context).size;
-    return SizedBox(
-      width: screenSize.width * 0.8,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: textColor,
-          backgroundColor: backgroundColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(screenSize.width * 0.025),
-          ),
-          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.02),
-        ),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: GoogleFonts.poppins(
-            fontSize: screenSize.width * 0.04,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);  // This line ensures the mixin is properly applied
     final screenSize = MediaQuery.of(context).size;
 
     return GestureDetector(
@@ -996,8 +898,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1229,5 +1130,105 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _onSearchSubmit() {
+    setState(() {
+      filterIndex = -1;
+    });
+    context
+        .read<ProductBloc>()
+        .add(LoadProducts(search: _searchText, category: ""));
+    _focusNode.unfocus();
+  }
+
+  Future<void> _showImagePicker(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await showDialog<XFile>(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            contentPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildButton(
+                  context,
+                  "Upload From Gallery",
+                  Colors.white,
+                  Colors.black,
+                  () async {
+                    Navigator.of(context).pop(
+                        await picker.pickImage(source: ImageSource.gallery));
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                _buildButton(
+                  context,
+                  "Take Photo",
+                  Colors.black,
+                  Colors.white,
+                  () async {
+                    Navigator.of(context).pop(
+                        await picker.pickImage(source: ImageSource.camera));
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (image != null) {
+      print('Selected image path: ${image.path}');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddToFavourites()),
+      );
+    }
+  }
+
+  Widget _buildButton(BuildContext context, String text, Color backgroundColor,
+      Color textColor, VoidCallback onPressed) {
+    final screenSize = MediaQuery.of(context).size;
+    return SizedBox(
+      width: screenSize.width * 0.8,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: textColor,
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(screenSize.width * 0.025),
+          ),
+          padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.02),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: GoogleFonts.poppins(
+            fontSize: screenSize.width * 0.04,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _updater(result) {
+    setState(() {
+      ImageManager().setImage(1, result[0]);
+      ImageManager().setImage(2, result[1]);
+      ImageManager().setImage(3, result[2]);
+      ImageManager().setImage(4, result[3]);
+      ImageManager().setImage(5, result[4]);
+      ImageManager().setImage(6, result[5]);
+    });
   }
 }
