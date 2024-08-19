@@ -145,7 +145,7 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
           onTap: () => {widget.setFilter(widget.index)},
           child: SizedBox(
             width: responsiveWidth(155),
-            height: responsiveHeight(130),
+            height: responsiveHeight(125),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -161,8 +161,8 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
                   return Positioned(
                     left: leftPosition,
                     child: Container(
-                      width: responsiveWidth(115 + (index == 2 ? 10 : 0)),
-                      height: responsiveHeight(110 + (index == 2 ? 10 : 0)),
+                      width: responsiveWidth(105 + (index == 2 ? 10 : 0)),
+                      height: responsiveHeight(100 + (index == 2 ? 10 : 0)),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(
                             responsiveWidth(10)), // Responsive border radius
@@ -176,8 +176,8 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
                 }),
                 if (widget.isFavourites == true)
                   Positioned(
-                    right: responsiveWidth(25),
-                    bottom: responsiveHeight(15),
+                    right: responsiveWidth(35),
+                    bottom: responsiveHeight(20),
                     child: CircleAvatar(
                       radius: responsiveWidth(7),
                       backgroundColor: Colors.white,
@@ -191,7 +191,6 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
             ),
           ),
         ),
-        SizedBox(height: responsiveHeight(5)), // Add some spacing
         Expanded(
           child: Text(
             widget.text,
@@ -200,7 +199,6 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
               fontWeight: FontWeight.bold,
               color: widget.selected ? Colors.red : Colors.black,
             ),
-           
           ),
         ),
       ],

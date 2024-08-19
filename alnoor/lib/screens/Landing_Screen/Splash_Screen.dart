@@ -114,9 +114,7 @@
 //   }
 // }
 
-
-
-
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Authentication/Login_Screen.dart';
 import 'package:alnoor/blocs/login_bloc.dart';
 import 'package:alnoor/repositories/login_repository.dart';
@@ -156,7 +154,8 @@ class StartScreen extends StatelessWidget {
                   height: screenSize.height * 0.2, // Responsive height
                   child: Image.asset('assets/images/Logo.png'),
                 ),
-                SizedBox(height: screenSize.height * 0.05), // Responsive spacing
+                SizedBox(
+                    height: screenSize.height * 0.05), // Responsive spacing
                 // Buttons
                 SizedBox(
                   width: screenSize.width * 0.8, // Responsive button width
@@ -192,15 +191,24 @@ class StartScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: screenSize.height * 0.02), // Responsive spacing
+                SizedBox(
+                    height: screenSize.height * 0.02), // Responsive spacing
                 SizedBox(
                   width: screenSize.width * 0.8, // Responsive button width
                   child: ElevatedButton(
                     onPressed: () {
+                      ImageManager().setImage(1, null);
+                      ImageManager().setImage(2, null);
+                      ImageManager().setImage(3, null);
+                      ImageManager().setImage(4, null);
+                      ImageManager().setImage(5, null);
+                      ImageManager().setImage(6, null);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(isGuestUser: true,),
+                          builder: (context) => HomeScreen(
+                            isGuestUser: true,
+                          ),
                         ),
                       );
                     },
@@ -224,7 +232,8 @@ class StartScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: screenSize.height * 0.02), // Responsive spacing
+                SizedBox(
+                    height: screenSize.height * 0.02), // Responsive spacing
                 // Create new account link
                 TextButton(
                   onPressed: () {
@@ -247,15 +256,18 @@ class StartScreen extends StatelessWidget {
                           'CREATE NEW ACCOUNT',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: screenSize.width * 0.045, // Responsive font size
+                            fontSize: screenSize.width *
+                                0.045, // Responsive font size
                           ),
                         ),
                       ),
                       SizedBox(
-                          height: screenSize.height * 0.005), // Space between text and underline
+                          height: screenSize.height *
+                              0.005), // Space between text and underline
                       Container(
                         height: 1, // Height of the underline
-                        width: screenSize.width * 0.45, // Responsive underline width
+                        width: screenSize.width *
+                            0.45, // Responsive underline width
                         color: Colors.white, // Color of the underline
                       ),
                     ],

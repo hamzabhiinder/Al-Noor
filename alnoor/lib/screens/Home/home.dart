@@ -395,8 +395,6 @@
 //   }
 // }
 
-
-
 // import 'dart:ui';
 
 // import 'package:alnoor/blocs/category_bloc.dart';
@@ -810,11 +808,6 @@
 //   }
 // }
 
-
-
-
-
-
 import 'dart:ui';
 
 import 'package:alnoor/blocs/category_bloc.dart';
@@ -982,12 +975,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen(isGuestUser: widget.isGuestUser)),
-              );
-            },
+            onTap: () {},
             child: SvgPicture.asset(
               'assets/images/Logo_Black.svg',
               width: screenSize.width * 0.12,
@@ -1008,7 +996,8 @@ class _HomeScreenState extends State<HomeScreen> {
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+              padding:
+                  EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1019,13 +1008,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              height: screenSize.height * 0.05,
+                              height: screenSize.height * 0.035,
                               child: TextField(
                                 focusNode: _focusNode,
                                 onChanged: (text) {
                                   setState(() {
                                     _searchText = text;
                                   });
+                                  if (_searchText.isEmpty) {
+                                    _onSearchSubmit();
+                                  }
                                 },
                                 onSubmitted: (text) {
                                   _onSearchSubmit();
@@ -1067,7 +1059,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(width: screenSize.width * 0.03),
+                      if (!widget.isGuestUser)
+                        (SizedBox(width: screenSize.width * 0.03)),
                       // Show the favorite icon only if the user is not a guest
                       if (!widget.isGuestUser)
                         IconButton(
@@ -1094,7 +1087,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                           },
                         ),
-                      SizedBox(width: screenSize.width * 0.03),
+                      if (!widget.isGuestUser)
+                        (SizedBox(width: screenSize.width * 0.03)),
                       // Show the upload icon only if the user is not a guest
                       if (!widget.isGuestUser)
                         GestureDetector(
@@ -1109,7 +1103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                     ],
                   ),
-                  SizedBox(height: screenSize.height * 0.03),
+                  if (widget.isGuestUser)
+                    (SizedBox(height: screenSize.height * 0.01)),
                   Expanded(
                     child: BlocBuilder<CategoryBloc, CategoryState>(
                       builder: (context, state) {
@@ -1142,7 +1137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       category: category.id))
                                             },
                                         child: SizedBox(
-                                          height: screenSize.height * 0.04,
+                                          height: screenSize.height * 0.03,
                                           child: Container(
                                             decoration: BoxDecoration(
                                               color: Color(0xFFEFEFEF),
@@ -1151,21 +1146,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       screenSize.width * 0.02),
                                             ),
                                             child: SizedBox(
-                                              width: screenSize.width * 0.2,
+                                              width: screenSize.width * 0.21,
                                               child: Chip(
                                                 backgroundColor:
                                                     Color(0xFFEFEFEF),
                                                 padding: EdgeInsets.only(
-                                                    bottom:
-                                                        screenSize.height *
-                                                            0.015),
+                                                    bottom: screenSize.height *
+                                                        0.015),
                                                 label: Center(
                                                   child: Text(
                                                     category.name,
                                                     style: GoogleFonts.poppins(
                                                       fontSize:
                                                           screenSize.width *
-                                                              0.025,
+                                                              0.023,
                                                       color: Color(0xFF9A9A9A),
                                                     ),
                                                   ),
@@ -1179,9 +1173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     color: index == filterIndex
                                                         ? Color(0xFF937974)
                                                         : Color(0xFFEFEFEF),
-                                                    width:
-                                                        screenSize.width *
-                                                            0.002,
+                                                    width: screenSize.width *
+                                                        0.002,
                                                   ),
                                                 ),
                                               ),
@@ -1191,7 +1184,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }).toList(),
                                 ),
                               ),
-                              SizedBox(height: screenSize.height * 0.03),
+                              SizedBox(
+                                  height: screenSize.height *
+                                      (widget.isGuestUser ? 0.013 : 0.0125)),
                               Expanded(
                                 child: BlocBuilder<ProductBloc, ProductState>(
                                   builder: (context, state) {

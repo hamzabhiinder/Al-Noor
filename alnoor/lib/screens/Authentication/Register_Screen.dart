@@ -165,7 +165,6 @@
 //   }
 // }
 
-
 // import 'package:alnoor/blocs/register_bloc.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
@@ -333,30 +332,13 @@
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:alnoor/blocs/register_bloc.dart';
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../utils/validators.dart';
 import '../../widgets/Input_Field.dart';
-import '../Home/home.dart';  // Import the HomeScreen
+import '../Home/home.dart'; // Import the HomeScreen
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -387,6 +369,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _register() {
+    setState(() {
+      ImageManager().setImage(1, null);
+      ImageManager().setImage(2, null);
+      ImageManager().setImage(3, null);
+      ImageManager().setImage(4, null);
+      ImageManager().setImage(5, null);
+      ImageManager().setImage(6, null);
+    });
     if (_formKey.currentState!.validate()) {
       BlocProvider.of<RegisterBloc>(context).add(RegisterButtonPressed(
         name: _nameController.text,
@@ -429,10 +419,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Logo
                       Image.asset(
                         'assets/images/Logo.png',
-                        height: screenSize.height * 0.1, // Responsive logo height
+                        height:
+                            screenSize.height * 0.1, // Responsive logo height
                         fit: BoxFit.contain,
                       ),
-                      SizedBox(height: screenSize.height * 0.03), // Responsive spacing
+                      SizedBox(
+                          height:
+                              screenSize.height * 0.03), // Responsive spacing
                       // Input Fields
                       CustomInputField(
                         hintText: 'Your Name',
@@ -470,10 +463,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         iconAssetPath: 'assets/images/Password.png',
                         controller: _confirmPasswordController,
                         obscureText: true,
-                        validator: (value) => Validators.validateConfirmPassword(
-                            value, _passwordController.text),
+                        validator: (value) =>
+                            Validators.validateConfirmPassword(
+                                value, _passwordController.text),
                       ),
-                      SizedBox(height: screenSize.height * 0.03), // Responsive spacing
+                      SizedBox(
+                          height:
+                              screenSize.height * 0.03), // Responsive spacing
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {
@@ -487,7 +483,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomeScreen( isGuestUser: false,),
+                                builder: (context) => HomeScreen(
+                                  isGuestUser: false,
+                                ),
                               ),
                             );
                           } else if (state is RegisterFailure) {
@@ -508,17 +506,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               backgroundColor: Colors.black87, // Button color
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                    screenSize.width * 0.03), // Responsive border radius
+                                    screenSize.width *
+                                        0.03), // Responsive border radius
                               ),
                               padding: EdgeInsets.symmetric(
-                                horizontal: screenSize.width * 0.2, // Responsive padding
+                                horizontal: screenSize.width *
+                                    0.2, // Responsive padding
                                 vertical: screenSize.height * 0.02,
                               ),
                             ),
                             child: Text(
                               'Create',
                               style: TextStyle(
-                                fontSize: screenSize.width * 0.05, // Responsive text size
+                                fontSize: screenSize.width *
+                                    0.05, // Responsive text size
                               ),
                             ),
                           );

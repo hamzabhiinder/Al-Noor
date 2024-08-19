@@ -312,9 +312,6 @@
 //   }
 // }
 
-
-
-
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
@@ -430,7 +427,10 @@ class _FavouritesState extends State<Favourites> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen(isGuestUser: true,)),
+                      MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                                isGuestUser: true,
+                              )),
                     );
                   },
                   child: SvgPicture.asset(
@@ -459,13 +459,16 @@ class _FavouritesState extends State<Favourites> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          height: screenHeight * 0.04,
+                          height: screenHeight * 0.035,
                           child: TextField(
                             focusNode: _focusNode,
                             onChanged: (text) {
                               setState(() {
                                 _searchText = text;
                               });
+                              if (_searchText.isEmpty) {
+                                _onSearchSubmit();
+                              }
                             },
                             onSubmitted: (text) {
                               _onSearchSubmit();
@@ -503,7 +506,7 @@ class _FavouritesState extends State<Favourites> {
                           ),
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.012),
+                    SizedBox(height: screenHeight * 0.011),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
                         'Favourites',
@@ -521,7 +524,7 @@ class _FavouritesState extends State<Favourites> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: screenHeight * 0.18,
+                            height: screenHeight * 0.17,
                             child: Row(
                               children: [
                                 Expanded(
@@ -567,7 +570,7 @@ class _FavouritesState extends State<Favourites> {
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight * 0.18,
+                            height: screenHeight * 0.17,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -594,7 +597,7 @@ class _FavouritesState extends State<Favourites> {
                               ],
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.025),
+                          SizedBox(height: screenHeight * 0.01),
                           Expanded(
                             child: BlocBuilder<ProductBloc, ProductState>(
                               builder: (context, state) {

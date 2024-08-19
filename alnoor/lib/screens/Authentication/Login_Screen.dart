@@ -143,10 +143,7 @@
 //   }
 // }
 
-
-
-
-
+import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -177,6 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLoginButtonPressed() {
+    setState(() {
+      ImageManager().setImage(1, null);
+      ImageManager().setImage(2, null);
+      ImageManager().setImage(3, null);
+      ImageManager().setImage(4, null);
+      ImageManager().setImage(5, null);
+      ImageManager().setImage(6, null);
+    });
     if (_formKey.currentState!.validate()) {
       context.read<LoginBloc>().add(
             LoginButtonPressed(
@@ -203,7 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
             // Navigate to HomeScreen on successful login
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen( isGuestUser:false )),
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(isGuestUser: false)),
             );
           } else if (state is LoginFailure) {
             // Show error message on login failure
@@ -237,10 +243,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Logo
                         Image.asset(
                           'assets/images/Logo.png',
-                          height: screenSize.height * 0.1, // Responsive logo height
+                          height:
+                              screenSize.height * 0.1, // Responsive logo height
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(height: screenSize.height * 0.03), // Responsive spacing
+                        SizedBox(
+                            height:
+                                screenSize.height * 0.03), // Responsive spacing
                         // Input Fields
                         CustomInputField(
                           hintText: 'Your Email Address',
@@ -255,7 +264,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                           validator: Validators.validatePassword,
                         ),
-                        SizedBox(height: screenSize.height * 0.03), // Responsive spacing
+                        SizedBox(
+                            height:
+                                screenSize.height * 0.03), // Responsive spacing
                         // Login Button
                         ElevatedButton(
                           onPressed: _onLoginButtonPressed,
@@ -263,21 +274,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: Colors.black87,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
-                                  screenSize.width * 0.03), // Responsive border radius
+                                  screenSize.width *
+                                      0.03), // Responsive border radius
                             ),
                             padding: EdgeInsets.symmetric(
-                              horizontal: screenSize.width * 0.2, // Responsive padding
+                              horizontal:
+                                  screenSize.width * 0.2, // Responsive padding
                               vertical: screenSize.height * 0.02,
                             ),
                           ),
                           child: Text(
                             'Login',
                             style: TextStyle(
-                              fontSize: screenSize.width * 0.05, // Responsive text size
+                              fontSize: screenSize.width *
+                                  0.05, // Responsive text size
                             ),
                           ),
                         ),
-                        SizedBox(height: screenSize.height * 0.02), // Responsive spacing
+                        SizedBox(
+                            height:
+                                screenSize.height * 0.02), // Responsive spacing
                         // Register Redirect
                         TextButton(
                           onPressed: () {
@@ -290,7 +306,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Don't have an account? Register here",
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: screenSize.width * 0.045, // Responsive text size
+                              fontSize: screenSize.width *
+                                  0.045, // Responsive text size
                             ),
                           ),
                         ),
