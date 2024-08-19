@@ -391,7 +391,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       BlocProvider.of<RegisterBloc>(context).add(RegisterButtonPressed(
         name: _nameController.text,
         email: _emailController.text,
+        phone: _phoneController.text,
+        city: _cityController.text,
         password: _passwordController.text,
+        confirm_password: _confirmPasswordController.text,
       ));
     }
   }

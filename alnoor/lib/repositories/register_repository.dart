@@ -4,14 +4,17 @@ import 'package:http/http.dart' as http;
 class RegisterRepository {
   final String _baseUrl = 'https://alnoormdf.com/alnoor/signup';
 
-  Future<Map<String, dynamic>> register(String name, String email, String password) async {
+  Future<Map<String, dynamic>> register(String name, String email, String phone, String city, String password, String confirm_password) async {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
         body: {
           'name': name,
           'email': email,
+          'phone': phone,
+          'city' : city,          
           'password': password,
+          'confirm_password': confirm_password
         },
       );
 

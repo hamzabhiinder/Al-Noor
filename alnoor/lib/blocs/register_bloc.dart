@@ -11,9 +11,12 @@ abstract class RegisterEvent extends Equatable {
 class RegisterButtonPressed extends RegisterEvent {
   final String name;
   final String email;
+  final String phone;
+  final String city; 
   final String password;
+  final String confirm_password;
 
-  RegisterButtonPressed({required this.name, required this.email, required this.password});
+  RegisterButtonPressed({required this.name, required this.email, required this.phone, required this.city, required this.password, required this.confirm_password});
 
   @override
   List<Object> get props => [name, email, password];
@@ -60,7 +63,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
 
     try {
-      final data = await registerRepository.register(event.name, event.email, event.password);
+      final data = await registerRepository.register(event.name, event.email, event.phone, event.city, event.password, event.confirm_password);
       emit(RegisterSuccess(data: data));
     } catch (error) {
       emit(RegisterFailure(error: error.toString()));
