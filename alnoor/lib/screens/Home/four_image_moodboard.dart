@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:io';
 import 'dart:ui';
 
@@ -16,9 +14,15 @@ class FourImageScreen extends StatefulWidget {
 }
 
 class _FourImageScreenState extends State<FourImageScreen> {
+  List<String?> images = List.generate(4, (index) => null);
+
   @override
   void initState() {
     super.initState();
+    images[0] = ImageManager().getImage(3);
+    images[1] = ImageManager().getImage(4);
+    images[2] = ImageManager().getImage(5);
+    images[3] = ImageManager().getImage(6);
   }
 
   @override
@@ -26,27 +30,26 @@ class _FourImageScreenState extends State<FourImageScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pop([
-          ImageManager().getImage(3),
-          ImageManager().getImage(4),
-          ImageManager().getImage(5),
-          ImageManager().getImage(6)
+          images[0],
+          images[1],
+          images[2],
+          images[3],
         ]);
         return false;
       },
       child: Scaffold(
         body: Stack(
           children: [
-            GridView.count(
-              crossAxisCount: 2,
-              childAspectRatio: MediaQuery.of(context).size.width /
-                  MediaQuery.of(context).size.height,
-              padding: EdgeInsets.zero,
-              children: [
-                _buildImageContainer(context, ImageManager().getImage(3), 1),
-                _buildImageContainer(context, ImageManager().getImage(4), 2),
-                _buildImageContainer(context, ImageManager().getImage(5), 3),
-                _buildImageContainer(context, ImageManager().getImage(6), 4),
-              ],
+            GridView.builder(
+              itemCount: 4,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: MediaQuery.of(context).size.width /
+                    MediaQuery.of(context).size.height,
+              ),
+              itemBuilder: (context, index) {
+                return _buildDraggableImageContainer(context, index);
+              },
             ),
             Positioned(
               top: 20,
@@ -55,10 +58,10 @@ class _FourImageScreenState extends State<FourImageScreen> {
                 icon: Icon(Icons.close, color: Colors.black, size: 30),
                 onPressed: () {
                   Navigator.of(context).pop([
-                    ImageManager().getImage(3),
-                    ImageManager().getImage(4),
-                    ImageManager().getImage(5),
-                    ImageManager().getImage(6)
+                    images[0],
+                    images[1],
+                    images[2],
+                    images[3],
                   ]);
                 },
               ),
@@ -69,8 +72,86 @@ class _FourImageScreenState extends State<FourImageScreen> {
     );
   }
 
+  Widget _buildDraggableImageContainer(BuildContext context, int index) {
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: DragTarget<int>(
+        onAcceptWithDetails: (details) {
+          setState(() {
+            int fromIndex = details.data;
+            String? temp = images[index];
+            images[index] = images[fromIndex];
+            images[fromIndex] = temp;
+          });
+        },
+        builder: (context, candidateData, rejectedData) {
+          return Draggable<int>(
+            data: index,
+            feedback: Material(
+              type: MaterialType.transparency,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height / 2,
+                child: _buildImageContainer(context, images[index], index),
+              ),
+            ),
+            childWhenDragging: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: images[index] != null
+                      ? (Uri.parse(images[index]!).isAbsolute &&
+                              images[index]!.startsWith('http'))
+                          ? Image.network(
+                              images[index]!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Center(
+                                    child: Text('Failed to load image'));
+                              },
+                            )
+                          : Image.file(
+                              File(images[index]!),
+                              fit: BoxFit.cover,
+                            )
+                      : _buildPlaceholder(context, index),
+                ),
+                if (images[index] != null)
+                  Positioned(
+                    top: 25,
+                    left: 15,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          images[index] = null;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.backspace,
+                          color: Colors.black,
+                          size: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            child: _buildImageContainer(context, images[index], index),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildImageContainer(
-      BuildContext context, String? imageUrl, int targetImage) {
+      BuildContext context, String? imageUrl, int index) {
     return Stack(
       children: [
         Container(
@@ -89,7 +170,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
                       File(imageUrl),
                       fit: BoxFit.cover,
                     )
-              : _buildPlaceholder(context, targetImage),
+              : _buildPlaceholder(context, index),
         ),
         if (imageUrl != null)
           Positioned(
@@ -98,24 +179,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  switch (targetImage) {
-                    case 1:
-                      ImageManager().setImage(3, null);
-                      ;
-                      break;
-                    case 2:
-                      ImageManager().setImage(4, null);
-                      ;
-                      break;
-                    case 3:
-                      ImageManager().setImage(5, null);
-                      ;
-                      break;
-                    case 4:
-                      ImageManager().setImage(6, null);
-                      ;
-                      break;
-                  }
+                  images[index] = null;
                 });
               },
               child: Container(
@@ -136,10 +200,10 @@ class _FourImageScreenState extends State<FourImageScreen> {
     );
   }
 
-  Widget _buildPlaceholder(BuildContext context, int targetImage) {
+  Widget _buildPlaceholder(BuildContext context, int index) {
     return GestureDetector(
       onTap: () async {
-        await _showImagePicker(context, targetImage);
+        await _showImagePicker(context, index);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -170,7 +234,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
     );
   }
 
-  Future<void> _showImagePicker(BuildContext context, int targetImage) async {
+  Future<void> _showImagePicker(BuildContext context, int index) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await showDialog<XFile>(
       context: context,
@@ -233,20 +297,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
 
     if (image != null) {
       setState(() {
-        switch (targetImage) {
-          case 1:
-            ImageManager().setImage(3, image.path);
-            break;
-          case 2:
-            ImageManager().setImage(4, image.path);
-            break;
-          case 3:
-            ImageManager().setImage(5, image.path);
-            break;
-          case 4:
-            ImageManager().setImage(6, image.path);
-            break;
-        }
+        images[index] = image.path;
       });
     }
   }
