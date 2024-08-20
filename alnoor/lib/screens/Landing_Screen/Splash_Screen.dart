@@ -121,6 +121,7 @@ import 'package:alnoor/repositories/login_repository.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../blocs/register_bloc.dart';
 import '../../repositories/register_repository.dart';
 import '../Authentication/Register_Screen.dart';
@@ -196,13 +197,16 @@ class StartScreen extends StatelessWidget {
                 SizedBox(
                   width: screenSize.width * 0.8, // Responsive button width
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       ImageManager().setImage(1, null);
                       ImageManager().setImage(2, null);
                       ImageManager().setImage(3, null);
                       ImageManager().setImage(4, null);
                       ImageManager().setImage(5, null);
                       ImageManager().setImage(6, null);
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isGuestUser', true);
                       Navigator.push(
                         context,
                         MaterialPageRoute(

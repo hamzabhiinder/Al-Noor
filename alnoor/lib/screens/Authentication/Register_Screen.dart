@@ -336,6 +336,7 @@ import 'package:alnoor/blocs/register_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/validators.dart';
 import '../../widgets/Input_Field.dart';
 import '../Home/home.dart'; // Import the HomeScreen
@@ -368,7 +369,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  void _register() async {
     setState(() {
       ImageManager().setImage(1, null);
       ImageManager().setImage(2, null);
@@ -377,6 +378,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ImageManager().setImage(5, null);
       ImageManager().setImage(6, null);
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isGuestUser', false);
     if (_formKey.currentState!.validate()) {
       BlocProvider.of<RegisterBloc>(context).add(RegisterButtonPressed(
         name: _nameController.text,

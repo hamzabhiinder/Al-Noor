@@ -147,6 +147,7 @@ import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../blocs/login_bloc.dart';
 import '../../repositories/login_repository.dart';
 import '../../utils/validators.dart';
@@ -173,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _onLoginButtonPressed() {
+  void _onLoginButtonPressed() async {
     setState(() {
       ImageManager().setImage(1, null);
       ImageManager().setImage(2, null);
@@ -182,6 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ImageManager().setImage(5, null);
       ImageManager().setImage(6, null);
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isGuestUser', false);
     if (_formKey.currentState!.validate()) {
       context.read<LoginBloc>().add(
             LoginButtonPressed(
