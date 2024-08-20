@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:alnoor/utils/globals.dart' as globals;
 class LoginRepository {
   final String _baseUrl = 'https://alnoormdf.com/alnoor/login';
 
@@ -14,7 +14,12 @@ class LoginRepository {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      Map<String, dynamic> responseData = json.decode(response.body);
+      
+      // Store the name in the global variable
+      globals.userName = responseData['user']['name'];
+
+      return responseData;
     } else {
       throw Exception('Failed to login');
     }

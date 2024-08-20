@@ -821,6 +821,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../widgets/Product_Grid.dart';
+import '../../widgets/menu.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuestUser;
@@ -839,6 +840,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   late List<String?> imagesInContainer2;
   String _searchText = '';
   FocusNode _focusNode = FocusNode();
+  bool _isMenuVisible = false;
 
   @override
   void initState() {
@@ -871,6 +873,9 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     return GestureDetector(
       onTap: () {
         _focusNode.unfocus();
+        setState(() {
+          _isMenuVisible = false;  // Hide menu when tapping outside
+        });
       },
       child: Scaffold(
         appBar: AppBar(
@@ -891,244 +896,262 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
                 width: screenSize.width * 0.08,
                 height: screenSize.width * 0.08,
               ),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  _isMenuVisible = !_isMenuVisible;  // Toggle menu visibility
+                });
+              },
             ),
           ],
         ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              height: screenSize.height * 0.035,
-                              child: TextField(
-                                focusNode: _focusNode,
-                                onChanged: (text) {
-                                  setState(() {
-                                    _searchText = text;
-                                  });
-                                  if (_searchText.isEmpty) {
-                                    _onSearchSubmit();
-                                  }
-                                },
-                                onSubmitted: (text) {
-                                  _onSearchSubmit();
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Color(0xFFEFEFEF),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        screenSize.width * 0.02),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: screenSize.width * 0.025),
-                                ),
-                                style: TextStyle(
-                                  fontSize: screenSize.width * 0.03,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                            if (!_focusNode.hasFocus && _searchText.isEmpty)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.search,
-                                      color: Colors.grey,
-                                      size: screenSize.width * 0.04),
-                                  SizedBox(width: screenSize.width * 0.02),
-                                  Text(
-                                    'Search Your Decor Here',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: screenSize.width * 0.025,
-                                      color: Color(0xFF9A9A9A),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                      if (!widget.isGuestUser)
-                        (SizedBox(width: screenSize.width * 0.03)),
-                      // Show the favorite icon only if the user is not a guest
-                      if (!widget.isGuestUser)
-                        IconButton(
-                          icon: Icon(Icons.favorite,
-                              size: screenSize.width * 0.06),
-                          onPressed: () async {
-                            final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Favourites(
-                                    index: 0,
-                                  ),
-                                ));
-
-                            if (result != null && result is List<String?>) {
-                              setState(() {
-                                ImageManager().getImage(1);
-                                ImageManager().getImage(2);
-                                ImageManager().getImage(3);
-                                ImageManager().getImage(4);
-                                ImageManager().getImage(5);
-                                ImageManager().getImage(6);
-                              });
-                            }
-                          },
-                        ),
-                      if (!widget.isGuestUser)
-                        (SizedBox(width: screenSize.width * 0.03)),
-                      // Show the upload icon only if the user is not a guest
-                      if (!widget.isGuestUser)
-                        GestureDetector(
-                          onTap: () {
-                            _showImagePicker(context);
-                          },
-                          child: SvgPicture.asset(
-                            'assets/images/Upload.svg',
-                            width: screenSize.width * 0.06,
-                            height: screenSize.width * 0.06,
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (widget.isGuestUser)
-                    (SizedBox(height: screenSize.height * 0.01)),
-                  Expanded(
-                    child: BlocBuilder<CategoryBloc, CategoryState>(
-                      builder: (context, state) {
-                        if (state is CategoryLoading) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (state is CategoryError) {
-                          return Center(child: Text(state.message));
-                        } else if (state is CategoryLoaded) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: Wrap(
-                                  spacing: screenSize.width * 0.02,
-                                  runSpacing: screenSize.height * 0.01,
-                                  children: state.categories
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    int index = entry.key;
-                                    var category = entry.value;
-                                    return GestureDetector(
-                                        onTap: () => {
-                                              setState(() {
-                                                filterIndex = index;
-                                              }),
-                                              context.read<ProductBloc>().add(
-                                                  LoadProducts(
-                                                      search: "",
-                                                      category: category.id))
-                                            },
-                                        child: SizedBox(
-                                          height: screenSize.height * 0.03,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFEFEFEF),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      screenSize.width * 0.02),
-                                            ),
-                                            child: SizedBox(
-                                              width: screenSize.width * 0.21,
-                                              child: Chip(
-                                                backgroundColor:
-                                                    Color(0xFFEFEFEF),
-                                                padding: EdgeInsets.only(
-                                                    bottom: screenSize.height *
-                                                        0.015),
-                                                label: Center(
-                                                  child: Text(
-                                                    category.name,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize:
-                                                          screenSize.width *
-                                                              0.023,
-                                                      color: Color(0xFF9A9A9A),
-                                                    ),
-                                                  ),
-                                                ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          screenSize.width *
-                                                              0.01),
-                                                  side: BorderSide(
-                                                    color: index == filterIndex
-                                                        ? Color(0xFF937974)
-                                                        : Color(0xFFEFEFEF),
-                                                    width: screenSize.width *
-                                                        0.002,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ));
-                                  }).toList(),
-                                ),
-                              ),
-                              SizedBox(
-                                  height: screenSize.height *
-                                      (widget.isGuestUser ? 0.013 : 0.0125)),
-                              Expanded(
-                                child: BlocBuilder<ProductBloc, ProductState>(
-                                  builder: (context, state) {
-                                    if (state is ProductLoading) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    } else if (state is ProductError) {
-                                      return Center(child: Text(state.message));
-                                    } else if (state is ProductLoaded) {
-                                      int totalPages =
-                                          (state.products.length / 8).ceil();
-                                      return ProductGrid(
-                                        updater: _updater,
-                                        isFavourites: false,
-                                        products: state.products,
-                                        totalPages: totalPages,
-                                        itemsInAPage: 8,
-                                      );
-                                    } else {
-                                      return SizedBox.shrink();
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ),
-                ],
+        body: Stack(
+          children: [
+            _buildMainContent(screenSize, context),
+            if (_isMenuVisible)
+              Positioned(
+                top: screenSize.height * 0.1, // Adjust the top position
+                right: 10, // Adjust the right position
+                child: HamburgerMenu(isGuestUser: widget.isGuestUser),  // Pass the flag here
               ),
-            );
-          },
+          ],
         ),
         bottomNavigationBar: AddToCompareRow(
           showCamera: true,
         ),
       ),
+    );
+  }
+
+  Widget _buildMainContent(Size screenSize, BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: screenSize.height * 0.035,
+                          child: TextField(
+                            focusNode: _focusNode,
+                            onChanged: (text) {
+                              setState(() {
+                                _searchText = text;
+                              });
+                              if (_searchText.isEmpty) {
+                                _onSearchSubmit();
+                              }
+                            },
+                            onSubmitted: (text) {
+                              _onSearchSubmit();
+                            },
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Color(0xFFEFEFEF),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                    screenSize.width * 0.02),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: screenSize.width * 0.025),
+                            ),
+                            style: TextStyle(
+                              fontSize: screenSize.width * 0.03,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        if (!_focusNode.hasFocus && _searchText.isEmpty)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.search,
+                                  color: Colors.grey,
+                                  size: screenSize.width * 0.04),
+                              SizedBox(width: screenSize.width * 0.02),
+                              Text(
+                                'Search Your Decor Here',
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenSize.width * 0.025,
+                                  color: Color(0xFF9A9A9A),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (!widget.isGuestUser)
+                    (SizedBox(width: screenSize.width * 0.03)),
+                  // Show the favorite icon only if the user is not a guest
+                  if (!widget.isGuestUser)
+                    IconButton(
+                      icon: Icon(Icons.favorite,
+                          size: screenSize.width * 0.06),
+                      onPressed: () async {
+                        final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Favourites(
+                                index: 0,
+                              ),
+                            ));
+
+                        if (result != null && result is List<String?>) {
+                          setState(() {
+                            ImageManager().getImage(1);
+                            ImageManager().getImage(2);
+                            ImageManager().getImage(3);
+                            ImageManager().getImage(4);
+                            ImageManager().getImage(5);
+                            ImageManager().getImage(6);
+                          });
+                        }
+                      },
+                    ),
+                  if (!widget.isGuestUser)
+                    (SizedBox(width: screenSize.width * 0.03)),
+                  // Show the upload icon only if the user is not a guest
+                  if (!widget.isGuestUser)
+                    GestureDetector(
+                      onTap: () {
+                        _showImagePicker(context);
+                      },
+                      child: SvgPicture.asset(
+                        'assets/images/Upload.svg',
+                        width: screenSize.width * 0.06,
+                        height: screenSize.width * 0.06,
+                      ),
+                    ),
+                ],
+              ),
+              if (widget.isGuestUser)
+                (SizedBox(height: screenSize.height * 0.01)),
+              Expanded(
+                child: BlocBuilder<CategoryBloc, CategoryState>(
+                  builder: (context, state) {
+                    if (state is CategoryLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is CategoryError) {
+                      return Center(child: Text(state.message));
+                    } else if (state is CategoryLoaded) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Wrap(
+                              spacing: screenSize.width * 0.02,
+                              runSpacing: screenSize.height * 0.01,
+                              children: state.categories
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                int index = entry.key;
+                                var category = entry.value;
+                                return GestureDetector(
+                                    onTap: () => {
+                                          setState(() {
+                                            filterIndex = index;
+                                          }),
+                                          context.read<ProductBloc>().add(
+                                              LoadProducts(
+                                                  search: "",
+                                                  category: category.id))
+                                        },
+                                    child: SizedBox(
+                                      height: screenSize.height * 0.03,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFEFEFEF),
+                                          borderRadius:
+                                              BorderRadius.circular(
+                                                  screenSize.width * 0.02),
+                                        ),
+                                        child: SizedBox(
+                                          width: screenSize.width * 0.21,
+                                          child: Chip(
+                                            backgroundColor:
+                                                Color(0xFFEFEFEF),
+                                            padding: EdgeInsets.only(
+                                                bottom: screenSize.height *
+                                                    0.015),
+                                            label: Center(
+                                              child: Text(
+                                                category.name,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize:
+                                                      screenSize.width *
+                                                          0.023,
+                                                  color: Color(0xFF9A9A9A),
+                                                ),
+                                              ),
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      screenSize.width *
+                                                          0.01),
+                                              side: BorderSide(
+                                                color: index == filterIndex
+                                                    ? Color(0xFF937974)
+                                                    : Color(0xFFEFEFEF),
+                                                width: screenSize.width *
+                                                    0.002,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(
+                              height: screenSize.height *
+                                  (widget.isGuestUser ? 0.013 : 0.0125)),
+                          Expanded(
+                            child: BlocBuilder<ProductBloc, ProductState>(
+                              builder: (context, state) {
+                                if (state is ProductLoading) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (state is ProductError) {
+                                  return Center(child: Text(state.message));
+                                } else if (state is ProductLoaded) {
+                                  int totalPages =
+                                      (state.products.length / 8).ceil();
+                                  return ProductGrid(
+                                    updater: _updater,
+                                    isFavourites: false,
+                                    products: state.products,
+                                    totalPages: totalPages,
+                                    itemsInAPage: 8,
+                                  );
+                                } else {
+                                  return SizedBox.shrink();
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
