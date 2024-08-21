@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../screens/Home/favourites.dart';
 import '../screens/Home/home.dart';
 import '../screens/Landing_Screen/Splash_Screen.dart';
@@ -25,6 +27,16 @@ class HamburgerMenu extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Guest',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             if (!isGuestUser)  // Only show if not a guest user
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -37,6 +49,7 @@ class HamburgerMenu extends StatelessWidget {
                 ),
               ),
             if (!isGuestUser) Divider(),  // Show divider only if userName is shown
+            if (!isGuestUser)
             _buildMenuItem(
               icon: Icons.home,
               title: 'Home',
@@ -58,6 +71,7 @@ class HamburgerMenu extends StatelessWidget {
                   );
                 },
               ),
+            if(!isGuestUser)
             _buildMenuItem(
               icon: Icons.logout,
               title: 'Logout',
@@ -87,13 +101,39 @@ class HamburgerMenu extends StatelessWidget {
     );
   }
 
-  void _logout(BuildContext context) {
-    // Add your logout logic here, for example:
-    // 1. Clear user session
-    // 2. Navigate to login screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => StartScreen()),
-    );
+  void _logout(BuildContext context) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://alnoormdf.com/alnoor/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${globals.token}', // Assuming the token is stored globally
+        },
+        body: jsonEncode({}), // Add any required body parameters if needed
+      );
+      print('API Response Status Code: ${response.statusCode}');
+      print('API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Successfully logged out, clear user session and navigate to StartScreen
+        globals.token = '';  // Clear the user token or any other session data
+        globals.userName = '';  // Clear the user name or any other session data
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => StartScreen()),
+        );
+      } else {
+        // Handle errors here
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Logout failed. Please try again.')),
+        );
+      }
+    } catch (e) {
+      // Handle any exceptions here
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    }
   }
 }

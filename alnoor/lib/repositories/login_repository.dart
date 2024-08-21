@@ -18,6 +18,7 @@ class LoginRepository {
       
       // Store the name in the global variable
       globals.userName = responseData['user']['name'];
+      globals.token=responseData['token'];
 
       return responseData;
     } else {
