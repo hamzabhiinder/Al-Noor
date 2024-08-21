@@ -487,8 +487,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => HomeScreen(
-                                  isGuestUser: false,
-                                ),
+                                                                  ),
                               ),
                             );
                           } else if (state is RegisterFailure) {

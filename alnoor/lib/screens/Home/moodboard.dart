@@ -269,7 +269,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                HomeScreen(isGuestUser: isGuestUser ?? true)));
+                                HomeScreen()));
                   },
                 ),
               ],

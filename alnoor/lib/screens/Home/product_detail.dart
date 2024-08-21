@@ -306,9 +306,7 @@
 
 
 
-
 import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -320,6 +318,8 @@ import 'package:dio/dio.dart';
 import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/menu.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -334,12 +334,14 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<ImageProvider> _imageFuture;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  bool _isMenuVisible = false;
+  bool isGuestUser = true; // Default to true; will be updated later
 
   @override
   void initState() {
     super.initState();
     _initializeNotifications(); // Initialize notifications
-    // Any other initialization code
+    _loadUserStatus(); // Load guest user status
   }
 
   void _initializeNotifications() async {
@@ -364,6 +366,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (Platform.isIOS) {
       _requestIOSPermissions();
     }
+  }
+
+  Future<void> _loadUserStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isGuestUser = prefs.getBool('isGuestUser') ?? true;
+    });
   }
 
   void _requestIOSPermissions() {
@@ -481,181 +490,208 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        if (_isMenuVisible) {
+          setState(() {
+            _isMenuVisible = false;
+          });
+        }
+      },
+      child: Scaffold(
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Stack(
               children: [
-                Stack(
-                  children: [
-                    Container(
-                      height: constraints.maxHeight * 0.4,
-                      width: double.infinity,
-                      child: FutureBuilder<ImageProvider>(
-                        future: _imageFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) {
-                              print(snapshot.error);
-                              return Image.asset(
-                                'assets/images/Logo.png',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              );
-                            }
-                            return Image(
-                              image: snapshot.data!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            );
-                          } else {
-                            return ImageSkeleton(
-                              width: double.infinity,
-                              height: double.infinity,
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.05,
-                            vertical: constraints.maxHeight * 0.03),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: SvgPicture.asset(
-                                'assets/images/Logo_Black.svg',
-                                width: 47,
-                                height: 47,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          Container(
+                            height: constraints.maxHeight * 0.4,
+                            width: double.infinity,
+                            child: FutureBuilder<ImageProvider>(
+                              future: _imageFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    return Image.asset(
+                                      'assets/images/Logo.png',
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
+                                  }
+                                  return Image(
+                                    image: snapshot.data!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  );
+                                } else {
+                                  return ImageSkeleton(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  );
+                                }
                               },
                             ),
-                            IconButton(
-                              icon: SvgPicture.asset(
-                                'assets/images/menu.svg',
-                                width: 30,
-                                height: 30,
+                          ),
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.05,
+                                  vertical: constraints.maxHeight * 0.03),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    icon: SvgPicture.asset(
+                                      'assets/images/Logo_Black.svg',
+                                      width: 47,
+                                      height: 47,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  if (!isGuestUser) // Show the menu icon only if not a guest user
+                                    IconButton(
+                                      icon: SvgPicture.asset(
+                                        'assets/images/menu.svg',
+                                        width: 30,
+                                        height: 30,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isMenuVisible = !_isMenuVisible;
+                                        });
+                                      },
+                                    ),
+                                ],
                               ),
-                              onPressed: () {},
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+                      Center(
+                        child: Text(
+                          widget.product.productName,
+                          style: GoogleFonts.poppins(
+                            fontSize: constraints.maxWidth * 0.05,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: constraints.maxHeight * 0.02),
-                Center(
-                  child: Text(
-                    widget.product.productName,
-                    style: GoogleFonts.poppins(
-                      fontSize: constraints.maxWidth * 0.05,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    "Decor Type: ${widget.product.productType}",
-                    style: GoogleFonts.poppins(
-                      fontSize: constraints.maxWidth * 0.035,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * 0.02),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildIconButton(
-                        iconPath: 'assets/images/Add New.png',
-                        label: "Add to\nMoodboard",
-                        onPressed: () {
-                          ImageManager().setImageFromCamera(
-                              widget.product.thumbnailImage);
-                          Navigator.of(context).pop([
-                            ImageManager().getImage(1),
-                            ImageManager().getImage(2),
-                            ImageManager().getImage(3),
-                            ImageManager().getImage(4),
-                            ImageManager().getImage(5),
-                            ImageManager().getImage(6)
-                          ]);
-                        },
-                        constraints: constraints),
-                    _buildIconButton(
-                        iconPath: 'assets/images/Buy.png',
-                        label: "Order\nSample",
-                        onPressed: () {},
-                        constraints: constraints),
-                    _buildIconButton(
-                        iconPath: 'assets/images/Share.png',
-                        label: "Share\nNow",
-                        onPressed: () {
-                          _shareProduct(context);
-                        },
-                        constraints: constraints),
-                    _buildIconButton(
-                        iconPath: 'assets/images/Download.png',
-                        label: "Download\nCatalogue",
-                        onPressed: () {
-                          _downloadImage(context);
-                        },
-                        constraints: constraints),
-                  ],
-                ),
-                SizedBox(height: constraints.maxHeight * 0.02),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * 0.05),
-                  child: Center(
-                    child: Text(
-                      widget.product.productShortDesc,
-                      style: GoogleFonts.poppins(
-                        fontSize: constraints.maxWidth * 0.035,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * 0.02),
-                Center(
-                  child: SizedBox(
-                    width: constraints.maxWidth * 0.6,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(
-                          context        
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF222020),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                      Center(
+                        child: Text(
+                          "Decor Type: ${widget.product.productType}",
+                          style: GoogleFonts.poppins(
+                            fontSize: constraints.maxWidth * 0.035,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
-                      child: Text("More Decor"),
-                    ),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildIconButton(
+                              iconPath: 'assets/images/Add New.png',
+                              label: "Add to\nMoodboard",
+                              onPressed: () {
+                                ImageManager().setImageFromCamera(
+                                    widget.product.thumbnailImage);
+                                Navigator.of(context).pop([
+                                  ImageManager().getImage(1),
+                                  ImageManager().getImage(2),
+                                  ImageManager().getImage(3),
+                                  ImageManager().getImage(4),
+                                  ImageManager().getImage(5),
+                                  ImageManager().getImage(6)
+                                ]);
+                              },
+                              constraints: constraints),
+                          _buildIconButton(
+                              iconPath: 'assets/images/Buy.png',
+                              label: "Order\nSample",
+                              onPressed: () {},
+                              constraints: constraints),
+                          _buildIconButton(
+                              iconPath: 'assets/images/Share.png',
+                              label: "Share\nNow",
+                              onPressed: () {
+                                _shareProduct(context);
+                              },
+                              constraints: constraints),
+                          _buildIconButton(
+                              iconPath: 'assets/images/Download.png',
+                              label: "Download\nCatalogue",
+                              onPressed: () {
+                                _downloadImage(context);
+                              },
+                              constraints: constraints),
+                        ],
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: constraints.maxWidth * 0.05),
+                        child: Center(
+                          child: Text(
+                            widget.product.productShortDesc,
+                            style: GoogleFonts.poppins(
+                              fontSize: constraints.maxWidth * 0.035,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+                      Center(
+                        child: SizedBox(
+                          width: constraints.maxWidth * 0.6,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF222020),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            child: Text("More Decor"),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                if (_isMenuVisible && !isGuestUser)
+                  Positioned(
+                    top: constraints.maxHeight * 0.002,
+                    right: 10,
+                    child: HamburgerMenu(
+                      isGuestUser: isGuestUser,
+                      isMenuVisible: _isMenuVisible,
+                      onMenuToggle: _toggleMenu,
+                    ),
+                  ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -690,5 +726,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ],
     );
+  }
+
+  void _toggleMenu() {
+    setState(() {
+      _isMenuVisible = !_isMenuVisible;
+    });
   }
 }

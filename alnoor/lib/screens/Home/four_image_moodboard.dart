@@ -285,7 +285,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                HomeScreen(isGuestUser: isGuestUser ?? true)));
+                                HomeScreen()));
                   },
                 ),
               ],

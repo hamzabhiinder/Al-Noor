@@ -113,7 +113,6 @@
 //     );
 //   }
 // }
-
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Authentication/Login_Screen.dart';
 import 'package:alnoor/blocs/login_bloc.dart';
@@ -198,23 +197,7 @@ class StartScreen extends StatelessWidget {
                   width: screenSize.width * 0.8, // Responsive button width
                   child: ElevatedButton(
                     onPressed: () async {
-                      ImageManager().setImage(1, null);
-                      ImageManager().setImage(2, null);
-                      ImageManager().setImage(3, null);
-                      ImageManager().setImage(4, null);
-                      ImageManager().setImage(5, null);
-                      ImageManager().setImage(6, null);
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      await prefs.setBool('isGuestUser', true);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                            isGuestUser: true,
-                          ),
-                        ),
-                      );
+                      await _onGuestButtonPressed(context);
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, // Text color
@@ -281,6 +264,25 @@ class StartScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _onGuestButtonPressed(BuildContext context) async {
+    ImageManager().setImage(1, null);
+    ImageManager().setImage(2, null);
+    ImageManager().setImage(3, null);
+    ImageManager().setImage(4, null);
+    ImageManager().setImage(5, null);
+    ImageManager().setImage(6, null);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isGuestUser', true);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
       ),
     );
   }

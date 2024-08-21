@@ -64,7 +64,7 @@ class HamburgerMenu extends StatelessWidget {
                 onMenuToggle();  // Close the menu when a menu item is tapped
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(isGuestUser: isGuestUser)),
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
             ),
