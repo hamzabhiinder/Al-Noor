@@ -909,9 +909,11 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
             _buildMainContent(screenSize, context),
             if (_isMenuVisible)
               Positioned(
-                top: screenSize.height * 0.1, // Adjust the top position
+                top: screenSize.height * 0.002, // Adjust the top position
                 right: 10, // Adjust the right position
-                child: HamburgerMenu(isGuestUser: widget.isGuestUser),  // Pass the flag here
+                child: HamburgerMenu(isGuestUser: widget.isGuestUser,
+                                    isMenuVisible:_isMenuVisible,
+                                    onMenuToggle:_toggleMenu,),  // Pass the flag here
               ),
           ],
         ),
@@ -921,7 +923,11 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
       ),
     );
   }
-
+void _toggleMenu() {
+    setState(() {
+      _isMenuVisible = !_isMenuVisible;
+    });
+  }
   Widget _buildMainContent(Size screenSize, BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {

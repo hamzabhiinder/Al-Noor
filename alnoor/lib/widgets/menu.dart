@@ -8,8 +8,14 @@ import '../screens/Landing_Screen/Splash_Screen.dart';
 
 class HamburgerMenu extends StatelessWidget {
   final bool isGuestUser;
+  final bool isMenuVisible;  // Add this line to accept the state
+  final VoidCallback onMenuToggle;  // Add this to toggle the menu
 
-  HamburgerMenu({required this.isGuestUser});
+  HamburgerMenu({
+    required this.isGuestUser,
+    required this.isMenuVisible,
+    required this.onMenuToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +33,7 @@ class HamburgerMenu extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+              if (isGuestUser)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -54,6 +61,7 @@ class HamburgerMenu extends StatelessWidget {
               icon: Icons.home,
               title: 'Home',
               onTap: () {
+                onMenuToggle();  // Close the menu when a menu item is tapped
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen(isGuestUser: isGuestUser)),
@@ -65,6 +73,7 @@ class HamburgerMenu extends StatelessWidget {
                 icon: Icons.favorite,
                 title: 'Favorites',
                 onTap: () {
+                  onMenuToggle();  // Close the menu when a menu item is tapped
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Favourites(index: 0)),
