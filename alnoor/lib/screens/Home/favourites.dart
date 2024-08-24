@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';

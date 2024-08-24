@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'dart:ui';
 import 'package:alnoor/blocs/category_bloc.dart';
@@ -12,7 +14,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../widgets/Product_Grid.dart';
 import '../../widgets/menu.dart';
 
@@ -69,68 +70,73 @@ class _HomeScreenState extends State<HomeScreen>
     super.build(context); // This line ensures the mixin is properly applied
     final screenSize = MediaQuery.of(context).size;
 
-    return GestureDetector(
-      onTap: () {
-        _focusNode.unfocus();
-        setState(() {
-          _isMenuVisible = false; // Hide menu when tapping outside
-        });
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: GestureDetector(
-            onTap: () {},
-            child: SvgPicture.asset(
-              'assets/images/Logo_Black.svg',
-              width: screenSize.width * 0.12,
-              height: screenSize.width * 0.12,
+    return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: GestureDetector(
+          onTap: () {
+            _focusNode.unfocus();
+            setState(() {
+              _isMenuVisible = false; // Hide menu when tapping outside
+            });
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              leading: GestureDetector(
+                onTap: () {},
+                child: SvgPicture.asset(
+                  'assets/images/Logo_Black.svg',
+                  width: screenSize.width * 0.12,
+                  height: screenSize.width * 0.12,
+                ),
+              ),
+              actions: [
+                if (!isGuestUser)
+                  IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/images/menu.svg',
+                      width: screenSize.width * 0.08,
+                      height: screenSize.width * 0.08,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isMenuVisible =
+                            !_isMenuVisible; // Toggle menu visibility
+                      });
+                    },
+                  ),
+                if (isGuestUser)
+                  TextButton(
+                    onPressed: () {
+                      // Add your onPressed logic here
+                    },
+                    child: Text('Guest'),
+                  ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                _buildMainContent(screenSize, context),
+                if (_isMenuVisible)
+                  Positioned(
+                    top: screenSize.height * 0.002, // Adjust the top position
+                    right: 10, // Adjust the right position
+                    child: HamburgerMenu(
+                      isGuestUser: isGuestUser,
+                      isMenuVisible: _isMenuVisible,
+                      onMenuToggle: _toggleMenu,
+                    ),
+                  ),
+              ],
+            ),
+            bottomNavigationBar: AddToCompareRow(
+              showCamera: true,
             ),
           ),
-          actions: [
-            if (!isGuestUser)
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/images/menu.svg',
-                  width: screenSize.width * 0.08,
-                  height: screenSize.width * 0.08,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _isMenuVisible = !_isMenuVisible; // Toggle menu visibility
-                  });
-                },
-              ),
-            if (isGuestUser)
-              TextButton(
-                onPressed: () {
-                  // Add your onPressed logic here
-                },
-                child: Text('Guest'),
-              ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            _buildMainContent(screenSize, context),
-            if (_isMenuVisible)
-              Positioned(
-                top: screenSize.height * 0.002, // Adjust the top position
-                right: 10, // Adjust the right position
-                child: HamburgerMenu(
-                  isGuestUser: isGuestUser,
-                  isMenuVisible: _isMenuVisible,
-                  onMenuToggle: _toggleMenu,
-                ),
-              ),
-          ],
-        ),
-        bottomNavigationBar: AddToCompareRow(
-          showCamera: true,
-        ),
-      ),
-    );
+        ));
   }
 
   void _toggleMenu() {
