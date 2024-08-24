@@ -200,7 +200,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to download image"),
       ));
-      print(e);
     } finally {
       setState(() {
         _isDownloading = false;

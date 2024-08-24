@@ -10,12 +10,21 @@ class FavouritesRepository {
   Future<List<List<Product>>> fetchFavourites(search) async {
     var response = null;
     var responseImage = null;
-    response = await http.get(
-      Uri.parse('https://alnoormdf.com/alnoor/favourites'),
-      headers: {
-        'Authorization': 'Bearer ${globals.token}',
-      },
-    ).timeout(Duration(seconds: 60));
+    if (search != "") {
+      response = await http.get(
+        Uri.parse("https://alnoormdf.com/alnoor/favourites/search/${search}"),
+        headers: {
+          'Authorization': 'Bearer ${globals.token}',
+        },
+      ).timeout(Duration(seconds: 60));
+    } else {
+      response = await http.get(
+        Uri.parse('https://alnoormdf.com/alnoor/favourites'),
+        headers: {
+          'Authorization': 'Bearer ${globals.token}',
+        },
+      ).timeout(Duration(seconds: 60));
+    }
     responseImage = await http.get(
       Uri.parse('https://alnoormdf.com/alnoor/get-images'),
       headers: {
@@ -25,7 +34,8 @@ class FavouritesRepository {
     if (response.statusCode == 200 && responseImage.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       Map<String, dynamic> dataImage = jsonDecode(responseImage.body);
-      if (data['favourites'].isEmpty) {
+      var prod = search != "" ? data['results'] : data['favourites'];
+      if (prod.isEmpty) {
         if (dataImage['images'].isEmpty) {
           return [[], [], [], []];
         } else {
@@ -37,7 +47,7 @@ class FavouritesRepository {
           return [[], [], [], myIdeasList];
         }
       } else {
-        Map<String, dynamic> productsJson = data['favourites'];
+        Map<String, dynamic> productsJson = prod;
         List<dynamic> myKitchenItems = productsJson['MY KITCHEN'] ?? [];
         List<dynamic> myBedroomItems = productsJson['MY BEDROOM'] ?? [];
         List<dynamic> myLoungeItems = productsJson['MY LOUNGE'] ?? [];
@@ -47,7 +57,6 @@ class FavouritesRepository {
             myBedroomItems.map((product) => Product.fromJson(product)).toList();
         List<Product> myLoungeList =
             myLoungeItems.map((product) => Product.fromJson(product)).toList();
-
         if (dataImage['images'].isEmpty) {
           return [myKitchenList, myBedroomList, myLoungeList, []];
         } else {

@@ -61,8 +61,9 @@ class _FavouritesState extends State<Favourites> {
 
   void _onSearchSubmit() {
     setState(() {
-      filterIndex = -1;
+      filterIndex = 0;
     });
+    context.read<FavouriteBloc>().add(LoadFavourites(search: _searchText));
     _focusNode.unfocus();
   }
 
