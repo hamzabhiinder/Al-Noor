@@ -86,6 +86,8 @@
 //     });
 //   }
 
+// ignore_for_file: deprecated_member_use
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return WillPopScope(
@@ -312,9 +314,7 @@
 //   }
 // }
 import 'package:alnoor/blocs/favorites_bloc.dart';
-import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:alnoor/widgets/Image_Collection.dart';
 import 'package:alnoor/widgets/Product_Grid.dart';

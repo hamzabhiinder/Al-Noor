@@ -1276,7 +1276,6 @@ import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:flutter/material.dart';

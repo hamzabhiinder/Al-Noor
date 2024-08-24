@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'dart:ui';
 
@@ -6,7 +8,6 @@ import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FourImageScreen extends StatefulWidget {
   @override
@@ -278,14 +279,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
                   Colors.white,
                   Colors.black,
                   () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    bool? isGuestUser = prefs.getBool('isGuestUser');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HomeScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
                 ),
               ],

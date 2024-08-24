@@ -1,9 +1,7 @@
-import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
