@@ -6,9 +6,12 @@ import 'package:alnoor/repositories/favourites_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await _initializeNotifications();
   runApp(
     MultiBlocProvider(
       providers: [
@@ -25,6 +28,20 @@ void main() {
       child: MyApp(),
     ),
   );
+}
+
+Future<void> _initializeNotifications() async {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
 class MyApp extends StatelessWidget {

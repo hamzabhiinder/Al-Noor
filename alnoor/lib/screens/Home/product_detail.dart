@@ -8,6 +8,7 @@ import 'package:alnoor/models/product.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +30,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       FlutterLocalNotificationsPlugin();
   bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
+  bool _isDownloading = false;
+
+  Future<void> requestStoragePermissions() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+      if (status.isGranted) {
+        // Permission granted
+      } else {
+        // Permission denied
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -157,6 +171,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Future<void> _downloadImage(BuildContext context) async {
+    await requestStoragePermissions();
     final String imageUrl =
         "https://alnoormdf.com/" + widget.product.productImage;
     try {
@@ -164,18 +179,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
       String filePath = '${directory.path}/${widget.product.productName}.jpg';
       Dio dio = Dio();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Downloading..."),
+          duration:
+              Duration(minutes: 10), // Longer duration to cover download time
+        ),
+      );
+
       await dio.download(imageUrl, filePath);
 
       // Show notification
       await _showNotification(filePath);
-
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Downloaded to $filePath"),
       ));
     } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to download image."),
+        content: Text("Failed to download image"),
       ));
+      print(e);
+    } finally {
+      setState(() {
+        _isDownloading = false;
+      });
     }
   }
 
@@ -203,7 +232,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Stack(
                         children: [
                           Container(
-                            height: constraints.maxHeight * 0.4,
+                            height: constraints.maxHeight * 0.5,
                             width: double.infinity,
                             child: FutureBuilder<ImageProvider>(
                               future: _imageFuture,
@@ -345,6 +374,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               fontSize: constraints.maxWidth * 0.035,
                             ),
                             textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 8, // Set the maximum number of lines to 8
                           ),
                         ),
                       ),
