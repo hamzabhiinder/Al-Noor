@@ -33,20 +33,39 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      productId: json['product_id'],
+      productId: json['product_id'] ?? '',
       thumbnailImage: "https://alnoormdf.com/" + json['thumbnail_image'],
-      productName: json['product_name'],
-      productSlug: json['product_slug'],
-      productImage: json['product_image'],
+      productName: json['product_name'] ?? '',
+      productSlug: json['product_slug'] ?? '',
+      productImage: json['product_image'] ?? '',
       productImage2: json['product_image2'] ?? '',
       productImage3: json['product_image3'] ?? '',
       productImage4: json['product_image4'] ?? '',
-      productType: json['product_type'],
-      productShortDesc: json['product_short_desc'],
-      productRegPrice: json['product_reg_price'],
-      productStatus: json['product_status'],
-      productCreatedAt: json['product_created_at'],
-      productUpdatedAt: json['product_updated_at'],
+      productType: json['product_type'] ?? '',
+      productShortDesc: json['product_short_desc'] ?? '',
+      productRegPrice: json['product_reg_price'] ?? '',
+      productStatus: json['product_status'] ?? '',
+      productCreatedAt: json['product_created_at'] ?? '',
+      productUpdatedAt: json['product_updated_at'] ?? '',
+    );
+  }
+
+  factory Product.fromImageJson(Map<String, dynamic> json) {
+    return Product(
+      productId: json['id'] ?? '',
+      thumbnailImage: json['file_path'],
+      productName: 'My Ideas',
+      productSlug: '',
+      productImage: json['file_path'].replaceFirst("https://alnoormdf.com", ""),
+      productImage2: '',
+      productImage3: '',
+      productImage4: '',
+      productType: '',
+      productShortDesc: '',
+      productRegPrice: '',
+      productStatus: '',
+      productCreatedAt: '',
+      productUpdatedAt: '',
     );
   }
 }

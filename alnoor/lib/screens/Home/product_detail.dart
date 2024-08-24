@@ -302,10 +302,6 @@
 //   }
 // }
 
-
-
-
-
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/cupertino.dart';
@@ -333,7 +329,8 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<ImageProvider> _imageFuture;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
 
@@ -356,13 +353,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
     );
 
-    final InitializationSettings initializationSettings = InitializationSettings(
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-    
+
     if (Platform.isIOS) {
       _requestIOSPermissions();
     }
@@ -386,7 +384,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         );
   }
 
-  void _onDidReceiveLocalNotification(int id, String? title, String? body, String? payload) async {
+  void _onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) async {
     showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -416,12 +415,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       showWhen: false,
     );
 
-    const DarwinNotificationDetails iosPlatformChannelSpecifics = DarwinNotificationDetails();
+    const DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails();
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iosPlatformChannelSpecifics);
-        
+
     await flutterLocalNotificationsPlugin.show(
       0,
       'Download Complete',
@@ -444,8 +444,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       await precacheImage(image, context);
       return image;
     } catch (e) {
-      print("Hello");
-      print(e);
       return AssetImage('assets/images/Logo.png');
     }
   }
@@ -469,7 +467,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       Directory directory = await getDownloadDirectory();
 
       String filePath = '${directory.path}/${widget.product.productName}.jpg';
-      print(filePath);
       Dio dio = Dio();
       await dio.download(imageUrl, filePath);
 
@@ -518,7 +515,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
                                   if (snapshot.hasError) {
-                                    print(snapshot.error);
                                     return Image.asset(
                                       'assets/images/Logo.png',
                                       fit: BoxFit.cover,
@@ -594,7 +590,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                       Center(
                         child: Text(
-                          "Decor Type: ${widget.product.productType}",
+                          "Decor Type: ${widget.product.productType == "" ? "None" : widget.product.productType}",
                           style: GoogleFonts.poppins(
                             fontSize: constraints.maxWidth * 0.035,
                             color: Colors.grey,

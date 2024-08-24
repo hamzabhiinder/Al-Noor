@@ -8,7 +8,6 @@ class CategoryRepository {
   Future<List<Category>> fetchCategories() async {
     try {
       final response = await http.get(Uri.parse(apiUrl));
-      print(response.statusCode);
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
         List<dynamic> data = map["data"];

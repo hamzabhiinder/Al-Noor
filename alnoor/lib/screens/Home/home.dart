@@ -890,7 +890,7 @@
 //             ),
 //           ),
 //           actions: [
-//                if (!widget.isGuestUser) 
+//                if (!widget.isGuestUser)
 //             IconButton(
 //               icon: SvgPicture.asset(
 //                 'assets/images/menu.svg',
@@ -910,7 +910,7 @@
 //                             },
 //                             child: Text('Guest'),
 //                           ),
-//                       ],        
+//                       ],
 //                       ),
 //         body: Stack(
 //           children: [
@@ -1270,10 +1270,10 @@
 //   }
 // }
 
-
-
+import 'dart:io';
 import 'dart:ui';
 import 'package:alnoor/blocs/category_bloc.dart';
+import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/add_to_favourites.dart';
@@ -1478,12 +1478,10 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
-                  if (!isGuestUser)
-                    (SizedBox(width: screenSize.width * 0.03)),
+                  if (!isGuestUser) (SizedBox(width: screenSize.width * 0.03)),
                   if (!isGuestUser)
                     IconButton(
-                      icon: Icon(Icons.favorite,
-                          size: screenSize.width * 0.06),
+                      icon: Icon(Icons.favorite, size: screenSize.width * 0.06),
                       onPressed: () async {
                         final result = await Navigator.push(
                             context,
@@ -1505,8 +1503,7 @@ class _HomeScreenState extends State<HomeScreen>
                         }
                       },
                     ),
-                  if (!isGuestUser)
-                    (SizedBox(width: screenSize.width * 0.03)),
+                  if (!isGuestUser) (SizedBox(width: screenSize.width * 0.03)),
                   if (!isGuestUser)
                     GestureDetector(
                       onTap: () {
@@ -1520,8 +1517,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                 ],
               ),
-              if (isGuestUser)
-                (SizedBox(height: screenSize.height * 0.01)),
+              if (isGuestUser) (SizedBox(height: screenSize.height * 0.01)),
               Expanded(
                 child: BlocBuilder<CategoryBloc, CategoryState>(
                   builder: (context, state) {
@@ -1537,10 +1533,8 @@ class _HomeScreenState extends State<HomeScreen>
                             child: Wrap(
                               spacing: screenSize.width * 0.02,
                               runSpacing: screenSize.height * 0.01,
-                              children: state.categories
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
+                              children:
+                                  state.categories.asMap().entries.map((entry) {
                                 int index = entry.key;
                                 var category = entry.value;
                                 return GestureDetector(
@@ -1558,25 +1552,22 @@ class _HomeScreenState extends State<HomeScreen>
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: Color(0xFFEFEFEF),
-                                          borderRadius:
-                                              BorderRadius.circular(
-                                                  screenSize.width * 0.02),
+                                          borderRadius: BorderRadius.circular(
+                                              screenSize.width * 0.02),
                                         ),
                                         child: SizedBox(
                                           width: screenSize.width * 0.21,
                                           child: Chip(
-                                            backgroundColor:
-                                                Color(0xFFEFEFEF),
+                                            backgroundColor: Color(0xFFEFEFEF),
                                             padding: EdgeInsets.only(
-                                                bottom: screenSize.height *
-                                                    0.015),
+                                                bottom:
+                                                    screenSize.height * 0.015),
                                             label: Center(
                                               child: Text(
                                                 category.name,
                                                 style: GoogleFonts.poppins(
                                                   fontSize:
-                                                      screenSize.width *
-                                                          0.023,
+                                                      screenSize.width * 0.023,
                                                   color: Color(0xFF9A9A9A),
                                                 ),
                                               ),
@@ -1584,14 +1575,12 @@ class _HomeScreenState extends State<HomeScreen>
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(
-                                                      screenSize.width *
-                                                          0.01),
+                                                      screenSize.width * 0.01),
                                               side: BorderSide(
                                                 color: index == filterIndex
                                                     ? Color(0xFF937974)
                                                     : Color(0xFFEFEFEF),
-                                                width: screenSize.width *
-                                                    0.002,
+                                                width: screenSize.width * 0.002,
                                               ),
                                             ),
                                           ),
@@ -1616,6 +1605,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   int totalPages =
                                       (state.products.length / 8).ceil();
                                   return ProductGrid(
+                                    isGuestUser: isGuestUser,
                                     updater: _updater,
                                     isFavourites: false,
                                     products: state.products,
@@ -1654,6 +1644,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _showImagePicker(BuildContext context) async {
+    final favouriteBloc = BlocProvider.of<FavouriteBloc>(context);
     final ImagePicker picker = ImagePicker();
     final XFile? image = await showDialog<XFile>(
       context: context,
@@ -1698,10 +1689,12 @@ class _HomeScreenState extends State<HomeScreen>
     );
 
     if (image != null) {
-      print('Selected image path: ${image.path}');
+      File imageFile = File(image.path);
+      (favouriteBloc
+          .add(UploadImage(imageFile: imageFile, collectionName: "MY IDEAS")));
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddToFavourites()),
+        MaterialPageRoute(builder: (context) => Favourites(index: 3)),
       );
     }
   }

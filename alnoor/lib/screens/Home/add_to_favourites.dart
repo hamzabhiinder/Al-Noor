@@ -1,30 +1,28 @@
+import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:alnoor/widgets/Image_Collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: AddToFavourites(),
-    );
-  }
-}
-
 class AddToFavourites extends StatefulWidget {
+  final String productId;
+
+  AddToFavourites({required this.productId});
+
   @override
   _AddToFavouritesState createState() => _AddToFavouritesState();
 }
 
 class _AddToFavouritesState extends State<AddToFavourites> {
   int filterIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void setFilterIndex(int value) {
     setState(() {
@@ -49,7 +47,7 @@ class _AddToFavouritesState extends State<AddToFavourites> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen( )),
+              MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           },
           child: SvgPicture.asset(
@@ -107,9 +105,7 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () {
-                              print('MY KITCHEN tapped');
-                            },
+                            onTap: () {},
                             child: OverlappingImagesWidget(
                                 imageUrls: [
                                   'assets/images/Kitchen2.jpg',
@@ -120,13 +116,13 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                                 index: 0,
                                 setFilter: setFilterIndex,
                                 selected: false,
+                                productId: widget.productId,
                                 isFavourites: false),
                           ),
                         ),
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              print('MY BEDROOM tapped');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -145,6 +141,7 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                                 selected: false,
                                 setFilter: setFilterIndex,
                                 index: 1,
+                                productId: widget.productId,
                                 isFavourites: false),
                           ),
                         ),
@@ -160,7 +157,6 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                           flex: 2,
                           child: GestureDetector(
                             onTap: () {
-                              print('MY LOUNGE tapped');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -177,6 +173,7 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                                 ],
                                 text: 'MY LOUNGE',
                                 index: 2,
+                                productId: widget.productId,
                                 setFilter: setFilterIndex,
                                 selected: false,
                                 isFavourites: false),

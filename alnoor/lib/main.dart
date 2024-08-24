@@ -125,8 +125,10 @@
 // }
 
 import 'package:alnoor/blocs/category_bloc.dart';
+import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/repositories/category_repository.dart';
+import 'package:alnoor/repositories/favourites_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -141,6 +143,9 @@ void main() {
         ),
         BlocProvider(
           create: (context) => ProductBloc(ProductRepository()),
+        ),
+        BlocProvider(
+          create: (context) => FavouriteBloc(FavouritesRepository()),
         ),
       ],
       child: MyApp(),

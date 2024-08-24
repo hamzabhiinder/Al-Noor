@@ -94,7 +94,9 @@
 //   }
 // }
 
+import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OverlappingImagesWidget extends StatefulWidget {
@@ -102,6 +104,7 @@ class OverlappingImagesWidget extends StatefulWidget {
   final String text;
   final bool selected;
   final bool isFavourites;
+  final String productId;
   final int index;
   final void Function(int) setFilter;
 
@@ -112,7 +115,8 @@ class OverlappingImagesWidget extends StatefulWidget {
       required this.selected,
       required this.isFavourites,
       required this.index,
-      required this.setFilter})
+      required this.setFilter,
+      required this.productId})
       : super(key: key);
 
   @override
@@ -123,6 +127,7 @@ class OverlappingImagesWidget extends StatefulWidget {
 class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
   @override
   Widget build(BuildContext context) {
+    final favouriteBloc = BlocProvider.of<FavouriteBloc>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -142,7 +147,17 @@ class _OverlappingImagesWidgetState extends State<OverlappingImagesWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
-          onTap: () => {widget.setFilter(widget.index)},
+          onTap: () => {
+            widget.setFilter(widget.index),
+            if (!widget.isFavourites)
+              (favouriteBloc.add(AddFavourites(
+                  productId: widget.productId,
+                  collectionName: widget.index == 0
+                      ? 'MY KITCHEN'
+                      : widget.index == 1
+                          ? "MY BEDROOM"
+                          : "MY LOUNGE")))
+          },
           child: SizedBox(
             width: responsiveWidth(155),
             height: responsiveHeight(125),

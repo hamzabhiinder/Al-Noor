@@ -147,10 +147,6 @@
 //   }
 // }
 
-
-
-
-
 import 'dart:ui';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/widgets/Four_Image_Grid.dart';
@@ -213,7 +209,6 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
     );
 
     if (image != null) {
-      print('Selected image path: ${image.path}');
       ImageManager().setImageFromCamera(image.path);
       setState(() {
         ImageManager().getImage(1);
@@ -283,7 +278,8 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
                   height: iconSize,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black, width: 1.0),
-                    borderRadius: BorderRadius.circular(screenSize.width * 0.01),
+                    borderRadius:
+                        BorderRadius.circular(screenSize.width * 0.01),
                   ),
                   child: IconButton(
                     icon: Icon(Icons.camera_alt, size: iconSize * 0.5),
@@ -292,8 +288,7 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
                     },
                   ),
                 ),
-              if (widget.showCamera)
-                SizedBox(width: screenSize.width * 0.05),
+              if (widget.showCamera) SizedBox(width: screenSize.width * 0.05),
               DragTargetContainer1(),
               SizedBox(width: screenSize.width * 0.05),
               FourImageDragTargetContainer(),

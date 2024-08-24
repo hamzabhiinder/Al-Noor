@@ -11,6 +11,7 @@ class ProductGrid extends StatefulWidget {
   final int totalPages;
   final int itemsInAPage;
   final bool isFavourites;
+  final bool isGuestUser;
   final Function(dynamic) updater;
 
   ProductGrid(
@@ -18,7 +19,8 @@ class ProductGrid extends StatefulWidget {
       required this.totalPages,
       required this.itemsInAPage,
       required this.isFavourites,
-      required this.updater});
+      required this.updater,
+      required this.isGuestUser});
 
   @override
   _ProductGridState createState() => _ProductGridState();
@@ -129,7 +131,6 @@ class _ProductGridState extends State<ProductGrid> {
                               );
 
                               if (result != null && result is List<String?>) {
-                                print("hiii");
                                 widget.updater(result);
                               }
                             },
@@ -197,7 +198,7 @@ class _ProductGridState extends State<ProductGrid> {
                               ],
                             ),
                           ),
-                          if (!widget.isFavourites)
+                          if ((!widget.isFavourites) && (!widget.isGuestUser))
                             (Positioned(
                               top: 10,
                               right: 10,
@@ -207,7 +208,9 @@ class _ProductGridState extends State<ProductGrid> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  AddToFavourites()),
+                                                  AddToFavourites(
+                                                      productId:
+                                                          product.productId)),
                                         )
                                       },
                                   child: Icon(

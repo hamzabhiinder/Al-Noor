@@ -311,6 +311,7 @@
 //             )));
 //   }
 // }
+import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
@@ -368,7 +369,7 @@ class _FavouritesState extends State<Favourites> {
       filterIndex = widget.index;
     });
     _pageController = PageController(initialPage: currentPage);
-    context.read<ProductBloc>().add(LoadProducts(search: "", category: ""));
+    context.read<FavouriteBloc>().add(LoadFavourites(search: ""));
   }
 
   void _onSearchSubmit() {
@@ -443,7 +444,8 @@ class _FavouritesState extends State<Favourites> {
               ),
             ),
             actions: [
-              if (!widget.isGuestUser) // Show menu button only if the user is not a guest
+              if (!widget
+                  .isGuestUser) // Show menu button only if the user is not a guest
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/menu.svg',
@@ -452,7 +454,8 @@ class _FavouritesState extends State<Favourites> {
                   ),
                   onPressed: () {
                     setState(() {
-                      _isMenuVisible = !_isMenuVisible; // Toggle menu visibility
+                      _isMenuVisible =
+                          !_isMenuVisible; // Toggle menu visibility
                     });
                   },
                 ),
@@ -461,7 +464,9 @@ class _FavouritesState extends State<Favourites> {
           body: Stack(
             children: [
               _buildMainContent(screenWidth, screenHeight, context),
-              if (_isMenuVisible && !widget.isGuestUser) // Show menu only if visible and not a guest
+              if (_isMenuVisible &&
+                  !widget
+                      .isGuestUser) // Show menu only if visible and not a guest
                 Positioned(
                   top: screenHeight * 0.002, // Adjust the top position
                   right: 10, // Adjust the right position
@@ -481,7 +486,8 @@ class _FavouritesState extends State<Favourites> {
     );
   }
 
-  Widget _buildMainContent(double screenWidth, double screenHeight, BuildContext context) {
+  Widget _buildMainContent(
+      double screenWidth, double screenHeight, BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       child: Column(
@@ -512,8 +518,8 @@ class _FavouritesState extends State<Favourites> {
                       borderRadius: BorderRadius.circular(4),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.03),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                   ),
                   style: TextStyle(fontSize: screenHeight * 0.015),
                   textAlign: TextAlign.left,
@@ -524,8 +530,7 @@ class _FavouritesState extends State<Favourites> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.search,
-                        color: Colors.grey,
-                        size: screenHeight * 0.02),
+                        color: Colors.grey, size: screenHeight * 0.02),
                     SizedBox(width: screenWidth * 0.02),
                     Text(
                       'Search Your Decor Here',
@@ -562,7 +567,6 @@ class _FavouritesState extends State<Favourites> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            print('MY KITCHEN tapped');
                             _focusNode.unfocus();
                           },
                           child: OverlappingImagesWidget(
@@ -574,6 +578,7 @@ class _FavouritesState extends State<Favourites> {
                             text: 'MY KITCHEN',
                             index: 0,
                             selected: filterIndex == 0,
+                            productId: "-1",
                             isFavourites: true,
                             setFilter: setFilterIndex,
                           ),
@@ -582,7 +587,6 @@ class _FavouritesState extends State<Favourites> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            print('MY BEDROOM tapped');
                             _focusNode.unfocus();
                           },
                           child: OverlappingImagesWidget(
@@ -593,6 +597,7 @@ class _FavouritesState extends State<Favourites> {
                               ],
                               text: 'MY BEDROOM',
                               index: 1,
+                              productId: "-1",
                               setFilter: setFilterIndex,
                               selected: filterIndex == 1,
                               isFavourites: true),
@@ -604,13 +609,10 @@ class _FavouritesState extends State<Favourites> {
                 SizedBox(
                   height: screenHeight * 0.17,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        flex: 2,
                         child: GestureDetector(
                           onTap: () {
-                            print('MY LOUNGE tapped');
                             _focusNode.unfocus();
                           },
                           child: OverlappingImagesWidget(
@@ -621,8 +623,28 @@ class _FavouritesState extends State<Favourites> {
                               ],
                               text: 'MY LOUNGE',
                               index: 2,
+                              productId: "-1",
                               setFilter: setFilterIndex,
                               selected: filterIndex == 2,
+                              isFavourites: true),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            _focusNode.unfocus();
+                          },
+                          child: OverlappingImagesWidget(
+                              imageUrls: [
+                                'assets/images/Kitchen2.jpg',
+                                'assets/images/Kitchen3.jpg',
+                                'assets/images/Kitchen1.jpg'
+                              ],
+                              text: 'MY IDEAS',
+                              index: 3,
+                              productId: "-1",
+                              setFilter: setFilterIndex,
+                              selected: filterIndex == 3,
                               isFavourites: true),
                         ),
                       ),
@@ -631,19 +653,30 @@ class _FavouritesState extends State<Favourites> {
                 ),
                 SizedBox(height: screenHeight * 0.01),
                 Expanded(
-                  child: BlocBuilder<ProductBloc, ProductState>(
+                  child: BlocBuilder<FavouriteBloc, FavouriteState>(
                     builder: (context, state) {
-                      if (state is ProductLoading) {
+                      if (state is FavouriteLoading) {
                         return Center(child: CircularProgressIndicator());
-                      } else if (state is ProductError) {
+                      } else if (state is FavouriteError) {
                         return Center(child: Text(state.message));
-                      } else if (state is ProductLoaded) {
+                      } else if (state is FavouriteLoaded) {
                         int totalPages =
-                            (state.products.length / 4).ceil();
+                            (state.favourites[filterIndex].length / 4).ceil();
+                        if (state.favourites[filterIndex].length == 0) {
+                          return Center(
+                              child: Text("No Items In This Collection "));
+                        }
                         return ProductGrid(
+                          isGuestUser: widget.isGuestUser,
                           updater: _updater,
                           isFavourites: true,
-                          products: state.products,
+                          products: filterIndex == 0
+                              ? state.favourites[0]
+                              : filterIndex == 1
+                                  ? state.favourites[1]
+                                  : filterIndex == 2
+                                      ? state.favourites[2]
+                                      : state.favourites[3],
                           totalPages: totalPages,
                           itemsInAPage: 4,
                         );

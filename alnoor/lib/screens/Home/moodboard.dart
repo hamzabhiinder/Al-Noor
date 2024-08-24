@@ -261,15 +261,8 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                   Colors.white,
                   Colors.black,
                   () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    bool? isGuestUser = prefs.getBool('isGuestUser');
-                    print(isGuestUser);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                HomeScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
                 ),
               ],
