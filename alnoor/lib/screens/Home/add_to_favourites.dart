@@ -55,14 +55,14 @@ class _AddToFavouritesState extends State<AddToFavourites> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/images/menu.svg',
-              width: 30,
-              height: 30,
-            ),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: SvgPicture.asset(
+          //     'assets/images/menu.svg',
+          //     width: 30,
+          //     height: 30,
+          //   ),
+          //   onPressed: () {},
+          // ),
         ],
       ),
       body: Padding(

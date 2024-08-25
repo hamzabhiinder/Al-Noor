@@ -343,7 +343,8 @@ class _FavouritesState extends State<Favourites> {
                 Expanded(
                   child: BlocBuilder<FavouriteBloc, FavouriteState>(
                     builder: (context, state) {
-                      if (state is FavouriteLoading) {
+                      if (state is FavouriteLoading ||
+                          state is UploadImageLoading) {
                         return Center(child: CircularProgressIndicator());
                       } else if (state is FavouriteError) {
                         return Center(child: Text(state.message));

@@ -108,7 +108,7 @@ class FavouriteBloc extends Bloc<FavouritesEvent, FavouriteState> {
       final favourites = await repository.fetchFavourites("");
       emit(FavouriteLoaded(favourites));
     } catch (e) {
-      emit(UploadImageFailure('Failed to upload image'));
+      print(e);
     }
   }
 }
