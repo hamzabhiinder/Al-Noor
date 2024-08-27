@@ -9,12 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';
+import 'services/notification_service.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initializeNotifications();
-  await FlutterDownloader.initialize();
+  await FlutterDownloader.initialize(debug: true);
   runApp(
     MultiBlocProvider(
       providers: [
@@ -50,6 +51,8 @@ Future<void> _initializeNotifications() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+        NotificationService.initialize(context);
+
     return MaterialApp(
             scaffoldMessengerKey: scaffoldMessengerKey, // Set the global key here
       home: StartScreen(),

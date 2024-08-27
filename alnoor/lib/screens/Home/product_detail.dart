@@ -1,18 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:alnoor/models/product.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../main.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../models/product.dart';
 import '../../services/download_service.dart';
 import '../../widgets/menu.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:alnoor/models/product.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -28,13 +21,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<ImageProvider> _imageFuture;
   bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
-  bool _isDownloading = false;
-
-  final DownloadService downloadService =
-      DownloadService(scaffoldMessengerKey: scaffoldMessengerKey);
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  final DownloadService downloadService = DownloadService(
+    scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
+  );
 
   @override
   void initState() {
