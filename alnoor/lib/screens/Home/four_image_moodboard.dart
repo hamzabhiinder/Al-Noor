@@ -79,6 +79,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
       child: DragTarget<int>(
         onAcceptWithDetails: (details) {
           setState(() {
+            print("fourteen");
             int fromIndex = details.data;
             String? temp = images[index];
             images[index] = images[fromIndex];
@@ -125,6 +126,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
+                          print("fifteen");
                           images[index] = null;
                         });
                       },
@@ -180,6 +182,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
+                  print("sixteen");
                   images[index] = null;
                 });
               },
@@ -292,6 +295,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
 
     if (image != null) {
       setState(() {
+        print("seventeen");
         images[index] = image.path;
       });
     }

@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen>
   late List<String?> imagesInContainer2;
   String _searchText = '';
   FocusNode _focusNode = FocusNode();
-  bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
+  late ValueNotifier<bool> _isMenuVisibleNotifier;
 
   @override
   void initState() {
@@ -44,19 +44,23 @@ class _HomeScreenState extends State<HomeScreen>
     imagesInContainer1 = List<String?>.filled(2, null);
     imagesInContainer2 = List<String?>.filled(4, null);
     _focusNode.addListener(() {
+      print("eighteen");
       setState(() {});
     });
+    _isMenuVisibleNotifier = ValueNotifier<bool>(false);
   }
 
   Future<void> _loadUserStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      print("nineteen");
       isGuestUser = prefs.getBool('isGuestUser') ?? true;
     });
   }
 
   @override
   void dispose() {
+    _isMenuVisibleNotifier.dispose();
     _pageController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -77,9 +81,8 @@ class _HomeScreenState extends State<HomeScreen>
         child: GestureDetector(
           onTap: () {
             _focusNode.unfocus();
-            setState(() {
-              _isMenuVisible = false; // Hide menu when tapping outside
-            });
+            _isMenuVisibleNotifier.value =
+                false; // Hide menu when tapping outside
           },
           child: Scaffold(
             appBar: AppBar(
@@ -102,10 +105,8 @@ class _HomeScreenState extends State<HomeScreen>
                       height: screenSize.width * 0.08,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _isMenuVisible =
-                            !_isMenuVisible; // Toggle menu visibility
-                      });
+                      _isMenuVisibleNotifier.value =
+                          !_isMenuVisibleNotifier.value;
                     },
                   ),
                 if (isGuestUser)
@@ -120,16 +121,22 @@ class _HomeScreenState extends State<HomeScreen>
             body: Stack(
               children: [
                 _buildMainContent(screenSize, context),
-                if (_isMenuVisible)
-                  Positioned(
-                    top: screenSize.height * 0.002, // Adjust the top position
-                    right: 10, // Adjust the right position
-                    child: HamburgerMenu(
-                      isGuestUser: isGuestUser,
-                      isMenuVisible: _isMenuVisible,
-                      onMenuToggle: _toggleMenu,
-                    ),
-                  ),
+                ValueListenableBuilder<bool>(
+                    valueListenable: _isMenuVisibleNotifier,
+                    builder: (context, isVisible, child) {
+                      return (isVisible && !isGuestUser)
+                          ? Positioned(
+                              top: screenSize.height *
+                                  0.002, // Adjust the top position
+                              right: 10, // Adjust the right position
+                              child: HamburgerMenu(
+                                isGuestUser: isGuestUser,
+                                isMenuVisible: isVisible,
+                                onMenuToggle: _toggleMenu,
+                              ),
+                            )
+                          : SizedBox.shrink();
+                    }),
               ],
             ),
             bottomNavigationBar: AddToCompareRow(
@@ -140,9 +147,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _toggleMenu() {
-    setState(() {
-      _isMenuVisible = !_isMenuVisible;
-    });
+    _isMenuVisibleNotifier.value = !_isMenuVisibleNotifier.value;
   }
 
   Widget _buildMainContent(Size screenSize, BuildContext context) {
@@ -165,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen>
                             focusNode: _focusNode,
                             onChanged: (text) {
                               setState(() {
+                                print("twentythree");
                                 _searchText = text;
                               });
                               if (_searchText.isEmpty) {
@@ -226,6 +232,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                         if (result != null && result is List<String?>) {
                           setState(() {
+                            print("twentyfour");
                             ImageManager().getImage(1);
                             ImageManager().getImage(2);
                             ImageManager().getImage(3);
@@ -273,6 +280,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 return GestureDetector(
                                     onTap: () => {
                                           setState(() {
+                                            print("twentyfive");
                                             filterIndex = index;
                                           }),
                                           context.read<ProductBloc>().add(
@@ -339,7 +347,6 @@ class _HomeScreenState extends State<HomeScreen>
                                       (state.products.length / 8).ceil();
                                   return ProductGrid(
                                     isGuestUser: isGuestUser,
-                                    updater: _updater,
                                     isFavourites: false,
                                     products: state.products,
                                     totalPages: totalPages,
@@ -368,6 +375,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   void _onSearchSubmit() {
     setState(() {
+      print("twentysix");
       filterIndex = -1;
     });
     context
@@ -456,16 +464,5 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
-  }
-
-  void _updater(result) {
-    setState(() {
-      ImageManager().setImage(1, result[0]);
-      ImageManager().setImage(2, result[1]);
-      ImageManager().setImage(3, result[2]);
-      ImageManager().setImage(4, result[3]);
-      ImageManager().setImage(5, result[4]);
-      ImageManager().setImage(6, result[5]);
-    });
   }
 }

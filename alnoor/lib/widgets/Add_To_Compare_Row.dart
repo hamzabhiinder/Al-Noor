@@ -62,6 +62,7 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
     if (image != null) {
       ImageManager().setImageFromCamera(image.path);
       setState(() {
+        print("thirtysix");
         ImageManager().getImage(1);
         ImageManager().getImage(2);
         ImageManager().getImage(3);

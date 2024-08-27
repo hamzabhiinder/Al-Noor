@@ -33,13 +33,6 @@ class _FourImageDragTargetContainerState
           ImageManager().setImage(4, images[1]);
           ImageManager().setImage(5, images[2]);
           ImageManager().setImage(6, images[3]);
-
-          setState(() {
-            ImageManager().getImage(3);
-            ImageManager().getImage(4);
-            ImageManager().getImage(5);
-            ImageManager().getImage(6);
-          });
         }
       },
       child: DragTarget<String>(
@@ -48,23 +41,21 @@ class _FourImageDragTargetContainerState
         },
         onAcceptWithDetails: (DragTargetDetails<String> details) {
           final String newImageUrl = details.data;
-          setState(() {
-            if (ImageManager().getImage(3) == null ||
-                ImageManager().getImage(3) == "") {
-              ImageManager().setImage(3, newImageUrl);
-            } else if (ImageManager().getImage(4) == null ||
-                ImageManager().getImage(4) == "") {
-              ImageManager().setImage(4, newImageUrl);
-            } else if (ImageManager().getImage(5) == null ||
-                ImageManager().getImage(5) == "") {
-              ImageManager().setImage(5, newImageUrl);
-            } else if (ImageManager().getImage(6) == null ||
-                ImageManager().getImage(6) == "") {
-              ImageManager().setImage(6, newImageUrl);
-            } else {
-              ImageManager().setImage(3, newImageUrl);
-            }
-          });
+          if (ImageManager().getImage(3) == null ||
+              ImageManager().getImage(3) == "") {
+            ImageManager().setImage(3, newImageUrl);
+          } else if (ImageManager().getImage(4) == null ||
+              ImageManager().getImage(4) == "") {
+            ImageManager().setImage(4, newImageUrl);
+          } else if (ImageManager().getImage(5) == null ||
+              ImageManager().getImage(5) == "") {
+            ImageManager().setImage(5, newImageUrl);
+          } else if (ImageManager().getImage(6) == null ||
+              ImageManager().getImage(6) == "") {
+            ImageManager().setImage(6, newImageUrl);
+          } else {
+            ImageManager().setImage(3, newImageUrl);
+          }
         },
         builder: (BuildContext context, List<String?> candidateData,
             List<dynamic> rejectedData) {
@@ -80,14 +71,24 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(ImageManager().getImage(3)),
+                        child: ValueListenableBuilder<String?>(
+                          valueListenable: ImageManager().getImageNotifier(3),
+                          builder: (context, imagePath, child) {
+                            return _displayImage(imagePath);
+                          },
+                        ),
                       ),
                       Container(
                         width: dividerThickness,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(ImageManager().getImage(4)),
+                        child: ValueListenableBuilder<String?>(
+                          valueListenable: ImageManager().getImageNotifier(4),
+                          builder: (context, imagePath, child) {
+                            return _displayImage(imagePath);
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -100,14 +101,24 @@ class _FourImageDragTargetContainerState
                   child: Row(
                     children: [
                       Expanded(
-                        child: _displayImage(ImageManager().getImage(5)),
+                        child: ValueListenableBuilder<String?>(
+                          valueListenable: ImageManager().getImageNotifier(5),
+                          builder: (context, imagePath, child) {
+                            return _displayImage(imagePath);
+                          },
+                        ),
                       ),
                       Container(
                         width: dividerThickness,
                         color: Colors.black,
                       ),
                       Expanded(
-                        child: _displayImage(ImageManager().getImage(6)),
+                        child: ValueListenableBuilder<String?>(
+                          valueListenable: ImageManager().getImageNotifier(6),
+                          builder: (context, imagePath, child) {
+                            return _displayImage(imagePath);
+                          },
+                        ),
                       ),
                     ],
                   ),

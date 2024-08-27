@@ -37,6 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _register() async {
     setState(() {
+      print("two");
       ImageManager().setImage(1, null);
       ImageManager().setImage(2, null);
       ImageManager().setImage(3, null);

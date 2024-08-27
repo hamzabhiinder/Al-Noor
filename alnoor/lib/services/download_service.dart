@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'notification_service.dart';
@@ -14,7 +13,8 @@ class DownloadService {
       scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text("Downloading..."),
-          duration: Duration(minutes: 10), // Longer duration to cover download time
+          duration:
+              Duration(minutes: 10), // Longer duration to cover download time
         ),
       );
 
@@ -27,8 +27,8 @@ class DownloadService {
           scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
 
           // Show success notification
-          NotificationService.showNotification(
-              "Download Complete", "$productName.jpg has been downloaded", path!);
+          NotificationService.showNotification("Download Complete",
+              "$productName.jpg has been downloaded", path);
         },
         onDownloadError: (errorMessage) {
           // Show failure snackbar using the global key

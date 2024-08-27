@@ -23,6 +23,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
 
   void _swapImages() {
     setState(() {
+      print("twentyeight");
       final temp = ImageManager().getImage(1);
       ImageManager().setImage(1, ImageManager().getImage(2));
       ImageManager().setImage(2, temp);
@@ -72,6 +73,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
+                              print("twentynine");
                               ImageManager().setImage(1, null);
                             });
                           },
@@ -122,6 +124,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
+                              print("thirty");
                               ImageManager().setImage(2, null);
                             });
                           },
@@ -273,6 +276,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
 
     if (image != null) {
       setState(() {
+        print("thirtyone");
         if (targetImage == 1) {
           ImageManager().setImage(1, image.path);
         } else if (targetImage == 2) {

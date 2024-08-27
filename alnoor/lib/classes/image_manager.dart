@@ -1,12 +1,14 @@
+import 'package:flutter/widgets.dart';
+
 class ImageManager {
   static final ImageManager _instance = ImageManager._internal();
 
-  var _image1;
-  var _image2;
-  var _image3;
-  var _image4;
-  var _image5;
-  var _image6;
+  ValueNotifier<String?> image1 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> image2 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> image3 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> image4 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> image5 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> image6 = ValueNotifier<String?>(null);
 
   factory ImageManager() {
     return _instance;
@@ -15,62 +17,81 @@ class ImageManager {
   ImageManager._internal();
 
   void setImageFromCamera(dynamic path) {
-    if (_image1 == null || _image1!.isEmpty) {
-      _image1 = path;
-    } else if (_image2 == null || _image2!.isEmpty) {
-      _image2 = path;
-    } else if (_image3 == null || _image3!.isEmpty) {
-      _image3 = path;
-    } else if (_image4 == null || _image4!.isEmpty) {
-      _image4 = path;
-    } else if (_image5 == null || _image5!.isEmpty) {
-      _image5 = path;
-    } else if (_image6 == null || _image6!.isEmpty) {
-      _image6 = path;
+    if (image1.value == null || image1.value!.isEmpty) {
+      image1.value = path;
+    } else if (image2.value == null || image2.value!.isEmpty) {
+      image2.value = path;
+    } else if (image3.value == null || image3.value!.isEmpty) {
+      image3.value = path;
+    } else if (image4.value == null || image4.value!.isEmpty) {
+      image4.value = path;
+    } else if (image5.value == null || image5.value!.isEmpty) {
+      image5.value = path;
+    } else if (image6.value == null || image6.value!.isEmpty) {
+      image6.value = path;
     } else {
-      _image1 = path;
+      image1.value = path;
     }
   }
 
   void setImage(int index, dynamic path) {
     switch (index) {
       case 1:
-        _image1 = path;
+        image1.value = path;
         break;
       case 2:
-        _image2 = path;
+        image2.value = path;
         break;
       case 3:
-        _image3 = path;
+        image3.value = path;
         break;
       case 4:
-        _image4 = path;
+        image4.value = path;
         break;
       case 5:
-        _image5 = path;
+        image5.value = path;
         break;
       case 6:
-        _image6 = path;
+        image6.value = path;
         break;
       default:
-        _image1 = path;
+        image1.value = path;
+    }
+  }
+
+  ValueNotifier<String?> getImageNotifier(int index) {
+    switch (index) {
+      case 1:
+        return image1;
+      case 2:
+        return image2;
+      case 3:
+        return image3;
+      case 4:
+        return image4;
+      case 5:
+        return image5;
+      case 6:
+        return image6;
+      default:
+        return image1;
     }
   }
 
   String? getImage(int index) {
     switch (index) {
       case 1:
-        return _image1;
+        return image1.value;
       case 2:
-        return _image2;
+        return image2.value;
       case 3:
-        return _image3;
+        return image3.value;
       case 4:
-        return _image4;
+        return image4.value;
       case 5:
-        return _image5;
+        return image5.value;
       case 6:
-        return _image6;
+        return image6.value;
       default:
         return null;
     }

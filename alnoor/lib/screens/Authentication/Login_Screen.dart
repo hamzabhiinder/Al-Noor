@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onLoginButtonPressed() async {
     setState(() {
+      print("one");
       ImageManager().setImage(1, null);
       ImageManager().setImage(2, null);
       ImageManager().setImage(3, null);

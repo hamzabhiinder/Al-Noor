@@ -1,3 +1,5 @@
+import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,8 +21,8 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<ImageProvider> _imageFuture;
-  bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
+  late ValueNotifier<bool> _isMenuVisibleNotifier;
 
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -33,11 +35,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _loadUserStatus(); // Load guest user status
+    _isMenuVisibleNotifier = ValueNotifier<bool>(false);
   }
 
   Future<void> _loadUserStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      print("thirtytwo");
       isGuestUser = prefs.getBool('isGuestUser') ?? true;
     });
   }
@@ -65,11 +69,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
     return GestureDetector(
       onTap: () {
-        if (_isMenuVisible) {
-          setState(() {
-            _isMenuVisible = false;
-          });
-        }
+        _isMenuVisibleNotifier.value = false;
       },
       child: ScaffoldMessenger(
         key: _scaffoldMessengerKey,
@@ -107,7 +107,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       height: double.infinity,
                                     );
                                   } else {
-                                    return CircularProgressIndicator();
+                                    return ImageSkeleton(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
                                   }
                                 },
                               ),
@@ -142,9 +145,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           height: 30,
                                         ),
                                         onPressed: () {
-                                          setState(() {
-                                            _isMenuVisible = !_isMenuVisible;
-                                          });
+                                          _isMenuVisibleNotifier.value =
+                                              !_isMenuVisibleNotifier.value;
                                         },
                                       ),
                                   ],
@@ -179,7 +181,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             _buildIconButton(
                                 iconPath: 'assets/images/Add New.png',
                                 label: "Add to\nMoodboard",
-                                onPressed: () {},
+                                onPressed: () {
+                                  ImageManager().setImageFromCamera(
+                                      widget.product.thumbnailImage);
+                                  Navigator.of(context).pop([
+                                    ImageManager().getImage(1),
+                                    ImageManager().getImage(2),
+                                    ImageManager().getImage(3),
+                                    ImageManager().getImage(4),
+                                    ImageManager().getImage(5),
+                                    ImageManager().getImage(6),
+                                  ]);
+                                },
                                 constraints: constraints),
                             _buildIconButton(
                                 iconPath: 'assets/images/Buy.png',
@@ -218,7 +231,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 8, // Set the maximum number of lines to 8
+                              maxLines:
+                                  8, // Set the maximum number of lines to 8
                             ),
                           ),
                         ),
@@ -244,16 +258,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ],
                     ),
                   ),
-                  if (_isMenuVisible && !isGuestUser)
-                    Positioned(
-                      top: constraints.maxHeight * 0.09,
-                      right: 30,
-                      child: HamburgerMenu(
-                        isGuestUser: isGuestUser,
-                        isMenuVisible: _isMenuVisible,
-                        onMenuToggle: _toggleMenu,
-                      ),
-                    ),
+                  ValueListenableBuilder<bool>(
+                      valueListenable: _isMenuVisibleNotifier,
+                      builder: (context, isVisible, child) {
+                        return (isVisible && !isGuestUser)
+                            ? Positioned(
+                                top: constraints.maxHeight * 0.09,
+                                right: 30,
+                                child: HamburgerMenu(
+                                  isGuestUser: isGuestUser,
+                                  isMenuVisible: isVisible,
+                                  onMenuToggle: _toggleMenu,
+                                ),
+                              )
+                            : SizedBox.shrink();
+                      }),
                 ],
               );
             },
@@ -296,8 +315,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _toggleMenu() {
-    setState(() {
-      _isMenuVisible = !_isMenuVisible;
-    });
+    _isMenuVisibleNotifier.value = !_isMenuVisibleNotifier.value;
   }
 }

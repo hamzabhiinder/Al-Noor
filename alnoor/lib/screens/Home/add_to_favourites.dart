@@ -17,15 +17,17 @@ class AddToFavourites extends StatefulWidget {
 
 class _AddToFavouritesState extends State<AddToFavourites> {
   int filterIndex = 0;
-  bool _isMenuVisible = false; // State to control the menu visibility
+  late ValueNotifier<bool> _isMenuVisibleNotifier;
 
   @override
   void initState() {
+    _isMenuVisibleNotifier = ValueNotifier<bool>(false);
     super.initState();
   }
 
   void setFilterIndex(int value) {
     setState(() {
+      print("three");
       filterIndex = value;
     });
     Navigator.push(
@@ -38,14 +40,17 @@ class _AddToFavouritesState extends State<AddToFavourites> {
   }
 
   void _toggleMenu() {
-    setState(() {
-      _isMenuVisible = !_isMenuVisible;
-    });
+    _isMenuVisibleNotifier.value = !_isMenuVisibleNotifier.value;
+  }
+
+  @override
+  void dispose() {
+    _isMenuVisibleNotifier.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -199,16 +204,22 @@ class _AddToFavouritesState extends State<AddToFavourites> {
               ],
             ),
           ),
-          if (_isMenuVisible) // Show menu when it's visible
-            Positioned(
-              top: screenHeight * 0.002,
-              right: 10,
-              child: HamburgerMenu(
-                isGuestUser: false,
-                isMenuVisible: _isMenuVisible,
-                onMenuToggle: _toggleMenu,
-              ),
-            ),
+          ValueListenableBuilder<bool>(
+              valueListenable: _isMenuVisibleNotifier,
+              builder: (context, isVisible, child) {
+                return isVisible
+                    ? // Show menu when it's visible
+                    Positioned(
+                        top: screenHeight * 0.002,
+                        right: 10,
+                        child: HamburgerMenu(
+                          isGuestUser: false,
+                          isMenuVisible: isVisible,
+                          onMenuToggle: _toggleMenu,
+                        ),
+                      )
+                    : SizedBox.shrink();
+              }),
         ],
       ),
     );

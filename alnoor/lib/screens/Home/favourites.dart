@@ -44,15 +44,19 @@ class _FavouritesState extends State<Favourites> {
   int currentPage = 0;
   late PageController _pageController;
   int filterIndex = 0;
-  bool _isMenuVisible = false; // State to control the menu visibility
+  late ValueNotifier<bool> _isMenuVisibleNotifier;
 
   @override
   void initState() {
     super.initState();
+    _isMenuVisibleNotifier = ValueNotifier<bool>(false);
     _focusNode.addListener(() {
-      setState(() {});
+      setState(() {
+        print("five");
+      });
     });
     setState(() {
+      print("six");
       filterIndex = widget.index;
     });
     _pageController = PageController(initialPage: currentPage);
@@ -61,32 +65,24 @@ class _FavouritesState extends State<Favourites> {
 
   void _onSearchSubmit() {
     setState(() {
+      print("seven");
       filterIndex = 0;
     });
     context.read<FavouriteBloc>().add(LoadFavourites(search: _searchText));
     _focusNode.unfocus();
   }
 
-  void _updater(result) {
-    setState(() {
-      ImageManager().setImage(1, result[0]);
-      ImageManager().setImage(2, result[1]);
-      ImageManager().setImage(3, result[2]);
-      ImageManager().setImage(4, result[3]);
-      ImageManager().setImage(5, result[4]);
-      ImageManager().setImage(6, result[5]);
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
     _focusNode.dispose();
+    _isMenuVisibleNotifier.dispose();
     super.dispose();
   }
 
   void setFilterIndex(int value) {
     setState(() {
+      print("nine");
       filterIndex = value;
     });
   }
@@ -111,11 +107,7 @@ class _FavouritesState extends State<Favourites> {
       child: GestureDetector(
         onTap: () {
           _focusNode.unfocus();
-          if (_isMenuVisible) {
-            setState(() {
-              _isMenuVisible = false; // Hide menu when tapping outside
-            });
-          }
+          _isMenuVisibleNotifier.value = false;
         },
         child: Scaffold(
           appBar: AppBar(
@@ -141,10 +133,8 @@ class _FavouritesState extends State<Favourites> {
                     height: screenWidth * 0.08,
                   ),
                   onPressed: () {
-                    setState(() {
-                      _isMenuVisible =
-                          !_isMenuVisible; // Toggle menu visibility
-                    });
+                    _isMenuVisibleNotifier.value =
+                        !_isMenuVisibleNotifier.value;
                   },
                 ),
             ],
@@ -152,18 +142,22 @@ class _FavouritesState extends State<Favourites> {
           body: Stack(
             children: [
               _buildMainContent(screenWidth, screenHeight, context),
-              if (_isMenuVisible &&
-                  !widget
-                      .isGuestUser) // Show menu only if visible and not a guest
-                Positioned(
-                  top: screenHeight * 0.002, // Adjust the top position
-                  right: 10, // Adjust the right position
-                  child: HamburgerMenu(
-                    isGuestUser: widget.isGuestUser,
-                    isMenuVisible: _isMenuVisible,
-                    onMenuToggle: _toggleMenu,
-                  ),
-                ),
+              ValueListenableBuilder<bool>(
+                  valueListenable: _isMenuVisibleNotifier,
+                  builder: (context, isVisible, child) {
+                    return isVisible
+                        ? Positioned(
+                            top:
+                                screenHeight * 0.002, // Adjust the top position
+                            right: 10, // Adjust the right position
+                            child: HamburgerMenu(
+                              isGuestUser: widget.isGuestUser,
+                              isMenuVisible: isVisible,
+                              onMenuToggle: _toggleMenu,
+                            ),
+                          )
+                        : SizedBox.shrink();
+                  }),
             ],
           ),
           bottomNavigationBar: AddToCompareRow(
@@ -190,6 +184,7 @@ class _FavouritesState extends State<Favourites> {
                   focusNode: _focusNode,
                   onChanged: (text) {
                     setState(() {
+                      print("twelve");
                       _searchText = text;
                     });
                     if (_searchText.isEmpty) {
@@ -357,7 +352,6 @@ class _FavouritesState extends State<Favourites> {
                         }
                         return ProductGrid(
                           isGuestUser: widget.isGuestUser,
-                          updater: _updater,
                           isFavourites: true,
                           products: filterIndex == 0
                               ? state.favourites[0]
@@ -385,7 +379,8 @@ class _FavouritesState extends State<Favourites> {
 
   void _toggleMenu() {
     setState(() {
-      _isMenuVisible = !_isMenuVisible;
+      print("thirteen");
+      _isMenuVisibleNotifier.value = !_isMenuVisibleNotifier.value;
     });
   }
 }
