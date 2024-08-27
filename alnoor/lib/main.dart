@@ -7,11 +7,24 @@ import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'models/product.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';
+import 'utils/product_adapter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+  // Register the adapter
+  Hive.registerAdapter(ProductAdapter());
+
+  // Open the box only once and keep it open
+  final productBox = await Hive.openBox<List<dynamic>>('productBox');
+
   await _initializeNotifications();
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -19,7 +32,7 @@ void main() async {
           create: (context) => CategoryBloc(CategoryRepository()),
         ),
         BlocProvider(
-          create: (context) => ProductBloc(ProductRepository()),
+          create: (context) => ProductBloc(ProductRepository(), productBox),
         ),
         BlocProvider(
           create: (context) => FavouriteBloc(FavouritesRepository()),

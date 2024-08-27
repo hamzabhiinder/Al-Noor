@@ -1,8 +1,7 @@
-// category_bloc.dart
-
 import 'package:alnoor/models/product.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 // Events
 abstract class ProductEvent {}
@@ -31,23 +30,31 @@ class ProductError extends ProductState {
   ProductError(this.message);
 }
 
-// BLoC
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRepository repository;
+  final Box<List<dynamic>> productBox;
 
-  ProductBloc(this.repository) : super(ProductInitial()) {
+  ProductBloc(this.repository, this.productBox) : super(ProductInitial()) {
     on<LoadProducts>(_onLoadProducts);
   }
 
   Future<void> _onLoadProducts(
       LoadProducts event, Emitter<ProductState> emit) async {
-    emit(ProductLoading());
-    try {
-      final products =
-          await repository.fetchProducts(event.search, event.category);
-      emit(ProductLoaded(products));
-    } catch (e) {
-      emit(ProductError('Failed to load categories'));
+    if (productBox.containsKey('cachedProducts') && event.search.isEmpty && event.category.isEmpty) {
+      // Manually cast the cached list to List<Product>
+      final cachedProducts = (productBox.get('cachedProducts') as List)
+          .map((product) => product as Product)
+          .toList();
+      emit(ProductLoaded(cachedProducts));
+    } else {
+      emit(ProductLoading());
+      try {
+        final products = await repository.fetchProducts(event.search, event.category);
+        productBox.put('cachedProducts', products);
+        emit(ProductLoaded(products));
+      } catch (e) {
+        emit(ProductError('Failed to load products'));
+      }
     }
   }
 }
