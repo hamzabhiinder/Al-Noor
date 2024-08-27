@@ -1,18 +1,18 @@
-import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:alnoor/models/product.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:dio/dio.dart';
-import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../main.dart';
+import '../../services/download_service.dart';
 import '../../widgets/menu.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:alnoor/models/product.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -26,54 +26,20 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<ImageProvider> _imageFuture;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
   bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
   bool _isDownloading = false;
 
-  Future<void> requestStoragePermissions() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      status = await Permission.storage.request();
-      if (status.isGranted) {
-        // Permission granted
-      } else {
-        // Permission denied
-      }
-    }
-  }
+  final DownloadService downloadService =
+      DownloadService(scaffoldMessengerKey: scaffoldMessengerKey);
+
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
-    _initializeNotifications(); // Initialize notifications
     _loadUserStatus(); // Load guest user status
-  }
-
-  void _initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    final DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-      onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
-    );
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    if (Platform.isIOS) {
-      _requestIOSPermissions();
-    }
   }
 
   Future<void> _loadUserStatus() async {
@@ -81,64 +47,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     setState(() {
       isGuestUser = prefs.getBool('isGuestUser') ?? true;
     });
-  }
-
-  void _requestIOSPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-  }
-
-  void _onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title ?? 'Notification'),
-        content: Text(body ?? 'Image downloaded successfully'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<void> _showNotification(String filePath) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'download_channel',
-      'Downloads',
-      channelDescription: 'Notifications for image downloads',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: false,
-    );
-
-    const DarwinNotificationDetails iosPlatformChannelSpecifics =
-        DarwinNotificationDetails();
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iosPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Download Complete',
-      'Image downloaded to $filePath',
-      platformChannelSpecifics,
-      payload: filePath,
-    );
   }
 
   @override
@@ -158,55 +66,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
-  Future<Directory> getDownloadDirectory() async {
-    Directory? directory;
-
-    if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-    } else if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
-    }
-
-    return directory!;
-  }
-
-  Future<void> _downloadImage(BuildContext context) async {
-    await requestStoragePermissions();
-    final String imageUrl =
-        "https://alnoormdf.com/" + widget.product.productImage;
-    try {
-      Directory directory = await getDownloadDirectory();
-
-      String filePath = '${directory.path}/${widget.product.productName}.jpg';
-      Dio dio = Dio();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Downloading..."),
-          duration:
-              Duration(minutes: 10), // Longer duration to cover download time
-        ),
-      );
-
-      await dio.download(imageUrl, filePath);
-
-      // Show notification
-      await _showNotification(filePath);
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Downloaded to $filePath"),
-      ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to download image"),
-      ));
-    } finally {
-      setState(() {
-        _isDownloading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -219,200 +78,193 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           });
         }
       },
-      child: Scaffold(
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            height: constraints.maxHeight * 0.5,
-                            width: double.infinity,
-                            child: FutureBuilder<ImageProvider>(
-                              future: _imageFuture,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  if (snapshot.hasError) {
-                                    return Image.asset(
-                                      'assets/images/Logo.png',
+      child: ScaffoldMessenger(
+        key: _scaffoldMessengerKey,
+        child: Scaffold(
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              height: constraints.maxHeight * 0.5,
+                              width: double.infinity,
+                              child: FutureBuilder<ImageProvider>(
+                                future: _imageFuture,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    if (snapshot.hasError) {
+                                      return Image.asset(
+                                        'assets/images/Logo.png',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      );
+                                    }
+                                    return Image(
+                                      image: snapshot.data!,
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       height: double.infinity,
                                     );
+                                  } else {
+                                    return CircularProgressIndicator();
                                   }
-                                  return Image(
-                                    image: snapshot.data!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  );
-                                } else {
-                                  return ImageSkeleton(
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  );
-                                }
-                              },
+                                },
+                              ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: screenWidth * 0.05,
-                                  vertical: constraints.maxHeight * 0.03),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(
-                                    icon: SvgPicture.asset(
-                                      'assets/images/Logo_Black.svg',
-                                      width: 47,
-                                      height: 47,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  if (!isGuestUser) // Show the menu icon only if not a guest user
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.05,
+                                    vertical: constraints.maxHeight * 0.03),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
                                     IconButton(
                                       icon: SvgPicture.asset(
-                                        'assets/images/menu.svg',
-                                        width: 30,
-                                        height: 30,
+                                        'assets/images/Logo_Black.svg',
+                                        width: 47,
+                                        height: 47,
                                       ),
                                       onPressed: () {
-                                        setState(() {
-                                          _isMenuVisible = !_isMenuVisible;
-                                        });
+                                        Navigator.pop(context);
                                       },
                                     ),
-                                ],
+                                    if (!isGuestUser) // Show the menu icon only if not a guest user
+                                      IconButton(
+                                        icon: SvgPicture.asset(
+                                          'assets/images/menu.svg',
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isMenuVisible = !_isMenuVisible;
+                                          });
+                                        },
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.02),
-                      Center(
-                        child: Text(
-                          widget.product.productName,
-                          style: GoogleFonts.poppins(
-                            fontSize: constraints.maxWidth * 0.05,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          ],
                         ),
-                      ),
-                      Center(
-                        child: Text(
-                          "Decor Type: ${widget.product.productType == "" ? "None" : widget.product.productType}",
-                          style: GoogleFonts.poppins(
-                            fontSize: constraints.maxWidth * 0.035,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.02),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildIconButton(
-                              iconPath: 'assets/images/Add New.png',
-                              label: "Add to\nMoodboard",
-                              onPressed: () {
-                                ImageManager().setImageFromCamera(
-                                    widget.product.thumbnailImage);
-                                Navigator.of(context).pop([
-                                  ImageManager().getImage(1),
-                                  ImageManager().getImage(2),
-                                  ImageManager().getImage(3),
-                                  ImageManager().getImage(4),
-                                  ImageManager().getImage(5),
-                                  ImageManager().getImage(6)
-                                ]);
-                              },
-                              constraints: constraints),
-                          _buildIconButton(
-                              iconPath: 'assets/images/Buy.png',
-                              label: "Order\nSample",
-                              onPressed: () {},
-                              constraints: constraints),
-                          _buildIconButton(
-                              iconPath: 'assets/images/Share.png',
-                              label: "Share\nNow",
-                              onPressed: () {
-                                _shareProduct(context);
-                              },
-                              constraints: constraints),
-                          _buildIconButton(
-                              iconPath: 'assets/images/Download.png',
-                              label: "Download\nCatalogue",
-                              onPressed: () {
-                                _downloadImage(context);
-                              },
-                              constraints: constraints),
-                        ],
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.02),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: constraints.maxWidth * 0.05),
-                        child: Center(
+                        SizedBox(height: constraints.maxHeight * 0.02),
+                        Center(
                           child: Text(
-                            widget.product.productShortDesc,
+                            widget.product.productName,
+                            style: GoogleFonts.poppins(
+                              fontSize: constraints.maxWidth * 0.05,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            "Decor Type: ${widget.product.productType == "" ? "None" : widget.product.productType}",
                             style: GoogleFonts.poppins(
                               fontSize: constraints.maxWidth * 0.035,
+                              color: Colors.grey,
                             ),
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 8, // Set the maximum number of lines to 8
                           ),
                         ),
-                      ),
-                      SizedBox(height: constraints.maxHeight * 0.02),
-                      Center(
-                        child: SizedBox(
-                          width: constraints.maxWidth * 0.6,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF222020),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                        SizedBox(height: constraints.maxHeight * 0.02),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildIconButton(
+                                iconPath: 'assets/images/Add New.png',
+                                label: "Add to\nMoodboard",
+                                onPressed: () {},
+                                constraints: constraints),
+                            _buildIconButton(
+                                iconPath: 'assets/images/Buy.png',
+                                label: "Order\nSample",
+                                onPressed: () {},
+                                constraints: constraints),
+                            _buildIconButton(
+                                iconPath: 'assets/images/Share.png',
+                                label: "Share\nNow",
+                                onPressed: () {
+                                  _shareProduct(context);
+                                },
+                                constraints: constraints),
+                            _buildIconButton(
+                                iconPath: 'assets/images/Download.png',
+                                label: "Download\nCatalogue",
+                                onPressed: () {
+                                  downloadService.downloadImage(
+                                    "https://alnoormdf.com/" +
+                                        widget.product.productImage,
+                                    widget.product.productName,
+                                  );
+                                },
+                                constraints: constraints),
+                          ],
+                        ),
+                        SizedBox(height: constraints.maxHeight * 0.02),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: constraints.maxWidth * 0.05),
+                          child: Center(
+                            child: Text(
+                              widget.product.productShortDesc,
+                              style: GoogleFonts.poppins(
+                                fontSize: constraints.maxWidth * 0.035,
                               ),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 8, // Set the maximum number of lines to 8
                             ),
-                            child: Text("More Decor"),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_isMenuVisible && !isGuestUser)
-                  Positioned(
-                    top: constraints.maxHeight * 0.09,
-                    right: 30,
-                    child: HamburgerMenu(
-                      isGuestUser: isGuestUser,
-                      isMenuVisible: _isMenuVisible,
-                      onMenuToggle: _toggleMenu,
+                        SizedBox(height: constraints.maxHeight * 0.02),
+                        Center(
+                          child: SizedBox(
+                            width: constraints.maxWidth * 0.6,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF222020),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              child: Text("More Decor"),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
-            );
-          },
+                  if (_isMenuVisible && !isGuestUser)
+                    Positioned(
+                      top: constraints.maxHeight * 0.09,
+                      right: 30,
+                      child: HamburgerMenu(
+                        isGuestUser: isGuestUser,
+                        isMenuVisible: _isMenuVisible,
+                        onMenuToggle: _toggleMenu,
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
