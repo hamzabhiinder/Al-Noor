@@ -1,5 +1,6 @@
 import 'package:alnoor/blocs/register_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/screens/Authentication/Login_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
+                                builder: (context) => LoginScreen(),
                               ),
                             );
                           } else if (state is RegisterFailure) {
