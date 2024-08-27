@@ -1,7 +1,8 @@
-import 'package:dio/dio.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DownloadService {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
@@ -10,9 +11,11 @@ class DownloadService {
 
   Future<void> downloadImage(String imageUrl, String productName) async {
     try {
+      // Request storage permission if not granted
+      await _requestPermission();
+
       Directory directory = await getDownloadDirectory();
       String filePath = '${directory.path}/$productName.jpg';
-      Dio dio = Dio();
 
       // Show initial "Downloading..." snackbar using the global key
       scaffoldMessengerKey.currentState?.showSnackBar(
@@ -22,13 +25,21 @@ class DownloadService {
         ),
       );
 
-      await dio.download(imageUrl, filePath);
+      final taskId = await FlutterDownloader.enqueue(
+        url: imageUrl,
+        savedDir: directory.path,
+        fileName: "$productName.jpg",
+        showNotification: true, // disable system notifications
+        openFileFromNotification: true, // disable file open on notification
+      );
 
       // Show success snackbar using the global key
-      scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
-      scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
-        content: Text("Downloaded to $filePath"),
-      ));
+      if (taskId != null) {
+        scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+        scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+          content: Text("Downloaded to $filePath"),
+        ));
+      }
     } catch (e) {
       // Show failure snackbar using the global key
       scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
@@ -48,5 +59,14 @@ class DownloadService {
     }
 
     return directory!;
+  }
+
+  Future<void> _requestPermission() async {
+    if (Platform.isAndroid) {
+      PermissionStatus status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+    }
   }
 }

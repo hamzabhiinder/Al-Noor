@@ -6,6 +6,7 @@ import 'package:alnoor/repositories/favourites_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -13,6 +14,7 @@ final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<Scaffol
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initializeNotifications();
+  await FlutterDownloader.initialize();
   runApp(
     MultiBlocProvider(
       providers: [
@@ -50,7 +52,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
             scaffoldMessengerKey: scaffoldMessengerKey, // Set the global key here
-
       home: StartScreen(),
       debugShowCheckedModeBanner: false,
     );
