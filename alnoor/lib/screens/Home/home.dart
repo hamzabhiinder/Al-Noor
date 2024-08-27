@@ -34,25 +34,19 @@ class _HomeScreenState extends State<HomeScreen>
   bool _isMenuVisible = false;
   bool isGuestUser = true; // Default to true; will be updated later
 
- @override
-void initState() {
-  super.initState();
-  _pageController = PageController(initialPage: currentPage);
-  _loadUserStatus(); // Load the guest user status
-  context.read<CategoryBloc>().add(LoadCategories());
-
-  // Check if products are already loaded to avoid reloading
-  if (context.read<ProductBloc>().state is! ProductLoaded) {
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: currentPage);
+    _loadUserStatus(); // Load the guest user status
+    context.read<CategoryBloc>().add(LoadCategories());
     context.read<ProductBloc>().add(LoadProducts(search: "", category: ""));
+    imagesInContainer1 = List<String?>.filled(2, null);
+    imagesInContainer2 = List<String?>.filled(4, null);
+    _focusNode.addListener(() {
+      setState(() {});
+    });
   }
-
-  imagesInContainer1 = List<String?>.filled(2, null);
-  imagesInContainer2 = List<String?>.filled(4, null);
-  _focusNode.addListener(() {
-    setState(() {});
-  });
-}
-
 
   Future<void> _loadUserStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

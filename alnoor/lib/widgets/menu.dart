@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
-import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../screens/Home/favourites.dart';
@@ -9,8 +8,8 @@ import '../screens/Landing_Screen/Splash_Screen.dart';
 
 class HamburgerMenu extends StatelessWidget {
   final bool isGuestUser;
-  final bool isMenuVisible;  // Accept the state
-  final VoidCallback onMenuToggle;  // To toggle the menu
+  final bool isMenuVisible;  // Add this line to accept the state
+  final VoidCallback onMenuToggle;  // Add this to toggle the menu
 
   HamburgerMenu({
     required this.isGuestUser,
@@ -34,7 +33,7 @@ class HamburgerMenu extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isGuestUser)
+              if (isGuestUser)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -81,7 +80,7 @@ class HamburgerMenu extends StatelessWidget {
                   );
                 },
               ),
-            if (!isGuestUser)
+            if(!isGuestUser)
             _buildMenuItem(
               icon: Icons.logout,
               title: 'Logout',
@@ -121,20 +120,14 @@ class HamburgerMenu extends StatelessWidget {
         },
         body: jsonEncode({}), // Add any required body parameters if needed
       );
-
       print('API Response Status Code: ${response.statusCode}');
       print('API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Successfully logged out, clear user session and cache, then navigate to StartScreen
+        // Successfully logged out, clear user session and navigate to StartScreen
         globals.token = '';  // Clear the user token or any other session data
         globals.userName = '';  // Clear the user name or any other session data
-        
-        // Clear the cache (Hive box)
-        var productBox = Hive.box<List<dynamic>>('productBox');
-        await productBox.clear();
 
-        // Navigate to the StartScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => StartScreen()),
