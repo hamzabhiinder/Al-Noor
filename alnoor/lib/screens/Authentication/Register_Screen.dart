@@ -86,15 +86,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       // Logo
-                      Center(
-                        child: 
+                    
                       SvgPicture.asset(
                         'assets/images/Logo_Black.svg',
                         height: screenSize.height * 0.2, // Adjusted logo height
                         fit: BoxFit.contain,
-                      ),),
+                      ),
                       SizedBox(
-                          height: screenSize.height * 0.001), // Spacing below logo
+                          height: screenSize.height * 0.01), // Spacing below logo
                       // Input Fields
                       CustomInputField(
                         hintText: 'Your Name',

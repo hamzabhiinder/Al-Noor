@@ -30,7 +30,7 @@ class CustomInputField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            fontSize: screenSize.width * 0.043, // Adjusting font size
+            fontSize: screenSize.width * 0.045, // Adjusting font size
           ),
           prefixIcon: Padding(
             padding: EdgeInsets.only(
