@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_fonts/google_fonts.dart';  // Import the Google Fonts package
 import 'screens/Landing_Screen/Splash_Screen.dart';
 import 'services/notification_service.dart';
 
@@ -66,6 +67,11 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // Set the global key here
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme( // Use GoogleFonts Poppins throughout the app
+          Theme.of(context).textTheme,
+        ),
+      ),
       home: StartScreen(),
       debugShowCheckedModeBanner: false,
     );

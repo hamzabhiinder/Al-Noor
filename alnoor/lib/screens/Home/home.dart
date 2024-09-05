@@ -101,8 +101,8 @@ class _HomeScreenState extends State<HomeScreen>
                   IconButton(
                     icon: SvgPicture.asset(
                       'assets/images/menu.svg',
-                      width: screenSize.width * 0.08,
-                      height: screenSize.width * 0.08,
+                      width: screenSize.width * 0.07,
+                      height: screenSize.width * 0.07,
                     ),
                     onPressed: () {
                       _isMenuVisibleNotifier.value =

@@ -3,6 +3,7 @@ import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Authentication/Login_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/validators.dart';
 import '../../widgets/Input_Field.dart';
@@ -38,7 +39,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _register() async {
     setState(() {
-      print("two");
       ImageManager().setImage(1, null);
       ImageManager().setImage(2, null);
       ImageManager().setImage(3, null);
@@ -68,12 +68,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: Stack(
         children: [
           // Background Image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background.png'),
-                fit: BoxFit.cover,
-              ),
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/registerBG.png',
+              fit: BoxFit.cover,
             ),
           ),
           // Content
@@ -81,22 +79,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: screenSize.width * 0.1, // Responsive padding
+                  horizontal: screenSize.width * 0.13, // Adjusted padding
                 ),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     children: [
                       // Logo
-                      Image.asset(
-                        'assets/images/Logo.png',
-                        height:
-                            screenSize.height * 0.1, // Responsive logo height
+                      Center(
+                        child: 
+                      SvgPicture.asset(
+                        'assets/images/Logo_Black.svg',
+                        height: screenSize.height * 0.2, // Adjusted logo height
                         fit: BoxFit.contain,
-                      ),
+                      ),),
                       SizedBox(
-                          height:
-                              screenSize.height * 0.03), // Responsive spacing
+                          height: screenSize.height * 0.001), // Spacing below logo
                       // Input Fields
                       CustomInputField(
                         hintText: 'Your Name',
@@ -139,8 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 value, _passwordController.text),
                       ),
                       SizedBox(
-                          height:
-                              screenSize.height * 0.03), // Responsive spacing
+                          height: screenSize.height * 0.03), // Spacing before button
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {
@@ -176,19 +173,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     screenSize.width *
-                                        0.03), // Responsive border radius
+                                        0.02), // Button border radius
                               ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: screenSize.width *
-                                    0.2, // Responsive padding
+                                    0.2, // Button padding
                                 vertical: screenSize.height * 0.02,
                               ),
                             ),
                             child: Text(
                               'Create',
                               style: TextStyle(
-                                fontSize: screenSize.width *
-                                    0.05, // Responsive text size
+                                fontSize: screenSize.width * 0.05,
+                                color: Colors.white, // Button text color
                               ),
                             ),
                           );
