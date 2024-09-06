@@ -357,14 +357,19 @@ class _HomeScreenState extends State<HomeScreen>
                                       height: screenSize.height * 0.03,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFEFEFEF),
+                                          color: filterIndex.contains(index)
+                                              ? Color(0xFF403D3D)
+                                              : Color(0xFFEFEFEF),
                                           borderRadius: BorderRadius.circular(
                                               screenSize.width * 0.02),
                                         ),
                                         child: SizedBox(
                                           width: screenSize.width * 0.21,
                                           child: Chip(
-                                            backgroundColor: Color(0xFFEFEFEF),
+                                            backgroundColor:
+                                                filterIndex.contains(index)
+                                                    ? Color(0xFF403D3D)
+                                                    : Color(0xFFEFEFEF),
                                             padding: EdgeInsets.only(
                                                 bottom:
                                                     screenSize.height * 0.015),
@@ -374,7 +379,10 @@ class _HomeScreenState extends State<HomeScreen>
                                                 style: GoogleFonts.poppins(
                                                   fontSize:
                                                       screenSize.width * 0.023,
-                                                  color: Color(0xFF9A9A9A),
+                                                  color: filterIndex
+                                                          .contains(index)
+                                                      ? Color(0xFFFFFFFF)
+                                                      : Color(0xFF9A9A9A),
                                                 ),
                                               ),
                                             ),
@@ -385,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen>
                                               side: BorderSide(
                                                 color:
                                                     filterIndex.contains(index)
-                                                        ? Color(0xFF937974)
+                                                        ? Color(0xFF403D3D)
                                                         : Color(0xFFEFEFEF),
                                                 width: screenSize.width * 0.002,
                                               ),
