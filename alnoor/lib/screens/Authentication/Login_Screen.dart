@@ -129,6 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Login',
                             style: TextStyle(
                               fontSize: screenSize.width * 0.05,
+                              color: Colors.white
                             ),
                           ),
                         ),
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             "Don't have an account? Register here",
                             style: TextStyle(
-                              color: Colors.black87,
+                              color: Colors.black,
                               fontSize: screenSize.width * 0.045,
                             ),
                           ),

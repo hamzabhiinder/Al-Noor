@@ -21,30 +21,40 @@ class CustomInputField extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.01),
+      padding: EdgeInsets.symmetric(
+        vertical: screenSize.height * 0.007, // Adjusting vertical spacing
+      ),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(fontSize: screenSize.width * 0.045),
+          hintStyle: TextStyle(
+            fontSize: screenSize.width * 0.045, // Adjusting font size
+          ),
           prefixIcon: Padding(
-            padding: EdgeInsets.all(screenSize.width * 0.03),
+            padding: EdgeInsets.only(
+              left: screenSize.width * 0.04, // Adjusting left padding for icon
+              right: screenSize.width * 0.03,
+            ),
             child: Image.asset(
               iconAssetPath,
-              width: screenSize.width * 0.06,
-              height: screenSize.width * 0.06,
+              width: screenSize.width * 0.065, // Adjusting icon width
+              height: screenSize.width * 0.065, // Adjusting icon height
             ),
           ),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.8),
+          fillColor: Colors.white.withOpacity(0.85), // Adjust opacity
+          contentPadding: EdgeInsets.symmetric(
+            vertical: screenSize.height * 0.02, // Add vertical padding inside field
+          ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(screenSize.width * 0.025),
+            borderRadius: BorderRadius.circular(screenSize.width * 0.03), // Slightly more rounded
             borderSide: BorderSide.none,
           ),
         ),
         validator: validator,
-        style: TextStyle(fontSize: screenSize.width * 0.045),
+        style: TextStyle(fontSize: screenSize.width * 0.045), // Adjust text style
       ),
     );
   }

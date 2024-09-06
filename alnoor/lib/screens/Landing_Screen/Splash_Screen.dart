@@ -24,8 +24,8 @@ class StartScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/background.png'),
-                fit: BoxFit.cover,
+                image: AssetImage('assets/images/BGg.png'),
+                fit: BoxFit.fill,
               ),
             ),
           ),
@@ -41,10 +41,10 @@ class StartScreen extends StatelessWidget {
                   child: Image.asset('assets/images/Logo.png'),
                 ),
                 SizedBox(
-                    height: screenSize.height * 0.05), // Responsive spacing
+                    height: screenSize.height * 0.035), // Responsive spacing
                 // Buttons
                 SizedBox(
-                  width: screenSize.width * 0.8, // Responsive button width
+                  width: screenSize.width * 0.5, // Responsive button width
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -72,7 +72,7 @@ class StartScreen extends StatelessWidget {
                     child: FittedBox(
                       child: Text(
                         'LOG IN AS ALNOOR USER',
-                        style: TextStyle(fontSize: screenSize.width * 0.05),
+                        style: TextStyle(fontSize: screenSize.width * 0.035,),
                       ),
                     ),
                   ),
@@ -80,7 +80,7 @@ class StartScreen extends StatelessWidget {
                 SizedBox(
                     height: screenSize.height * 0.02), // Responsive spacing
                 SizedBox(
-                  width: screenSize.width * 0.8, // Responsive button width
+                  width: screenSize.width * 0.5, // Responsive button width
                   child: ElevatedButton(
                     onPressed: () async {
                       await _onGuestButtonPressed(context);
@@ -100,13 +100,13 @@ class StartScreen extends StatelessWidget {
                     child: FittedBox(
                       child: Text(
                         'LOG IN AS GUEST USER',
-                        style: TextStyle(fontSize: screenSize.width * 0.05),
+                        style: TextStyle(fontSize: screenSize.width * 0.035),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(
-                    height: screenSize.height * 0.02), // Responsive spacing
+                    height: screenSize.height * 0.01), // Responsive spacing
                 // Create new account link
                 TextButton(
                   onPressed: () {
@@ -130,7 +130,7 @@ class StartScreen extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: screenSize.width *
-                                0.045, // Responsive font size
+                                0.03, // Responsive font size
                           ),
                         ),
                       ),
@@ -140,7 +140,7 @@ class StartScreen extends StatelessWidget {
                       Container(
                         height: 1, // Height of the underline
                         width: screenSize.width *
-                            0.45, // Responsive underline width
+                            0.35, // Responsive underline width
                         color: Colors.white, // Color of the underline
                       ),
                     ],
