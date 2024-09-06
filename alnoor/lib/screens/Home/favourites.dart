@@ -39,12 +39,12 @@ class Favourites extends StatefulWidget {
 }
 
 class _FavouritesState extends State<Favourites> {
-  String _searchText = '';
   FocusNode _focusNode = FocusNode();
   int currentPage = 0;
   late PageController _pageController;
   int filterIndex = 0;
   late ValueNotifier<bool> _isMenuVisibleNotifier;
+  TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -68,7 +68,9 @@ class _FavouritesState extends State<Favourites> {
       print("seven");
       filterIndex = 0;
     });
-    context.read<FavouriteBloc>().add(LoadFavourites(search: _searchText));
+    context
+        .read<FavouriteBloc>()
+        .add(LoadFavourites(search: _textController.text));
     _focusNode.unfocus();
   }
 
@@ -170,6 +172,7 @@ class _FavouritesState extends State<Favourites> {
 
   Widget _buildMainContent(
       double screenWidth, double screenHeight, BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       child: Column(
@@ -181,13 +184,10 @@ class _FavouritesState extends State<Favourites> {
               Container(
                 height: screenHeight * 0.035,
                 child: TextField(
+                  controller: _textController,
                   focusNode: _focusNode,
                   onChanged: (text) {
-                    setState(() {
-                      print("twelve");
-                      _searchText = text;
-                    });
-                    if (_searchText.isEmpty) {
+                    if (_textController.text.isEmpty) {
                       _onSearchSubmit();
                     }
                   },
@@ -195,6 +195,18 @@ class _FavouritesState extends State<Favourites> {
                     _onSearchSubmit();
                   },
                   decoration: InputDecoration(
+                    suffixIcon: _textController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.close,
+                                size: screenSize.width * 0.04),
+                            onPressed: () {
+                              setState(() {
+                                _textController.text = "";
+                              });
+                              _onSearchSubmit(); // Optionally call this if you want to trigger the search when clearing the text
+                            },
+                          )
+                        : null,
                     filled: true,
                     fillColor: Color(0xFFEFEFEF),
                     border: OutlineInputBorder(
@@ -208,7 +220,7 @@ class _FavouritesState extends State<Favourites> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              if (!_focusNode.hasFocus && _searchText.isEmpty)
+              if (!_focusNode.hasFocus && _textController.text.isEmpty)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

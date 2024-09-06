@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
+import 'package:alnoor/blocs/subcategory_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
@@ -24,15 +25,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin<HomeScreen> {
-  int filterIndex = -1;
+  var filterIndex = [];
   int currentPage = 0;
   late PageController _pageController;
   late List<String?> imagesInContainer1;
   late List<String?> imagesInContainer2;
-  String _searchText = '';
   FocusNode _focusNode = FocusNode();
   bool isGuestUser = true; // Default to true; will be updated later
   late ValueNotifier<bool> _isMenuVisibleNotifier;
+  TextEditingController _textController = TextEditingController();
+  var categories = [];
+  var subcategories = [];
+  var selectedSubcategories = [];
+  var subcatIndex = [];
 
   @override
   void initState() {
@@ -40,7 +45,10 @@ class _HomeScreenState extends State<HomeScreen>
     _pageController = PageController(initialPage: currentPage);
     _loadUserStatus(); // Load the guest user status
     context.read<CategoryBloc>().add(LoadCategories());
-    context.read<ProductBloc>().add(LoadProducts(search: "", category: ""));
+    context
+        .read<ProductBloc>()
+        .add(LoadProducts(search: "", categories: [], subcategories: []));
+    context.read<SubcategoryBloc>().add(LoadSubcategories());
     imagesInContainer1 = List<String?>.filled(2, null);
     imagesInContainer2 = List<String?>.filled(4, null);
     _focusNode.addListener(() {
@@ -151,6 +159,36 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildMainContent(Size screenSize, BuildContext context) {
+    void fetch(categories) {
+      List<dynamic> subCategoryIds =
+          selectedSubcategories.map((item) => item.sub_category_id).toList();
+
+      print("one");
+      print(subCategoryIds);
+      context.read<ProductBloc>().add(
+            LoadProducts(
+              search: "",
+              categories: categories,
+              subcategories: subCategoryIds,
+            ),
+          );
+    }
+
+    void fetch2(subcategoriesprovided) {
+      List<dynamic> subCategoryIds =
+          subcategoriesprovided.map((item) => item.sub_category_id).toList();
+
+      print("two");
+      print(subCategoryIds);
+      context.read<ProductBloc>().add(
+            LoadProducts(
+              search: "",
+              categories: categories,
+              subcategories: subCategoryIds,
+            ),
+          );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
@@ -167,13 +205,10 @@ class _HomeScreenState extends State<HomeScreen>
                         Container(
                           height: screenSize.height * 0.035,
                           child: TextField(
+                            controller: _textController,
                             focusNode: _focusNode,
                             onChanged: (text) {
-                              setState(() {
-                                print("twentythree");
-                                _searchText = text;
-                              });
-                              if (_searchText.isEmpty) {
+                              if (_textController.text.isEmpty) {
                                 _onSearchSubmit();
                               }
                             },
@@ -188,6 +223,18 @@ class _HomeScreenState extends State<HomeScreen>
                                     screenSize.width * 0.02),
                                 borderSide: BorderSide.none,
                               ),
+                              suffixIcon: _textController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(Icons.close,
+                                          size: screenSize.width * 0.04),
+                                      onPressed: () {
+                                        setState(() {
+                                          _textController.text = "";
+                                        });
+                                        _onSearchSubmit(); // Optionally call this if you want to trigger the search when clearing the text
+                                      },
+                                    )
+                                  : null,
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: screenSize.width * 0.025),
                             ),
@@ -197,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen>
                             textAlign: TextAlign.left,
                           ),
                         ),
-                        if (!_focusNode.hasFocus && _searchText.isEmpty)
+                        if (!_focusNode.hasFocus &&
+                            _textController.text.isEmpty)
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -281,12 +329,29 @@ class _HomeScreenState extends State<HomeScreen>
                                     onTap: () => {
                                           setState(() {
                                             print("twentyfive");
-                                            filterIndex = index;
-                                          }),
-                                          context.read<ProductBloc>().add(
-                                              LoadProducts(
-                                                  search: "",
-                                                  category: category.id))
+                                            if (!filterIndex.contains(index)) {
+                                              fetch(
+                                                  [...categories, category.id]);
+                                              filterIndex =
+                                                  List.from(filterIndex)
+                                                    ..add(index);
+                                              categories = List.from(categories)
+                                                ..add(category.id);
+                                            } else {
+                                              fetch(categories
+                                                  .where((catId) =>
+                                                      catId != category.id)
+                                                  .toList());
+                                              categories = categories
+                                                  .where((catId) =>
+                                                      catId != category.id)
+                                                  .toList();
+                                              filterIndex = filterIndex
+                                                  .where((filterId) =>
+                                                      filterId != index)
+                                                  .toList();
+                                            }
+                                          })
                                         },
                                     child: SizedBox(
                                       height: screenSize.height * 0.03,
@@ -318,9 +383,10 @@ class _HomeScreenState extends State<HomeScreen>
                                                   BorderRadius.circular(
                                                       screenSize.width * 0.01),
                                               side: BorderSide(
-                                                color: index == filterIndex
-                                                    ? Color(0xFF937974)
-                                                    : Color(0xFFEFEFEF),
+                                                color:
+                                                    filterIndex.contains(index)
+                                                        ? Color(0xFF937974)
+                                                        : Color(0xFFEFEFEF),
                                                 width: screenSize.width * 0.002,
                                               ),
                                             ),
@@ -331,9 +397,117 @@ class _HomeScreenState extends State<HomeScreen>
                               }).toList(),
                             ),
                           ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: screenSize.height * 0.01,
+                            ),
+                            child:
+                                BlocBuilder<SubcategoryBloc, SubcategoryState>(
+                              builder: (context, state) {
+                                if (state is SubcategoryLoading) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (state is SubcategoryError) {
+                                  return Center(child: Text(state.message));
+                                } else if (state is SubcategoryLoaded) {
+                                  List<dynamic> full = [];
+                                  for (int i in filterIndex) {
+                                    full.addAll(state.subcategories[i]);
+                                  }
+                                  subcategories = full;
+                                  if (filterIndex != [] &&
+                                      subcategories.isNotEmpty) {
+                                    return SizedBox(
+                                      height: screenSize.height * 0.014,
+                                      child: Center(
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: subcategories
+                                                .asMap()
+                                                .entries
+                                                .map<Widget>((entry) {
+                                              int index = entry.key;
+                                              var subcategory = entry.value;
+                                              return GestureDetector(
+                                                onTap: () => {
+                                                  setState(() {
+                                                    print("twentyfive");
+                                                    if (!selectedSubcategories
+                                                        .contains(
+                                                            subcategory)) {
+                                                      fetch2([
+                                                        ...selectedSubcategories,
+                                                        subcategory
+                                                      ]);
+                                                      selectedSubcategories =
+                                                          List.from(
+                                                              selectedSubcategories)
+                                                            ..add(subcategory);
+                                                      subcatIndex = [
+                                                        ...subcatIndex,
+                                                        index
+                                                      ];
+                                                    } else {
+                                                      fetch2(
+                                                          selectedSubcategories
+                                                              .where((catId) =>
+                                                                  catId !=
+                                                                  subcategory)
+                                                              .toList());
+                                                      selectedSubcategories =
+                                                          selectedSubcategories
+                                                              .where((catId) =>
+                                                                  catId !=
+                                                                  subcategory)
+                                                              .toList();
+                                                      subcatIndex = subcatIndex
+                                                          .where(
+                                                              (indexElement) =>
+                                                                  indexElement !=
+                                                                  index)
+                                                          .toList();
+                                                    }
+                                                  })
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 8),
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    subcategory
+                                                        .sub_category_name,
+                                                    style: TextStyle(
+                                                      color: subcatIndex
+                                                              .contains(index)
+                                                          ? Color(0xFF403D3D)
+                                                          : Color(0xFF9A9A9A),
+                                                      fontSize:
+                                                          screenSize.width *
+                                                              0.023,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    // Return an empty widget when the list is empty
+                                    return SizedBox();
+                                  }
+                                }
+                                // Handle any unhandled states
+                                return Text("Unhandled State");
+                              },
+                            ),
+                          ),
                           SizedBox(
                               height: screenSize.height *
-                                  (isGuestUser ? 0.013 : 0.0125)),
+                                  (isGuestUser ? 0.014 : 0.0126)),
                           Expanded(
                             child: BlocBuilder<ProductBloc, ProductState>(
                               builder: (context, state) {
@@ -376,11 +550,10 @@ class _HomeScreenState extends State<HomeScreen>
   void _onSearchSubmit() {
     setState(() {
       print("twentysix");
-      filterIndex = -1;
+      filterIndex = [];
     });
-    context
-        .read<ProductBloc>()
-        .add(LoadProducts(search: _searchText, category: ""));
+    context.read<ProductBloc>().add(LoadProducts(
+        search: _textController.text, categories: [], subcategories: []));
     _focusNode.unfocus();
   }
 

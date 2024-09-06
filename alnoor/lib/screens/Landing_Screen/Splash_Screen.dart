@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../blocs/register_bloc.dart';
 import '../../repositories/register_repository.dart';
 import '../Authentication/Register_Screen.dart';
+import 'package:alnoor/utils/globals.dart' as globals;
 
 class StartScreen extends StatelessWidget {
   @override
@@ -163,7 +164,7 @@ class StartScreen extends StatelessWidget {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isGuestUser', true);
-
+    globals.freshLogin = 'true';
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -79,7 +79,7 @@ class _ProductGridState extends State<ProductGrid> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+                    mainAxisSpacing: 6,
                   ),
                   itemCount: pageProducts.length,
                   itemBuilder: (context, index) {

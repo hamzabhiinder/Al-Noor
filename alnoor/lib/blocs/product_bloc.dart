@@ -9,9 +9,13 @@ abstract class ProductEvent {}
 
 class LoadProducts extends ProductEvent {
   final String search;
-  final String category;
+  final List<dynamic> categories;
+  final List<dynamic> subcategories;
 
-  LoadProducts({required this.search, required this.category});
+  LoadProducts(
+      {required this.search,
+      required this.categories,
+      required this.subcategories});
 }
 
 // States
@@ -43,8 +47,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       LoadProducts event, Emitter<ProductState> emit) async {
     emit(ProductLoading());
     try {
-      final products =
-          await repository.fetchProducts(event.search, event.category);
+      final products = await repository.fetchProducts(
+          event.search, event.categories, event.subcategories);
       emit(ProductLoaded(products));
     } catch (e) {
       emit(ProductError('Failed to load categories'));

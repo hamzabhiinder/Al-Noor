@@ -1,8 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-
+import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,8 @@ class FourImageScreen extends StatefulWidget {
 class _FourImageScreenState extends State<FourImageScreen> {
   List<String?> images = List.generate(4, (index) => null);
 
+  bool _isVisible = true;
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +27,12 @@ class _FourImageScreenState extends State<FourImageScreen> {
     images[1] = ImageManager().getImage(4);
     images[2] = ImageManager().getImage(5);
     images[3] = ImageManager().getImage(6);
+    Timer(Duration(seconds: 4), () {
+      setState(() {
+        _isVisible = false;
+      });
+      globals.freshLogin = 'false';
+    });
   }
 
   @override
@@ -39,37 +48,44 @@ class _FourImageScreenState extends State<FourImageScreen> {
         return false;
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            GridView.builder(
-              itemCount: 4,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: MediaQuery.of(context).size.width /
-                    MediaQuery.of(context).size.height,
-              ),
-              itemBuilder: (context, index) {
-                return _buildDraggableImageContainer(context, index);
+          body: Stack(
+        children: [
+          GridView.builder(
+            itemCount: 4,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: MediaQuery.of(context).size.width /
+                  MediaQuery.of(context).size.height,
+            ),
+            itemBuilder: (context, index) {
+              return _buildDraggableImageContainer(context, index);
+            },
+          ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: IconButton(
+              icon: Icon(Icons.close, color: Colors.black, size: 30),
+              onPressed: () {
+                Navigator.of(context).pop([
+                  images[0],
+                  images[1],
+                  images[2],
+                  images[3],
+                ]);
               },
             ),
-            Positioned(
-              top: 20,
-              right: 20,
-              child: IconButton(
-                icon: Icon(Icons.close, color: Colors.black, size: 30),
-                onPressed: () {
-                  Navigator.of(context).pop([
-                    images[0],
-                    images[1],
-                    images[2],
-                    images[3],
-                  ]);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+          if (globals.freshLogin ==
+              'true') // Replace `yourCondition` with your actual condition
+            Center(
+              child: _isVisible
+                  ? Image.asset(
+                      'assets/images/animation.gif') // Replace with your GIF asset path
+                  : Container(), // Empty container when GIF is not visible
+            )
+        ],
+      )),
     );
   }
 

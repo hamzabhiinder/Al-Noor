@@ -3,16 +3,26 @@ import 'package:http/http.dart' as http;
 import '../models/product.dart';
 
 class ProductRepository {
-  Future<List<Product>> fetchProducts(search, category) async {
+  Future<List<Product>> fetchProducts(search, categories, subcategories) async {
     var response = null;
     if (search != "") {
       response = await http
           .get(Uri.parse("https://alnoormdf.com/alnoor/search/${search}"))
           .timeout(Duration(seconds: 60));
-    } else if (category != "") {
-      response = await http
-          .get(Uri.parse("https://alnoormdf.com/api/products?c_id=${category}"))
-          .timeout(Duration(seconds: 60));
+    } else if (categories.length != 0) {
+      if (subcategories.length != 0) {
+        print(
+            "https://alnoormdf.com/api/products?c_id=${categories.join(',')}&sc_id=${subcategories.join(',')}");
+        response = await http
+            .get(Uri.parse(
+                "https://alnoormdf.com/api/products?c_id=${categories.join(',')}&sc_id=${subcategories.join(',')}"))
+            .timeout(Duration(seconds: 60));
+      } else {
+        response = await http
+            .get(Uri.parse(
+                "https://alnoormdf.com/api/products?c_id=${categories.join(',')}"))
+            .timeout(Duration(seconds: 60));
+      }
     } else {
       response = await http
           .get(Uri.parse('https://alnoormdf.com/alnoor/all-products'))
