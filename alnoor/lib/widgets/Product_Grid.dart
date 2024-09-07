@@ -1,10 +1,13 @@
+import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/models/product.dart';
 import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:alnoor/widgets/Paginator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../screens/Home/show_product.dart';
+import 'package:alnoor/utils/globals.dart' as globals;
 
 class ProductGrid extends StatefulWidget {
   final List<Product> products;
@@ -265,14 +268,32 @@ class _ProductGridState extends State<ProductGrid> {
                   widget.totalPages, currentPage, _pageController, context),
               IconButton(
                 icon: Icon(Icons.chevron_right),
-                onPressed: currentPage < widget.totalPages - 1
-                    ? () {
-                        _pageController.nextPage(
+                onPressed: () {
+                  if (!widget.isFavourites) {
+                    if (globals.categories.length != 0 &&
+                        globals.done != true) {
+                      List<dynamic> subCategoryIds = globals
+                          .selectedSubcategories
+                          .map((item) => item.sub_category_id)
+                          .toList();
+                      context.read<ProductBloc>().add(
+                            LoadPages(
+                              search: "",
+                              categories: globals.categories,
+                              subcategories: subCategoryIds,
+                            ),
+                          );
+
+                      globals.page = globals.page + 1;
+                    }
+                  }
+                  currentPage < widget.totalPages - 1
+                      ? (_pageController.nextPage(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                        );
-                      }
-                    : null,
+                        ))
+                      : ();
+                },
               ),
             ],
           ),

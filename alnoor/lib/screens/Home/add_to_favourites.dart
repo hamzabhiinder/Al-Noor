@@ -52,9 +52,11 @@ class _AddToFavouritesState extends State<AddToFavourites> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: screenWidth * 0.125,
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: GestureDetector(
@@ -66,16 +68,16 @@ class _AddToFavouritesState extends State<AddToFavourites> {
           },
           child: SvgPicture.asset(
             'assets/images/Logo_Black.svg',
-            width: 47,
-            height: 47,
+            width: screenWidth * 0.14,
+            height: screenWidth * 0.14,
           ),
         ),
         actions: [
           IconButton(
             icon: SvgPicture.asset(
               'assets/images/menu.svg',
-              width: 30,
-              height: 30,
+              width: screenWidth * 0.065,
+              height: screenWidth * 0.065,
             ),
             onPressed: _toggleMenu,
           ),

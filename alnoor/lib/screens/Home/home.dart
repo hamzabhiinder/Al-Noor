@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:alnoor/blocs/category_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/Product_Grid.dart';
 import '../../widgets/menu.dart';
+import 'package:alnoor/utils/globals.dart' as globals;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -34,10 +36,9 @@ class _HomeScreenState extends State<HomeScreen>
   bool isGuestUser = true; // Default to true; will be updated later
   late ValueNotifier<bool> _isMenuVisibleNotifier;
   TextEditingController _textController = TextEditingController();
-  var categories = [];
   var subcategories = [];
-  var selectedSubcategories = [];
   var subcatIndex = [];
+  var statevar = [];
 
   @override
   void initState() {
@@ -45,6 +46,9 @@ class _HomeScreenState extends State<HomeScreen>
     _pageController = PageController(initialPage: currentPage);
     _loadUserStatus(); // Load the guest user status
     context.read<CategoryBloc>().add(LoadCategories());
+    globals.products = [];
+    globals.page = 1;
+    globals.done = false;
     context
         .read<ProductBloc>()
         .add(LoadProducts(search: "", categories: [], subcategories: []));
@@ -94,14 +98,15 @@ class _HomeScreenState extends State<HomeScreen>
           },
           child: Scaffold(
             appBar: AppBar(
+              toolbarHeight: screenSize.width * 0.125,
               elevation: 0,
               backgroundColor: Colors.transparent,
               leading: GestureDetector(
                 onTap: () {},
                 child: SvgPicture.asset(
                   'assets/images/Logo_Black.svg',
-                  width: screenSize.width * 0.12,
-                  height: screenSize.width * 0.12,
+                  width: screenSize.width * 0.14,
+                  height: screenSize.width * 0.14,
                 ),
               ),
               actions: [
@@ -109,8 +114,8 @@ class _HomeScreenState extends State<HomeScreen>
                   IconButton(
                     icon: SvgPicture.asset(
                       'assets/images/menu.svg',
-                      width: screenSize.width * 0.07,
-                      height: screenSize.width * 0.07,
+                      width: screenSize.width * 0.065,
+                      height: screenSize.width * 0.065,
                     ),
                     onPressed: () {
                       _isMenuVisibleNotifier.value =
@@ -160,8 +165,12 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildMainContent(Size screenSize, BuildContext context) {
     void fetch(categories) {
-      List<dynamic> subCategoryIds =
-          selectedSubcategories.map((item) => item.sub_category_id).toList();
+      List<dynamic> subCategoryIds = globals.selectedSubcategories
+          .map((item) => item.sub_category_id)
+          .toList();
+      globals.page = 1;
+      globals.products = [];
+      globals.done = false;
       context.read<ProductBloc>().add(
             LoadProducts(
               search: "",
@@ -174,10 +183,13 @@ class _HomeScreenState extends State<HomeScreen>
     void fetch2(subcategoriesprovided) {
       List<dynamic> subCategoryIds =
           subcategoriesprovided.map((item) => item.sub_category_id).toList();
+      globals.page = 1;
+      globals.products = [];
+      globals.done = false;
       context.read<ProductBloc>().add(
             LoadProducts(
               search: "",
-              categories: categories,
+              categories: globals.categories,
               subcategories: subCategoryIds,
             ),
           );
@@ -324,19 +336,29 @@ class _HomeScreenState extends State<HomeScreen>
                                           setState(() {
                                             print("twentyfive");
                                             if (!filterIndex.contains(index)) {
-                                              fetch(
-                                                  [...categories, category.id]);
+                                              fetch([
+                                                ...globals.categories,
+                                                category.id
+                                              ]);
                                               filterIndex =
                                                   List.from(filterIndex)
                                                     ..add(index);
-                                              categories = List.from(categories)
-                                                ..add(category.id);
+                                              globals.categories =
+                                                  List.from(globals.categories)
+                                                    ..add(category.id);
                                             } else {
-                                              fetch(categories
+                                              globals.selectedSubcategories =
+                                                  globals.selectedSubcategories
+                                                      .where((item) =>
+                                                          !statevar[index]
+                                                              .contains(item))
+                                                      .toList();
+                                              fetch(globals.categories
                                                   .where((catId) =>
                                                       catId != category.id)
                                                   .toList());
-                                              categories = categories
+                                              globals.categories = globals
+                                                  .categories
                                                   .where((catId) =>
                                                       catId != category.id)
                                                   .toList();
@@ -413,6 +435,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   return Center(child: Text(state.message));
                                 } else if (state is SubcategoryLoaded) {
                                   List<dynamic> full = [];
+                                  statevar = state.subcategories;
                                   for (int i in filterIndex) {
                                     full.addAll(state.subcategories[i]);
                                   }
@@ -420,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   if (filterIndex != [] &&
                                       subcategories.isNotEmpty) {
                                     return SizedBox(
-                                      height: screenSize.height * 0.014,
+                                      height: screenSize.height * 0.015,
                                       child: Center(
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
@@ -436,30 +459,33 @@ class _HomeScreenState extends State<HomeScreen>
                                                 onTap: () => {
                                                   setState(() {
                                                     print("twentyfive");
-                                                    if (!selectedSubcategories
+                                                    if (!globals
+                                                        .selectedSubcategories
                                                         .contains(
                                                             subcategory)) {
                                                       fetch2([
-                                                        ...selectedSubcategories,
+                                                        ...globals
+                                                            .selectedSubcategories,
                                                         subcategory
                                                       ]);
-                                                      selectedSubcategories =
-                                                          List.from(
-                                                              selectedSubcategories)
+                                                      globals.selectedSubcategories =
+                                                          List.from(globals
+                                                              .selectedSubcategories)
                                                             ..add(subcategory);
                                                       subcatIndex = [
                                                         ...subcatIndex,
                                                         index
                                                       ];
                                                     } else {
-                                                      fetch2(
-                                                          selectedSubcategories
-                                                              .where((catId) =>
-                                                                  catId !=
-                                                                  subcategory)
-                                                              .toList());
-                                                      selectedSubcategories =
-                                                          selectedSubcategories
+                                                      fetch2(globals
+                                                          .selectedSubcategories
+                                                          .where((catId) =>
+                                                              catId !=
+                                                              subcategory)
+                                                          .toList());
+                                                      globals.selectedSubcategories =
+                                                          globals
+                                                              .selectedSubcategories
                                                               .where((catId) =>
                                                                   catId !=
                                                                   subcategory)
@@ -554,6 +580,9 @@ class _HomeScreenState extends State<HomeScreen>
       print("twentysix");
       filterIndex = [];
     });
+    globals.page = 1;
+    globals.products = [];
+    globals.done = false;
     context.read<ProductBloc>().add(LoadProducts(
         search: _textController.text, categories: [], subcategories: []));
     _focusNode.unfocus();

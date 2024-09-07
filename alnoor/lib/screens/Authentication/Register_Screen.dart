@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/validators.dart';
 import '../../widgets/Input_Field.dart';
-import '../Home/home.dart'; // Import the HomeScreen
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -86,14 +85,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       // Logo
-                    
+
                       SvgPicture.asset(
                         'assets/images/Logo_Black.svg',
                         height: screenSize.height * 0.2, // Adjusted logo height
                         fit: BoxFit.contain,
                       ),
                       SizedBox(
-                          height: screenSize.height * 0.01), // Spacing below logo
+                          height:
+                              screenSize.height * 0.01), // Spacing below logo
                       // Input Fields
                       CustomInputField(
                         hintText: 'Your Name',
@@ -136,7 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 value, _passwordController.text),
                       ),
                       SizedBox(
-                          height: screenSize.height * 0.03), // Spacing before button
+                          height: screenSize.height *
+                              0.03), // Spacing before button
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {
@@ -175,8 +176,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         0.02), // Button border radius
                               ),
                               padding: EdgeInsets.symmetric(
-                                horizontal: screenSize.width *
-                                    0.2, // Button padding
+                                horizontal:
+                                    screenSize.width * 0.2, // Button padding
                                 vertical: screenSize.height * 0.02,
                               ),
                             ),

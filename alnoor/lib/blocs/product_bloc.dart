@@ -18,6 +18,17 @@ class LoadProducts extends ProductEvent {
       required this.subcategories});
 }
 
+class LoadPages extends ProductEvent {
+  final String search;
+  final List<dynamic> categories;
+  final List<dynamic> subcategories;
+
+  LoadPages(
+      {required this.search,
+      required this.categories,
+      required this.subcategories});
+}
+
 // States
 abstract class ProductState {}
 
@@ -41,6 +52,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc(this.repository) : super(ProductInitial()) {
     on<LoadProducts>(_onLoadProducts);
+    on<LoadPages>(_onLoadPages);
+  }
+
+  Future<void> _onLoadPages(LoadPages event, Emitter<ProductState> emit) async {
+    try {
+      final products = await repository.fetchProducts(
+          event.search, event.categories, event.subcategories);
+      emit(ProductLoaded(products));
+    } catch (e) {
+      emit(ProductError('Failed to load categories'));
+    }
   }
 
   Future<void> _onLoadProducts(

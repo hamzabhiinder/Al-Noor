@@ -113,6 +113,7 @@ class _FavouritesState extends State<Favourites> {
         },
         child: Scaffold(
           appBar: AppBar(
+            toolbarHeight: screenWidth * 0.125,
             elevation: 0,
             backgroundColor: Colors.transparent,
             leading: GestureDetector(
@@ -121,8 +122,8 @@ class _FavouritesState extends State<Favourites> {
               },
               child: SvgPicture.asset(
                 'assets/images/Logo_Black.svg',
-                width: screenWidth * 0.12,
-                height: screenWidth * 0.12,
+                width: screenWidth * 0.14,
+                height: screenWidth * 0.14,
               ),
             ),
             actions: [
@@ -131,8 +132,8 @@ class _FavouritesState extends State<Favourites> {
                 IconButton(
                   icon: SvgPicture.asset(
                     'assets/images/menu.svg',
-                    width: screenWidth * 0.08,
-                    height: screenWidth * 0.08,
+                    width: screenWidth * 0.065,
+                    height: screenWidth * 0.065,
                   ),
                   onPressed: () {
                     _isMenuVisibleNotifier.value =

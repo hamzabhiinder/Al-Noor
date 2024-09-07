@@ -1,71 +1,52 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
+import 'package:alnoor/utils/globals.dart' as globals;
 
 class ProductRepository {
-  Future<List<Product>> fetchProducts(String search, List<dynamic> categories,
-      List<dynamic> subcategories) async {
-    List<Product> allProducts = [];
-    int page = 1;
-    bool hasMorePages = true;
-
-    while (hasMorePages) {
-      http.Response? response;
-      if (search.isNotEmpty) {
+  Future<List<Product>> fetchProducts(search, categories, subcategories) async {
+    var response = null;
+    if (search != "") {
+      response = await http
+          .get(Uri.parse("https://alnoormdf.com/alnoor/search/${search}"))
+          .timeout(Duration(seconds: 60));
+      globals.done = true;
+    } else if (categories.length != 0) {
+      if (subcategories.length != 0) {
         response = await http
-            .get(Uri.parse("https://alnoormdf.com/alnoor/search/$search"))
+            .get(Uri.parse(
+                "https://alnoormdf.com/api/products?c_id=${categories.join(',')}&sc_id=${subcategories.join(',')}&page=${globals.page}"))
             .timeout(Duration(seconds: 60));
-        if (response.statusCode == 200) {
-          Map<String, dynamic> data = jsonDecode(response.body);
-          List<dynamic> productsJson = data['data'];
-
-          allProducts =
-              productsJson.map((product) => Product.fromJson(product)).toList();
-          hasMorePages = false;
-        }
-      } else if (categories.isNotEmpty) {
-        String url =
-            "https://alnoormdf.com/api/products?c_id=${categories.join(',')}&page=$page";
-
-        if (subcategories.isNotEmpty) {
-          url += "&sc_id=${subcategories.join(',')}";
-        }
-        response =
-            await http.get(Uri.parse(url)).timeout(Duration(seconds: 60));
-
-        if (response.statusCode == 200) {
-          Map<String, dynamic> data = jsonDecode(response.body);
-          List<dynamic> productsJson = data['data'];
-
-          if (productsJson.isNotEmpty) {
-            allProducts.addAll(productsJson
-                .map((product) => Product.fromJson(product))
-                .toList());
-            page++;
-          } else {
-            hasMorePages = false;
-          }
-        } else {
-          throw Exception('Failed to load products');
-        }
       } else {
         response = await http
-            .get(Uri.parse('https://alnoormdf.com/alnoor/all-products'))
+            .get(Uri.parse(
+                "https://alnoormdf.com/api/products?c_id=${categories.join(',')}&page=${globals.page}"))
             .timeout(Duration(seconds: 60));
-
-        if (response.statusCode == 200) {
-          Map<String, dynamic> data = jsonDecode(response.body);
-          List<dynamic> productsJson = data['data'];
-
-          allProducts =
-              productsJson.map((product) => Product.fromJson(product)).toList();
-          hasMorePages = false;
-        } else {
-          throw Exception('Failed to load products');
-        }
       }
+    } else {
+      response = await http
+          .get(Uri.parse('https://alnoormdf.com/alnoor/all-products'))
+          .timeout(Duration(seconds: 60));
+      globals.done = true;
     }
 
-    return allProducts;
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      List<dynamic> productsJson = data['data'];
+      if (productsJson
+              .map((product) => Product.fromJson(product))
+              .toList()
+              .length ==
+          0) {
+        globals.done = true;
+      }
+      globals.products = [
+        ...globals.products,
+        ...productsJson.map((product) => Product.fromJson(product)).toList()
+      ];
+      return globals.products;
+    } else {
+      throw Exception('Failed to load products');
+    }
   }
 }
