@@ -84,56 +84,67 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Center(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenSize.width * 0.1,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/Logo.png',
-                          height: screenSize.height * 0.1,
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(height: screenSize.height * 0.03),
-                        CustomInputField(
-                          hintText: 'Your Email Address',
-                          iconAssetPath: 'assets/images/email.png',
-                          controller: _emailController,
-                          validator: Validators.validateEmail,
-                        ),
-                        CustomInputField(
-                          hintText: 'Password',
-                          iconAssetPath: 'assets/images/Password.png',
-                          controller: _passwordController,
-                          obscureText: true,
-                          validator: Validators.validatePassword,
-                        ),
-                        SizedBox(height: screenSize.height * 0.03),
-                        ElevatedButton(
-                          onPressed: _onLoginButtonPressed,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  screenSize.width * 0.03),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenSize.width * 0.1,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/images/Logo.png',
+                              height: screenSize.height * 0.1,
+                              fit: BoxFit.contain,
                             ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: screenSize.width * 0.2,
-                              vertical: screenSize.height * 0.02,
+                            SizedBox(height: screenSize.height * 0.03),
+                            CustomInputField(
+                              hintText: 'Your Email Address',
+                              iconAssetPath: 'assets/images/email.png',
+                              controller: _emailController,
+                              validator: Validators.validateEmail,
                             ),
-                          ),
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                                fontSize: screenSize.width * 0.05,
-                                color: Colors.white),
-                          ),
+                            CustomInputField(
+                              hintText: 'Password',
+                              iconAssetPath: 'assets/images/Password.png',
+                              controller: _passwordController,
+                              obscureText: true,
+                              validator: Validators.validatePassword,
+                            ),
+                            SizedBox(height: screenSize.height * 0.03),
+                            ElevatedButton(
+                              onPressed: _onLoginButtonPressed,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.black87,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      screenSize.width * 0.03),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screenSize.width * 0.2,
+                                  vertical: screenSize.height * 0.01,
+                                ),
+                              ),
+                              child: Text(
+                                'Login',
+                                style: TextStyle(
+                                    fontSize: screenSize.width * 0.05,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: screenSize.height * 0.02),
-                        TextButton(
+                      ),
+                    ),
+                    // Separate padding for TextButton
+                    SizedBox(height: screenSize.height * 0.02),
+                    Padding(
+                      padding: EdgeInsets.only(top: screenSize.height * 0.01),
+                      child: Align(
+                        alignment: Alignment.center, // Centers the TextButton horizontally
+                        child: TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -149,9 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
