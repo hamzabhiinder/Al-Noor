@@ -17,7 +17,7 @@ class FourImageScreen extends StatefulWidget {
 
 class _FourImageScreenState extends State<FourImageScreen> {
   List<String?> images = List.generate(4, (index) => null);
-
+  Timer? _timer;
   bool _isVisible = true;
 
   @override
@@ -27,12 +27,18 @@ class _FourImageScreenState extends State<FourImageScreen> {
     images[1] = ImageManager().getImage(4);
     images[2] = ImageManager().getImage(5);
     images[3] = ImageManager().getImage(6);
-    Timer(Duration(seconds: 4), () {
+    _timer = Timer(Duration(seconds: 4), () {
       setState(() {
         _isVisible = false;
       });
       globals.freshLogin = 'false';
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Dispose of the Timer
+    super.dispose();
   }
 
   @override
