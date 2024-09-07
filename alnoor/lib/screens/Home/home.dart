@@ -162,9 +162,6 @@ class _HomeScreenState extends State<HomeScreen>
     void fetch(categories) {
       List<dynamic> subCategoryIds =
           selectedSubcategories.map((item) => item.sub_category_id).toList();
-
-      print("one");
-      print(subCategoryIds);
       context.read<ProductBloc>().add(
             LoadProducts(
               search: "",
@@ -177,9 +174,6 @@ class _HomeScreenState extends State<HomeScreen>
     void fetch2(subcategoriesprovided) {
       List<dynamic> subCategoryIds =
           subcategoriesprovided.map((item) => item.sub_category_id).toList();
-
-      print("two");
-      print(subCategoryIds);
       context.read<ProductBloc>().add(
             LoadProducts(
               search: "",
