@@ -55,8 +55,18 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final horizontalPadding = screenHeight * 0.065;
+    final spacing = screenHeight * 0.013;
+    final availableWidth = screenWidth - (horizontalPadding * 2);
+    final desiredItemSize = (screenHeight / 6) - (spacing * 4);
+    int crossAxisCount = (availableWidth / desiredItemSize).floor();
+    double itemHeight = (screenHeight / 6) - (spacing * 4);
+    double childAspectRatio = desiredItemSize / itemHeight;
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 0),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 0),
       child: Column(
         children: [
           Expanded(
@@ -96,9 +106,10 @@ class _ProductGridState extends State<ProductGrid> {
 
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 6,
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: spacing,
+                    mainAxisSpacing: spacing,
+                    childAspectRatio: childAspectRatio,
                   ),
                   itemCount: pageProducts.length,
                   itemBuilder: (context, index) {
