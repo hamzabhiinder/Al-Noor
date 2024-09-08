@@ -55,13 +55,21 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final horizontalPadding = screenHeight * 0.065;
+
+    // Calculate the available height for grid items and dynamic sizing
+    final horizontalPadding = screenWidth * 0.14;
     final spacing = screenHeight * 0.013;
-    final desiredItemSize = (screenHeight / 6) - (spacing * 4);
-    int crossAxisCount = 2;
-    double itemHeight = (screenHeight / 6) - (spacing * 4);
-    double childAspectRatio = desiredItemSize / itemHeight;
+    final availableHeight = screenHeight - (spacing * 7); // 4 rows + spacing
+    final availableWidth = screenWidth - (horizontalPadding * 2) - (spacing);
+
+    // Determine item size for a 2x4 grid
+    final desiredItemHeight = availableHeight / 4;
+    final desiredItemWidth = availableWidth / 2;
+    final itemSize = desiredItemHeight < desiredItemWidth
+        ? desiredItemHeight
+        : desiredItemWidth;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 0),
@@ -72,7 +80,7 @@ class _ProductGridState extends State<ProductGrid> {
               controller: _pageController,
               onPageChanged: (page) {
                 if (!widget.isFavourites) {
-                  if (globals.categories.length != 0 && globals.done != true) {
+                  if (globals.categories.isNotEmpty && !globals.done) {
                     List<dynamic> subCategoryIds = globals.selectedSubcategories
                         .map((item) => item.sub_category_id)
                         .toList();
@@ -88,7 +96,6 @@ class _ProductGridState extends State<ProductGrid> {
                   }
                 }
                 setState(() {
-                  print("thirtynine");
                   currentPage = page;
                 });
               },
@@ -104,10 +111,10 @@ class _ProductGridState extends State<ProductGrid> {
 
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
+                    crossAxisCount: 2, // Two items per row
                     crossAxisSpacing: spacing,
                     mainAxisSpacing: spacing,
-                    childAspectRatio: childAspectRatio,
+                    childAspectRatio: 1, // 1:1 ratio for square items
                   ),
                   itemCount: pageProducts.length,
                   itemBuilder: (context, index) {
@@ -127,18 +134,19 @@ class _ProductGridState extends State<ProductGrid> {
                                   return Image.asset(
                                     'assets/images/Logo.png',
                                     fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
+                                    width: itemSize,
+                                    height: itemSize,
                                   );
                                 }
                                 return Image(
                                   image: snapshot.data!,
                                   fit: BoxFit.cover,
-                                  width: 100,
-                                  height: 100,
+                                  width: itemSize,
+                                  height: itemSize,
                                 );
                               } else {
-                                return ImageSkeleton(width: 100, height: 100);
+                                return ImageSkeleton(
+                                    width: itemSize, height: itemSize);
                               }
                             },
                           ),
@@ -168,20 +176,19 @@ class _ProductGridState extends State<ProductGrid> {
                                       return Image.asset(
                                         'assets/images/Logo.png',
                                         fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
+                                        width: itemSize,
+                                        height: itemSize,
                                       );
                                     }
                                     return Image(
                                       image: snapshot.data!,
                                       fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
+                                      width: itemSize,
+                                      height: itemSize,
                                     );
                                   } else {
                                     return ImageSkeleton(
-                                        width: double.infinity,
-                                        height: double.infinity);
+                                        width: itemSize, height: itemSize);
                                   }
                                 },
                               ),
@@ -194,7 +201,7 @@ class _ProductGridState extends State<ProductGrid> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  width: 80,
+                                  width: itemSize * 0.6,
                                   child: Text(
                                     product.productName,
                                     style: TextStyle(
@@ -207,7 +214,7 @@ class _ProductGridState extends State<ProductGrid> {
                                   ),
                                 ),
                                 Container(
-                                  width: 80,
+                                  width: itemSize * 0.6,
                                   child: Text(
                                     product.productType,
                                     style: TextStyle(
@@ -295,8 +302,7 @@ class _ProductGridState extends State<ProductGrid> {
                 icon: Icon(Icons.chevron_right),
                 onPressed: () {
                   if (!widget.isFavourites) {
-                    if (globals.categories.length != 0 &&
-                        globals.done != true) {
+                    if (globals.categories.isNotEmpty && !globals.done) {
                       List<dynamic> subCategoryIds = globals
                           .selectedSubcategories
                           .map((item) => item.sub_category_id)
@@ -313,11 +319,11 @@ class _ProductGridState extends State<ProductGrid> {
                     }
                   }
                   currentPage < widget.totalPages - 1
-                      ? (_pageController.nextPage(
+                      ? _pageController.nextPage(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                        ))
-                      : ();
+                        )
+                      : null;
                 },
               ),
             ],
