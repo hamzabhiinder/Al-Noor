@@ -61,7 +61,7 @@ class _ProductGridState extends State<ProductGrid> {
     final spacing = screenHeight * 0.013;
     final availableWidth = screenWidth - (horizontalPadding * 2);
     final desiredItemSize = (screenHeight / 6) - (spacing * 4);
-    int crossAxisCount = (availableWidth / desiredItemSize).floor();
+    int crossAxisCount = 2;
     double itemHeight = (screenHeight / 6) - (spacing * 4);
     double childAspectRatio = desiredItemSize / itemHeight;
 
