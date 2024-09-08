@@ -137,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       SizedBox(
                           height: screenSize.height *
-                              0.03), // Spacing before button
+                              0.05), // Spacing before button
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {
@@ -169,16 +169,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return ElevatedButton(
                             onPressed: _register,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black87, // Button color
+                              backgroundColor: Color(0xff464444), // Button color
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     screenSize.width *
-                                        0.02), // Button border radius
+                                        0.01), // Button border radius
                               ),
                               padding: EdgeInsets.symmetric(
                                 horizontal:
                                     screenSize.width * 0.2, // Button padding
-                                vertical: screenSize.height * 0.02,
+                                vertical: screenSize.height * 0.01,
                               ),
                             ),
                             child: Text(

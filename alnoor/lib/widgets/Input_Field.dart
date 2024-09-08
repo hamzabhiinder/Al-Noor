@@ -46,10 +46,10 @@ class CustomInputField extends StatelessWidget {
           filled: true,
           fillColor: Colors.white.withOpacity(0.85), // Adjust opacity
           contentPadding: EdgeInsets.symmetric(
-            vertical: screenSize.height * 0.02, // Add vertical padding inside field
+            vertical: screenSize.height * 0.01 // Add vertical padding inside field
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(screenSize.width * 0.03), // Slightly more rounded
+            borderRadius: BorderRadius.circular(screenSize.width * 0.01), // Slightly more rounded
             borderSide: BorderSide.none,
           ),
         ),
