@@ -63,6 +63,22 @@ class _ProductGridState extends State<ProductGrid> {
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (page) {
+                if (!widget.isFavourites) {
+                  if (globals.categories.length != 0 && globals.done != true) {
+                    List<dynamic> subCategoryIds = globals.selectedSubcategories
+                        .map((item) => item.sub_category_id)
+                        .toList();
+                    context.read<ProductBloc>().add(
+                          LoadPages(
+                            search: "",
+                            categories: globals.categories,
+                            subcategories: subCategoryIds,
+                          ),
+                        );
+
+                    globals.page = globals.page + 1;
+                  }
+                }
                 setState(() {
                   print("thirtynine");
                   currentPage = page;
@@ -264,8 +280,8 @@ class _ProductGridState extends State<ProductGrid> {
                       }
                     : null,
               ),
-              ...buildPageIndicators(
-                  widget.totalPages, currentPage, _pageController, context),
+              ...buildPageIndicators(widget.totalPages, currentPage,
+                  _pageController, context, widget.isFavourites),
               IconButton(
                 icon: Icon(Icons.chevron_right),
                 onPressed: () {
