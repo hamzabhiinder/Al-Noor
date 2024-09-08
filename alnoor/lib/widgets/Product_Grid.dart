@@ -55,11 +55,9 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final horizontalPadding = screenHeight * 0.065;
     final spacing = screenHeight * 0.013;
-    final availableWidth = screenWidth - (horizontalPadding * 2);
     final desiredItemSize = (screenHeight / 6) - (spacing * 4);
     int crossAxisCount = 2;
     double itemHeight = (screenHeight / 6) - (spacing * 4);
