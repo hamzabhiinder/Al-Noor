@@ -357,8 +357,6 @@ class _FavouritesState extends State<Favourites> {
                       } else if (state is FavouriteError) {
                         return Center(child: Text(state.message));
                       } else if (state is FavouriteLoaded) {
-                        int totalPages =
-                            (state.favourites[filterIndex].length / 4).ceil();
                         if (state.favourites[filterIndex].length == 0) {
                           return Center(
                               child: Text("No Items In This Collection "));
@@ -373,8 +371,6 @@ class _FavouritesState extends State<Favourites> {
                                   : filterIndex == 2
                                       ? state.favourites[2]
                                       : state.favourites[3],
-                          totalPages: totalPages,
-                          itemsInAPage: 4,
                         );
                       } else {
                         return SizedBox.shrink();

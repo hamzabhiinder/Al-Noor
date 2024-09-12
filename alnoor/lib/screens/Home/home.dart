@@ -996,7 +996,7 @@ class _HomeScreenState extends State<HomeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Center(
-                          child: Container(
+                              child: Container(
                             child: Wrap(
                               spacing: screenSize.width * 0.02,
                               runSpacing: screenSize.height * 0.01,
@@ -1053,7 +1053,7 @@ class _HomeScreenState extends State<HomeScreen>
                                               screenSize.width * 0.02),
                                         ),
                                         child: SizedBox(
-                                          width: screenSize.width * 0.2,
+                                          width: screenSize.width * 0.21,
                                           child: Chip(
                                             backgroundColor:
                                                 filterIndex.contains(index)
@@ -1061,7 +1061,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                     : Color(0xFFEFEFEF),
                                             padding: EdgeInsets.only(
                                                 bottom:
-                                                    screenSize.height * 0.015),
+                                                    screenSize.height * 0.1),
                                             label: Center(
                                               child: Text(
                                                 category.name,
@@ -1090,12 +1090,10 @@ class _HomeScreenState extends State<HomeScreen>
                                           ),
                                         ),
                                       ),
-                                    )
-                                    );
+                                    ));
                               }).toList(),
                             ),
-                          )
-                          ),
+                          )),
                           Padding(
                             padding: EdgeInsets.only(
                               top: screenSize.height * 0.01,
@@ -1118,7 +1116,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   if (filterIndex != [] &&
                                       subcategories.isNotEmpty) {
                                     return SizedBox(
-                                      height: screenSize.height * 0.015,
+                                      height: screenSize.height * 0.02,
                                       child: Center(
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
@@ -1210,7 +1208,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                           SizedBox(
                               height: screenSize.height *
-                                  (isGuestUser ? 0.014 : 0.0126)),
+                                  (isGuestUser ? 0 : 0.0126)),
                           Expanded(
                             child: BlocBuilder<ProductBloc, ProductState>(
                               builder: (context, state) {
@@ -1220,14 +1218,10 @@ class _HomeScreenState extends State<HomeScreen>
                                 } else if (state is ProductError) {
                                   return Center(child: Text(state.message));
                                 } else if (state is ProductLoaded) {
-                                  int totalPages =
-                                      (state.products.length / 8).ceil();
                                   return ProductGrid(
                                     isGuestUser: isGuestUser,
                                     isFavourites: false,
                                     products: state.products,
-                                    totalPages: totalPages,
-                                    itemsInAPage: 8,
                                   );
                                 } else {
                                   return SizedBox.shrink();
