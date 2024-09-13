@@ -11,15 +11,21 @@ class SubcategoryRepository {
       if (response.statusCode == 200) {
         Map<String, dynamic> map = json.decode(response.body);
         List<dynamic> data = map["data"];
-        // Extract subcategory arrays from the original data
         List subcategories = data
             .where((item) => item is List)
             .map((subcategoryArray) => subcategoryArray
                 .map((item) => Subcategory.fromJson(item))
                 .toList())
             .toList();
+        List limitedSubcategories = subcategories.take(8).toList();
 
-        return subcategories.take(8).toList(); // Limit to the first 8 arrays
+        if (limitedSubcategories.length >= 8) {
+          var temp = limitedSubcategories[1];
+          limitedSubcategories[1] = limitedSubcategories[7];
+          limitedSubcategories[7] = temp;
+        }
+
+        return [[], [], [], [], [], [], [], limitedSubcategories[7]];
       } else {
         throw Exception('Failed to load categories');
       }

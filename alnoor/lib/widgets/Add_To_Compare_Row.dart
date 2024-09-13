@@ -105,7 +105,7 @@ class _AddToCompareRowState extends State<AddToCompareRow> {
     final iconSize = screenSize.width * 0.1;
 
     return Padding(
-      padding: EdgeInsets.only(top: screenSize.height * 0.01),
+      padding: EdgeInsets.symmetric(vertical: screenSize.height * 0.01),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

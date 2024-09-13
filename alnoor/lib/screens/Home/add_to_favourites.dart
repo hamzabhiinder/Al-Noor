@@ -66,27 +66,33 @@ class _AddToFavouritesState extends State<AddToFavourites> {
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           },
-          child: SvgPicture.asset(
-            'assets/images/Logo_Black.svg',
-            width: screenWidth * 0.14,
-            height: screenWidth * 0.14,
-          ),
+          child: Padding(
+              padding: EdgeInsets.only(left: screenWidth * 0.03),
+              child: SvgPicture.asset(
+                'assets/images/Logo_Black.svg',
+                width: screenWidth * 0.14,
+                height: screenWidth * 0.14,
+              )),
         ),
         actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/images/menu.svg',
-              width: screenWidth * 0.065,
-              height: screenWidth * 0.065,
+          Padding(
+            padding: EdgeInsets.only(
+                right: screenWidth * 0.02), // Adjust the value as needed
+            child: IconButton(
+              icon: SvgPicture.asset(
+                'assets/images/menu.svg',
+                width: screenWidth * 0.065,
+                height: screenWidth * 0.065,
+              ),
+              onPressed: _toggleMenu,
             ),
-            onPressed: _toggleMenu,
           ),
         ],
       ),
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

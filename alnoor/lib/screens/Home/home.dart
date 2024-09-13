@@ -770,39 +770,50 @@ class _HomeScreenState extends State<HomeScreen>
           },
           child: Scaffold(
             appBar: AppBar(
-              toolbarHeight: screenSize.width * 0.125,
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              leading: GestureDetector(
-                onTap: () {},
-                child: SvgPicture.asset(
-                  'assets/images/Logo_Black.svg',
-                  width: screenSize.width * 0.14,
-                  height: screenSize.width * 0.14,
+                toolbarHeight: screenSize.width * 0.125,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                leading: GestureDetector(
+                  onTap: () {},
+                  child: Padding(
+                      padding: EdgeInsets.only(left: screenSize.width * 0.03),
+                      child: SvgPicture.asset(
+                        'assets/images/Logo_Black.svg',
+                        width: screenSize.width * 0.14,
+                        height: screenSize.width * 0.14,
+                      )),
                 ),
-              ),
-              actions: [
-                if (!isGuestUser)
-                  IconButton(
-                    icon: SvgPicture.asset(
-                      'assets/images/menu.svg',
-                      width: screenSize.width * 0.065,
-                      height: screenSize.width * 0.065,
+                actions: [
+                  if (!isGuestUser)
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: screenSize.width *
+                              0.02), // Adjust the value as needed
+                      child: IconButton(
+                        icon: SvgPicture.asset(
+                          'assets/images/menu.svg',
+                          width: screenSize.width * 0.065,
+                          height: screenSize.width * 0.065,
+                        ),
+                        onPressed: () {
+                          _isMenuVisibleNotifier.value =
+                              !_isMenuVisibleNotifier.value;
+                        },
+                      ),
                     ),
-                    onPressed: () {
-                      _isMenuVisibleNotifier.value =
-                          !_isMenuVisibleNotifier.value;
-                    },
-                  ),
-                if (isGuestUser)
-                  TextButton(
-                    onPressed: () {
-                      // Add your onPressed logic here
-                    },
-                    child: Text('Guest'),
-                  ),
-              ],
-            ),
+                  if (isGuestUser)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        right: screenSize.width * 0.03,
+                      ), // Adjust the value as needed
+                      child: TextButton(
+                        onPressed: () {
+                          // Add your onPressed logic here
+                        },
+                        child: Text('Guest'),
+                      ),
+                    ),
+                ]),
             body: Stack(
               children: [
                 _buildMainContent(screenSize, context),
@@ -813,7 +824,8 @@ class _HomeScreenState extends State<HomeScreen>
                           ? Positioned(
                               top: screenSize.height *
                                   0.002, // Adjust the top position
-                              right: 10, // Adjust the right position
+                              right: screenSize.width *
+                                  0.03, // Adjust the right position
                               child: HamburgerMenu(
                                 isGuestUser: isGuestUser,
                                 isMenuVisible: isVisible,
@@ -1117,83 +1129,103 @@ class _HomeScreenState extends State<HomeScreen>
                                       subcategories.isNotEmpty) {
                                     return SizedBox(
                                       height: screenSize.height * 0.02,
-                                      child: Center(
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: subcategories
-                                                .asMap()
-                                                .entries
-                                                .map<Widget>((entry) {
-                                              int index = entry.key;
-                                              var subcategory = entry.value;
-                                              return GestureDetector(
-                                                onTap: () => {
-                                                  setState(() {
-                                                    print("twentyfive");
-                                                    if (!globals
-                                                        .selectedSubcategories
-                                                        .contains(
-                                                            subcategory)) {
-                                                      fetch2([
-                                                        ...globals
-                                                            .selectedSubcategories,
-                                                        subcategory
-                                                      ]);
-                                                      globals.selectedSubcategories =
-                                                          List.from(globals
-                                                              .selectedSubcategories)
-                                                            ..add(subcategory);
-                                                      subcatIndex = [
-                                                        ...subcatIndex,
-                                                        index
-                                                      ];
-                                                    } else {
-                                                      fetch2(globals
-                                                          .selectedSubcategories
-                                                          .where((catId) =>
-                                                              catId !=
-                                                              subcategory)
-                                                          .toList());
-                                                      globals.selectedSubcategories =
-                                                          globals
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: subcategories
+                                                    .asMap()
+                                                    .entries
+                                                    .map<Widget>((entry) {
+                                                  int index = entry.key;
+                                                  var subcategory = entry.value;
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        print("twentyfive");
+                                                        if (!globals
+                                                            .selectedSubcategories
+                                                            .contains(
+                                                                subcategory)) {
+                                                          fetch2([
+                                                            ...globals
+                                                                .selectedSubcategories,
+                                                            subcategory
+                                                          ]);
+                                                          globals.selectedSubcategories =
+                                                              List.from(globals
+                                                                  .selectedSubcategories)
+                                                                ..add(
+                                                                    subcategory);
+                                                          subcatIndex = [
+                                                            ...subcatIndex,
+                                                            index
+                                                          ];
+                                                        } else {
+                                                          fetch2(globals
+                                                              .selectedSubcategories
+                                                              .where((catId) =>
+                                                                  catId !=
+                                                                  subcategory)
+                                                              .toList());
+                                                          globals.selectedSubcategories = globals
                                                               .selectedSubcategories
                                                               .where((catId) =>
                                                                   catId !=
                                                                   subcategory)
                                                               .toList();
-                                                      subcatIndex = subcatIndex
-                                                          .where(
-                                                              (indexElement) =>
+                                                          subcatIndex = subcatIndex
+                                                              .where((indexElement) =>
                                                                   indexElement !=
                                                                   index)
-                                                          .toList();
-                                                    }
-                                                  })
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    subcategory
-                                                        .sub_category_name,
-                                                    style: TextStyle(
-                                                      color: subcatIndex
-                                                              .contains(index)
-                                                          ? Color(0xFF403D3D)
-                                                          : Color(0xFF9A9A9A),
-                                                      fontSize:
-                                                          screenSize.width *
-                                                              0.023,
+                                                              .toList();
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 6),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        subcategory
+                                                            .sub_category_name,
+                                                        style: TextStyle(
+                                                          color: subcatIndex
+                                                                  .contains(
+                                                                      index)
+                                                              ? Color(
+                                                                  0xFF403D3D)
+                                                              : Color(
+                                                                  0xFF9A9A9A),
+                                                          fontSize:
+                                                              screenSize.width *
+                                                                  0.023,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          // Add the SVG widget here
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                right: screenSize.width * 0.1,
+                                                bottom: screenSize.height *
+                                                    0.008), // Adjust padding if needed
+                                            child: SvgPicture.asset(
+                                              'assets/images/vector.svg', // Replace with your actual SVG path
+                                              height: screenSize.height *
+                                                  0.012, // Adjust size as needed
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   } else {
@@ -1206,9 +1238,6 @@ class _HomeScreenState extends State<HomeScreen>
                               },
                             ),
                           ),
-                          SizedBox(
-                              height: screenSize.height *
-                                  (isGuestUser ? 0 : 0.0126)),
                           Expanded(
                             child: BlocBuilder<ProductBloc, ProductState>(
                               builder: (context, state) {

@@ -13,6 +13,13 @@ class CategoryRepository {
         List<dynamic> data = map["data"];
         List<Category> categories =
             data.map((item) => Category.fromJson(item)).toList();
+
+        if (categories.length >= 8) {
+          final temp = categories[1];
+          categories[1] = categories[7];
+          categories[7] = temp;
+        }
+
         return categories.take(8).toList();
       } else {
         throw Exception('Failed to load categories');

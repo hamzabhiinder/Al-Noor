@@ -120,9 +120,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               left: 0,
                               right: 0,
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: screenWidth * 0.05,
-                                    vertical: constraints.maxHeight * 0.03),
+                                padding: EdgeInsets.only(
+                                    left: 0,
+                                    right: screenWidth * 0.02,
+                                    top: constraints.maxHeight * 0.03,
+                                    bottom: constraints.maxHeight * 0.03),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
