@@ -69,9 +69,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/registerBG.png',
+              'assets/images/BGg.png',
               fit: BoxFit.cover,
             ),
+          ),
+          // Black overlay
+          Container(
+            color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
           ),
           // Content
           Center(
@@ -85,9 +89,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       // Logo
-
-                      SvgPicture.asset(
-                        'assets/images/Logo_Black.svg',
+                      Image.asset(
+                        'assets/images/Logo.png',
                         height: screenSize.height * 0.2, // Adjusted logo height
                         fit: BoxFit.contain,
                       ),
@@ -131,13 +134,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         iconAssetPath: 'assets/images/Password.png',
                         controller: _confirmPasswordController,
                         obscureText: true,
-                        validator: (value) =>
-                            Validators.validateConfirmPassword(
-                                value, _passwordController.text),
+                        validator: (value) => Validators.validateConfirmPassword(
+                            value, _passwordController.text),
                       ),
                       SizedBox(
-                          height: screenSize.height *
-                              0.05), // Spacing before button
+                          height:
+                              screenSize.height * 0.05), // Spacing before button
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {
@@ -147,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   content: Text('Registration Successful')),
                             );
 
-                            // Navigate to HomeScreen
+                            // Navigate to LoginScreen
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -169,7 +171,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return ElevatedButton(
                             onPressed: _register,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xff464444), // Button color
+                              backgroundColor:
+                                  Color(0xff464444), // Button color
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
                                     screenSize.width *

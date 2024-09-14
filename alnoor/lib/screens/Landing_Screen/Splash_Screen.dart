@@ -29,6 +29,10 @@ class StartScreen extends StatelessWidget {
               ),
             ),
           ),
+          // Black overlay
+          Container(
+            color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
+          ),
           // Overlay content
           Center(
             child: Column(
@@ -40,11 +44,10 @@ class StartScreen extends StatelessWidget {
                   height: screenSize.height * 0.2, // Responsive height
                   child: Image.asset('assets/images/Logo.png'),
                 ),
-                SizedBox(
-                    height: screenSize.height * 0.035), // Responsive spacing
+                SizedBox(height: screenSize.height * 0.035),
                 // Buttons
                 SizedBox(
-                  width: screenSize.width * 0.5, // Responsive button width
+                  width: screenSize.width * 0.5,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -61,10 +64,10 @@ class StartScreen extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: Color(0xFFFFFFFF), // Text color
+                      backgroundColor: Color(0xFFFFFFFF),
                       padding: EdgeInsets.symmetric(
                         vertical: screenSize.height * 0.02,
-                      ), // Responsive padding
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
@@ -72,41 +75,42 @@ class StartScreen extends StatelessWidget {
                     child: FittedBox(
                       child: Text(
                         'LOG IN AS ALNOOR USER',
-                        style: TextStyle(fontSize: screenSize.width * 0.035,),
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.035,
+                        ),
                       ),
                     ),
                   ),
                 ),
+                SizedBox(height: screenSize.height * 0.02),
                 SizedBox(
-                    height: screenSize.height * 0.02), // Responsive spacing
-                SizedBox(
-                  width: screenSize.width * 0.5, // Responsive button width
+                  width: screenSize.width * 0.5,
                   child: ElevatedButton(
                     onPressed: () async {
                       await _onGuestButtonPressed(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, // Text color
-                      backgroundColor:
-                          Colors.transparent, // Button background color
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.transparent,
                       padding: EdgeInsets.symmetric(
                         vertical: screenSize.height * 0.02,
-                      ), // Responsive padding
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
-                        side: BorderSide(color: Colors.white), // Border color
+                        side: BorderSide(color: Colors.white),
                       ),
                     ),
                     child: FittedBox(
                       child: Text(
                         'LOG IN AS GUEST USER',
-                        style: TextStyle(fontSize: screenSize.width * 0.035),
+                        style: TextStyle(
+                          fontSize: screenSize.width * 0.035,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: screenSize.height * 0.01), // Responsive spacing
+                SizedBox(height: screenSize.height * 0.01),
                 // Create new account link
                 TextButton(
                   onPressed: () {
@@ -129,19 +133,15 @@ class StartScreen extends StatelessWidget {
                           'CREATE NEW ACCOUNT',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: screenSize.width *
-                                0.03, // Responsive font size
+                            fontSize: screenSize.width * 0.03,
                           ),
                         ),
                       ),
-                      SizedBox(
-                          height: screenSize.height *
-                              0.005), // Space between text and underline
+                      SizedBox(height: screenSize.height * 0.005),
                       Container(
-                        height: 1, // Height of the underline
-                        width: screenSize.width *
-                            0.35, // Responsive underline width
-                        color: Colors.white, // Color of the underline
+                        height: 1,
+                        width: screenSize.width * 0.35,
+                        color: Colors.white,
                       ),
                     ],
                   ),

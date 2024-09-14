@@ -20,41 +20,53 @@ class CustomInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: screenSize.height * 0.007, // Adjusting vertical spacing
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(
-            fontSize: screenSize.width * 0.045, // Adjusting font size
-          ),
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(
-              left: screenSize.width * 0.04, // Adjusting left padding for icon
-              right: screenSize.width * 0.03,
+    return SizedBox(
+      width: screenSize.width * 0.6, // Matching the width of the buttons
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: screenSize.height * 0.01, // Adjusting vertical spacing
+        ),
+        child: TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              fontSize: screenSize.width * 0.035, // Matching font size
+              color: Colors.white, // Ensure text is visible on dark background
             ),
-            child: Image.asset(
-              iconAssetPath,
-              width: screenSize.width * 0.065, // Adjusting icon width
-              height: screenSize.width * 0.065, // Adjusting icon height
+            prefixIcon: Padding(
+              padding: EdgeInsets.only(
+                left: screenSize.width * 0.03, // Adjusted padding
+                right: screenSize.width * 0.02,
+              ),
+              child: Image.asset(
+                iconAssetPath,
+                width: screenSize.width * 0.06, // Adjusted icon size
+                height: screenSize.width * 0.06,
+                color: Colors.white, // Ensure icon is visible on dark background
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.transparent, // Transparent to match button style
+            contentPadding: EdgeInsets.symmetric(
+              vertical: screenSize.height * 0.02, // Matching button padding
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0), // Matching border radius
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(color: Colors.white),
             ),
           ),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.85), // Adjust opacity
-          contentPadding: EdgeInsets.symmetric(
-            vertical: screenSize.height * 0.01 // Add vertical padding inside field
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(screenSize.width * 0.01), // Slightly more rounded
-            borderSide: BorderSide.none,
+          validator: validator,
+          style: TextStyle(
+            fontSize: screenSize.width * 0.035,
+            color: Colors.white, // Ensure input text is visible
           ),
         ),
-        validator: validator,
-        style: TextStyle(fontSize: screenSize.width * 0.045), // Adjust text style
       ),
     );
   }

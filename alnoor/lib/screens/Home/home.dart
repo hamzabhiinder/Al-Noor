@@ -692,6 +692,8 @@ import '../../widgets/Product_Grid.dart';
 import '../../widgets/menu.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 
+import '../Landing_Screen/Splash_Screen.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -808,12 +810,13 @@ class _HomeScreenState extends State<HomeScreen>
                       padding: EdgeInsets.only(
                         right: screenSize.width * 0.03,
                       ), // Adjust the value as needed
-                      child: TextButton(
-                        onPressed: () {
-                          // Add your onPressed logic here
+                      child: IconButton(icon: Icon(Icons.logout_outlined), onPressed: () { 
+                        Navigator.push(context,
+                        MaterialPageRoute(builder: (context)=> StartScreen(),
+                        ) 
+                        ); 
                         },
-                        child: Text('Guest'),
-                      ),
+                        )
                     ),
                 ]),
             body: Stack(

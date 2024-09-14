@@ -74,14 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         child: Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/background.png'),
-                  fit: BoxFit.cover,
-                ),
+            // Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/BGg.png',
+                fit: BoxFit.cover,
               ),
             ),
+            // Black overlay
+            Container(
+              color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
+            ),
+            // Content
             Center(
               child: SingleChildScrollView(
                 child: Column(
@@ -96,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Image.asset(
                               'assets/images/Logo.png',
-                              height: screenSize.height * 0.1,
+                              height: screenSize.height * 0.2,
                               fit: BoxFit.contain,
                             ),
                             SizedBox(height: screenSize.height * 0.03),
@@ -117,10 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ElevatedButton(
                               onPressed: _onLoginButtonPressed,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black87,
+                                backgroundColor: Color(0xff464444),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      screenSize.width * 0.03),
+                                      screenSize.width * 0.01),
                                 ),
                                 padding: EdgeInsets.symmetric(
                                   horizontal: screenSize.width * 0.2,
@@ -143,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: EdgeInsets.only(top: screenSize.height * 0.01),
                       child: Align(
-                        alignment: Alignment.center, // Centers the TextButton horizontally
+                        alignment: Alignment.center,
                         child: TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -155,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             "Don't have an account? Register here",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white, // Changed text color to white
                               fontSize: screenSize.width * 0.045,
                             ),
                           ),
