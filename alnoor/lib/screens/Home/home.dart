@@ -769,7 +769,9 @@ class _HomeScreenState extends State<HomeScreen>
                 false; // Hide menu when tapping outside
           },
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
+                surfaceTintColor: Colors.transparent,
                 toolbarHeight: screenSize.width * 0.125,
                 elevation: 0,
                 backgroundColor: Colors.transparent,

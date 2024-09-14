@@ -112,7 +112,9 @@ class _FavouritesState extends State<Favourites> {
           _isMenuVisibleNotifier.value = false;
         },
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
+            surfaceTintColor: Colors.transparent,
             toolbarHeight: screenWidth * 0.125,
             elevation: 0,
             backgroundColor: Colors.transparent,
