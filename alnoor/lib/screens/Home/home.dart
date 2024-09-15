@@ -1078,7 +1078,7 @@ class _HomeScreenState extends State<HomeScreen>
                                               screenSize.width * 0.02),
                                         ),
                                         child: SizedBox(
-                                          width: screenSize.width * 0.21,
+                                          width: screenSize.width * 0.208,
                                           child: Chip(
                                             backgroundColor:
                                                 filterIndex.contains(index)

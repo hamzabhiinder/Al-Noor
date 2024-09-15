@@ -170,6 +170,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme( // Use GoogleFonts Poppins throughout the app
           Theme.of(context).textTheme,
         ),
+        
       ),
       home: StartScreen(),
       debugShowCheckedModeBanner: false,
