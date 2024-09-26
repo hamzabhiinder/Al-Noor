@@ -772,61 +772,66 @@ class _HomeScreenState extends State<HomeScreen>
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
-           appBar: AppBar(
-  surfaceTintColor: Colors.transparent,
-  toolbarHeight: screenSize.width * 0.125, // Adjust toolbar height based on screen width
-  elevation: 0,
-  backgroundColor: Colors.transparent,
-  leading: GestureDetector(
-    onTap: () {},
-    child: Padding(
-      padding: EdgeInsets.only(left: screenSize.width * 0.03),
-      child: SvgPicture.asset(
-        'assets/images/Logo_Black.svg',
-        width: screenSize.width * 0.14, // Responsive logo size
-        height: screenSize.width * 0.14, // Responsive logo size
-        fit: BoxFit.contain, // Ensures the logo scales proportionally
-      ),
-    ),
-  ),
-  actions: [
-    if (!isGuestUser)
-      Padding(
-        padding: EdgeInsets.only(right: screenSize.width * 0.02),
-        child: IconButton(
-          icon: SvgPicture.asset(
-            'assets/images/menu.svg',
-            width: screenSize.width * 0.065, // Responsive menu icon size
-            height: screenSize.width * 0.065, // Responsive menu icon size
-          ),
-          onPressed: () {
-            _isMenuVisibleNotifier.value = !_isMenuVisibleNotifier.value;
-          },
-        ),
-      ),
-    if (isGuestUser)
-      Padding(
-        padding: EdgeInsets.only(
-          right: screenSize.width * 0.03,
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.logout_outlined,
-            size: screenSize.width * 0.065, // Responsive logout icon size
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StartScreen(),
+            appBar: AppBar(
+              surfaceTintColor: Colors.transparent,
+              toolbarHeight: screenSize.width *
+                  0.125, // Adjust toolbar height based on screen width
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              leading: GestureDetector(
+                onTap: () {},
+                child: Padding(
+                  padding: EdgeInsets.only(left: screenSize.width * 0.03),
+                  child: SvgPicture.asset(
+                    'assets/images/Logo_Black.svg',
+                    width: screenSize.width * 0.14, // Responsive logo size
+                    height: screenSize.width * 0.14, // Responsive logo size
+                    fit: BoxFit
+                        .contain, // Ensures the logo scales proportionally
+                  ),
+                ),
               ),
-            );
-          },
-        ),
-      ),
-  ],
-),
-
+              actions: [
+                if (!isGuestUser)
+                  Padding(
+                    padding: EdgeInsets.only(right: screenSize.width * 0.02),
+                    child: IconButton(
+                      icon: SvgPicture.asset(
+                        'assets/images/menu.svg',
+                        width: screenSize.width *
+                            0.065, // Responsive menu icon size
+                        height: screenSize.width *
+                            0.065, // Responsive menu icon size
+                      ),
+                      onPressed: () {
+                        _isMenuVisibleNotifier.value =
+                            !_isMenuVisibleNotifier.value;
+                      },
+                    ),
+                  ),
+                if (isGuestUser)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      right: screenSize.width * 0.03,
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.logout_outlined,
+                        size: screenSize.width *
+                            0.065, // Responsive logout icon size
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StartScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
             body: Stack(
               children: [
                 _buildMainContent(screenSize, context),
@@ -928,8 +933,17 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                               suffixIcon: _textController.text.isNotEmpty
                                   ? IconButton(
-                                      icon: Icon(Icons.close,
-                                          size: screenSize.width * 0.04),
+                                      icon: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white,
+                                        ),
+                                        child: Icon(
+                                          Icons.close,
+                                          size: screenSize.width * 0.03,
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                       onPressed: () {
                                         setState(() {
                                           _textController.text = "";
@@ -939,7 +953,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     )
                                   : null,
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: screenSize.width * 0.025),
+                                  horizontal: screenSize.width * 0.038),
                             ),
                             style: TextStyle(
                               fontSize: screenSize.width * 0.03,

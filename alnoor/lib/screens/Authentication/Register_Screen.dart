@@ -3,7 +3,6 @@ import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Authentication/Login_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/validators.dart';
 import '../../widgets/Input_Field.dart';
@@ -134,12 +133,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         iconAssetPath: 'assets/images/Password.png',
                         controller: _confirmPasswordController,
                         obscureText: true,
-                        validator: (value) => Validators.validateConfirmPassword(
-                            value, _passwordController.text),
+                        validator: (value) =>
+                            Validators.validateConfirmPassword(
+                                value, _passwordController.text),
                       ),
                       SizedBox(
-                          height:
-                              screenSize.height * 0.05), // Spacing before button
+                          height: screenSize.height *
+                              0.05), // Spacing before button
                       // Create Button
                       BlocConsumer<RegisterBloc, RegisterState>(
                         listener: (context, state) {

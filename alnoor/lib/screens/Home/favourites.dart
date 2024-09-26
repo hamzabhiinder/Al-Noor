@@ -206,8 +206,17 @@ class _FavouritesState extends State<Favourites> {
                   decoration: InputDecoration(
                     suffixIcon: _textController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.close,
-                                size: screenSize.width * 0.04),
+                            icon: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: Icon(
+                                Icons.close,
+                                size: screenSize.width * 0.03,
+                                color: Colors.black,
+                              ),
+                            ),
                             onPressed: () {
                               setState(() {
                                 _textController.text = "";
@@ -223,7 +232,7 @@ class _FavouritesState extends State<Favourites> {
                       borderSide: BorderSide.none,
                     ),
                     contentPadding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.038),
                   ),
                   style: TextStyle(fontSize: screenHeight * 0.015),
                   textAlign: TextAlign.left,

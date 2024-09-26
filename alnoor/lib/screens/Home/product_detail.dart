@@ -186,14 +186,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 onPressed: () {
                                   ImageManager().setImageFromCamera(
                                       widget.product.thumbnailImage);
-                                  Navigator.of(context).pop([
-                                    ImageManager().getImage(1),
-                                    ImageManager().getImage(2),
-                                    ImageManager().getImage(3),
-                                    ImageManager().getImage(4),
-                                    ImageManager().getImage(5),
-                                    ImageManager().getImage(6),
-                                  ]);
+                                  Navigator.of(context).pop({
+                                    'images': [
+                                      ImageManager().getImage(1),
+                                      ImageManager().getImage(2),
+                                      ImageManager().getImage(3),
+                                      ImageManager().getImage(4),
+                                      ImageManager().getImage(5),
+                                      ImageManager().getImage(6),
+                                    ],
+                                    'snackbarMessage':
+                                        'Added To Moodboard successfully',
+                                  });
                                 },
                                 constraints: constraints),
                             _buildIconButton(

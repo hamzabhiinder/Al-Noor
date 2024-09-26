@@ -132,7 +132,7 @@ class _ProductGridState extends State<ProductGrid> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        await Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProductDetailScreen(
@@ -141,6 +141,15 @@ class _ProductGridState extends State<ProductGrid> {
                             ),
                           ),
                         );
+                        if (result != null &&
+                            result['snackbarMessage'] != null) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(result['snackbarMessage'])),
+                            );
+                          });
+                        }
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12.0),
