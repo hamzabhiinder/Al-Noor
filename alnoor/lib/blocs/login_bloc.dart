@@ -1,3 +1,5 @@
+// blocs/login_bloc.dart
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../repositories/login_repository.dart';
@@ -37,6 +39,15 @@ class LoginSuccess extends LoginState {
   List<Object> get props => [data];
 }
 
+class LoginOfflineSuccess extends LoginState {
+  final Map<String, dynamic> data;
+
+  LoginOfflineSuccess({required this.data});
+
+  @override
+  List<Object> get props => [data];
+}
+
 class LoginFailure extends LoginState {
   final String error;
 
@@ -56,12 +67,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> _onLoginButtonPressed(
       LoginButtonPressed event, Emitter<LoginState> emit) async {
+    print('Login button pressed with email: ${event.email}');
     emit(LoginLoading());
 
     try {
       final data = await loginRepository.login(event.email, event.password);
-      emit(LoginSuccess(data: data));
+
+      if (data['status'] == 'success' && data['message'] == 'Logged in offline') {
+        // Offline login success
+        print('Emitting LoginOfflineSuccess for ${event.email}');
+        emit(LoginOfflineSuccess(data: data));
+      } else {
+        // Online login success
+        print('Emitting LoginSuccess for ${event.email}');
+        emit(LoginSuccess(data: data));
+      }
     } catch (error) {
+      print('Login failed for ${event.email}: $error');
       emit(LoginFailure(error: error.toString()));
     }
   }

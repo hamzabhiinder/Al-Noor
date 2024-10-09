@@ -1,3 +1,5 @@
+// models/product.dart
+
 class Product {
   final String productId;
   final String thumbnailImage;
@@ -50,22 +52,43 @@ class Product {
     );
   }
 
-  factory Product.fromImageJson(Map<String, dynamic> json) {
+  // Convert Product to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'product_id': productId,
+      'thumbnail_image': thumbnailImage,
+      'product_name': productName,
+      'product_slug': productSlug,
+      'product_image': productImage,
+      'product_image2': productImage2,
+      'product_image3': productImage3,
+      'product_image4': productImage4,
+      'product_type': productType,
+      'product_short_desc': productShortDesc,
+      'product_reg_price': productRegPrice,
+      'product_status': productStatus,
+      'product_created_at': productCreatedAt,
+      'product_updated_at': productUpdatedAt,
+    };
+  }
+
+  // Create Product from Map
+  factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      productId: json['id'] ?? '',
-      thumbnailImage: json['file_path'],
-      productName: 'My Ideas',
-      productSlug: '',
-      productImage: json['file_path'].replaceFirst("https://alnoormdf.com", ""),
-      productImage2: '',
-      productImage3: '',
-      productImage4: '',
-      productType: '',
-      productShortDesc: '',
-      productRegPrice: '',
-      productStatus: '',
-      productCreatedAt: '',
-      productUpdatedAt: '',
+      productId: map['product_id'] ?? '',
+      thumbnailImage: map['thumbnail_image'] ?? '',
+      productName: map['product_name'] ?? '',
+      productSlug: map['product_slug'] ?? '',
+      productImage: map['product_image'] ?? '',
+      productImage2: map['product_image2'] ?? '',
+      productImage3: map['product_image3'] ?? '',
+      productImage4: map['product_image4'] ?? '',
+      productType: map['product_type'] ?? '',
+      productShortDesc: map['product_short_desc'] ?? '',
+      productRegPrice: map['product_reg_price'] ?? '',
+      productStatus: map['product_status'] ?? '',
+      productCreatedAt: map['product_created_at'] ?? '',
+      productUpdatedAt: map['product_updated_at'] ?? '',
     );
   }
 }

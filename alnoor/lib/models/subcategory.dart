@@ -1,3 +1,5 @@
+// models/subcategory.dart
+
 class Subcategory {
   final String sub_category_id;
   final String category_id;
@@ -29,15 +31,27 @@ class Subcategory {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'sub_category_id': sub_category_id,
       'category_id': category_id,
-      'sub_category_name': sub_category_slug,
+      'sub_category_name': sub_category_name,
+      'sub_category_slug': sub_category_slug,
       'sub_category_status': sub_category_status,
-      'category_status': sub_category_status,
       'sub_category_created_at': sub_category_created_at,
       'sub_category_updated_at': sub_category_updated_at,
     };
+  }
+
+  factory Subcategory.fromMap(Map<String, dynamic> map) {
+    return Subcategory(
+      sub_category_id: map['sub_category_id'],
+      category_id: map['category_id'],
+      sub_category_name: map['sub_category_name'],
+      sub_category_slug: map['sub_category_slug'],
+      sub_category_status: map['sub_category_status'],
+      sub_category_created_at: map['sub_category_created_at'],
+      sub_category_updated_at: map['sub_category_updated_at'],
+    );
   }
 }

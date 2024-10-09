@@ -42,7 +42,7 @@ class FavouritesRepository {
           Map<String, dynamic> images = dataImage['images'];
           List<dynamic> myIdeasItems = images["MY IDEAS"];
           List<Product> myIdeasList = myIdeasItems
-              .map((product) => Product.fromImageJson(product))
+              .map((product) => Product.fromJson(product))
               .toList();
           return [[], [], [], myIdeasList];
         }
@@ -63,7 +63,7 @@ class FavouritesRepository {
           Map<String, dynamic> images = dataImage['images'];
           List<dynamic> myIdeasItems = images["MY IDEAS"];
           List<Product> myIdeasList = myIdeasItems
-              .map((product) => Product.fromImageJson(product))
+              .map((product) => Product.fromJson(product))
               .toList();
           return [myKitchenList, myBedroomList, myLoungeList, myIdeasList];
         }

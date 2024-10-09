@@ -1,3 +1,5 @@
+// models/category.dart
+
 class Category {
   final String id;
   final String name;
@@ -29,15 +31,27 @@ class Category {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'category_id': id,
-      'category_name': name,
-      'category_slug': slug,
-      'category_image': image,
-      'category_status': status,
-      'category_created_at': createdAt,
-      'category_updated_at': updatedAt,
+      'id': id,
+      'name': name,
+      'slug': slug,
+      'image': image,
+      'status': status,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
     };
+  }
+
+  factory Category.fromMap(Map<String, dynamic> map) {
+    return Category(
+      id: map['id'],
+      name: map['name'],
+      slug: map['slug'],
+      image: map['image'],
+      status: map['status'],
+      createdAt: map['created_at'],
+      updatedAt: map['updated_at'],
+    );
   }
 }

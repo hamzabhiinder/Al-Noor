@@ -49,6 +49,8 @@ dependencies:
   flutter_downloader: ^1.11.8
   flutter_file_downloader: ^2.0.0
   open_file: ^3.4.0
+  sqflite: ^2.4.0
+  connectivity_plus: ^6.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
