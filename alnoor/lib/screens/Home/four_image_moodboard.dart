@@ -86,8 +86,13 @@ class _FourImageScreenState extends State<FourImageScreen> {
               'true') // Replace `yourCondition` with your actual condition
             Center(
               child: _isVisible
-                  ? Image.asset(
-                      'assets/images/animation.gif') // Replace with your GIF asset path
+                  ? Container(
+                      margin: EdgeInsets.only(top: 60),
+                      child: Image.asset(
+                        'assets/images/animation.gif',
+                        width: 130, // Set the desired width
+                        height: 130, // Set the desired height
+                      )) // Replace with your GIF asset path
                   : Container(), // Empty container when GIF is not visible
             )
         ],
@@ -143,8 +148,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
                 ),
                 if (images[index] != null)
                   Positioned(
-                    top: 25,
-                    left: 15,
+                    bottom: index == 3 || index == 2 ? 45 : 20,
+                    right: 15,
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -199,8 +204,8 @@ class _FourImageScreenState extends State<FourImageScreen> {
         ),
         if (imageUrl != null)
           Positioned(
-            top: 25,
-            left: 15,
+            bottom: index == 3 || index == 2 ? 45 : 20,
+            right: 15,
             child: GestureDetector(
               onTap: () {
                 setState(() {

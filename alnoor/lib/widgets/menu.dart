@@ -1,3 +1,4 @@
+import 'package:alnoor/screens/Landing_Screen/About_Us.dart';
 import 'package:flutter/material.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -80,6 +81,21 @@ class HamburgerMenu extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Favourites(index: 0)),
+                  );
+                },
+              ),
+            if (!isGuestUser)
+              _buildMenuItem(
+                icon: Icons.info_outline,
+                title: 'About Us',
+                onTap: () {
+                  onMenuToggle(); // Close the menu when a menu item is tapped
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AboutUsPage(
+                              isGuestUser: isGuestUser,
+                            )),
                   );
                 },
               ),
