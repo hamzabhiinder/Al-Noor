@@ -163,25 +163,92 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
               Positioned(
                 top: MediaQuery.of(context).size.height / 2 - 40,
                 left: MediaQuery.of(context).size.width / 2 - 40,
-                child: GestureDetector(
-                  onTap: _swapImages,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(
-                      'assets/images/reverse.svg',
-                      width: 50,
-                      height: 50,
-                    ),
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                        onTap: _swapImages,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          padding: EdgeInsets.all(16),
+                          child: SvgPicture.asset(
+                            'assets/images/reverse.svg',
+                            width: 50,
+                            height: 50,
+                          ),
+                        )),
+                    SizedBox(height: 4),
+                    GestureDetector(
+                        onTap: () {
+                          _showSaveDialog(context);
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
+                  ],
                 ),
               ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showSaveDialog(BuildContext context) {
+    String moodboardName = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Save As',
+            textAlign: TextAlign.center,
+            style:
+                TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05),
+          ),
+          content: TextField(
+            onChanged: (value) {
+              moodboardName = value;
+            },
+            decoration: InputDecoration(
+              hintText: 'My Moodboard',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save the moodboard with the name 'moodboardName'
+                // Add your save logic here
+
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 
