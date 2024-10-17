@@ -1,3 +1,4 @@
+import 'package:alnoor/screens/Home/view_moodboards.dart';
 import 'package:alnoor/screens/Landing_Screen/About_Us.dart';
 import 'package:flutter/material.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
@@ -95,6 +96,22 @@ class HamburgerMenu extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => AboutUsPage(
                               isGuestUser: isGuestUser,
+                            )),
+                  );
+                },
+              ),
+            if (!isGuestUser)
+              _buildMenuItem(
+                icon: Icons.format_paint,
+                title: 'Moodboards',
+                onTap: () {
+                  onMenuToggle(); // Close the menu when a menu item is tapped
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Moodboards(
+                              isGuestUser: isGuestUser,
+                              index: 0,
                             )),
                   );
                 },

@@ -94,7 +94,29 @@ class _FourImageScreenState extends State<FourImageScreen> {
                         height: 130, // Set the desired height
                       )) // Replace with your GIF asset path
                   : Container(), // Empty container when GIF is not visible
-            )
+            ),
+          Center(
+            child: GestureDetector(
+                onTap: () {
+                  _showSaveDialog(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 7),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                  ),
+                )),
+          ),
         ],
       )),
     );
@@ -177,6 +199,49 @@ class _FourImageScreenState extends State<FourImageScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _showSaveDialog(BuildContext context) {
+    String moodboardName = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Save As',
+            textAlign: TextAlign.center,
+            style:
+                TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05),
+          ),
+          content: TextField(
+            onChanged: (value) {
+              moodboardName = value;
+            },
+            decoration: InputDecoration(
+              hintText: 'My Moodboard',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save the moodboard with the name 'moodboardName'
+                // Add your save logic here
+
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 
