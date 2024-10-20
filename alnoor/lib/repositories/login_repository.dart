@@ -21,6 +21,7 @@ class LoginRepository {
       globals.userName = responseData['user']['name'];
       globals.token = responseData['token'];
       globals.freshLogin = 'true';
+      print(responseData['token']);
 
       return responseData;
     } else {

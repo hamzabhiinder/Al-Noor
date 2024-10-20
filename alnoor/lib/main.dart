@@ -85,12 +85,14 @@
 // }
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/favorites_bloc.dart';
+import 'package:alnoor/blocs/moodboard_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/blocs/register_bloc.dart';
 import 'package:alnoor/blocs/login_bloc.dart';
 import 'package:alnoor/blocs/subcategory_bloc.dart';
 import 'package:alnoor/repositories/category_repository.dart';
 import 'package:alnoor/repositories/favourites_repository.dart';
+import 'package:alnoor/repositories/moodboard_repository.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:alnoor/repositories/register_repository.dart';
 import 'package:alnoor/repositories/login_repository.dart';
@@ -99,7 +101,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:google_fonts/google_fonts.dart';  // Import the Google Fonts package
+import 'package:google_fonts/google_fonts.dart'; // Import the Google Fonts package
 import 'screens/Landing_Screen/Splash_Screen.dart';
 import 'services/notification_service.dart';
 import 'dart:io' show Platform;
@@ -112,12 +114,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize only for supported platforms
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS || Platform.isWindows)) {
+  if (!kIsWeb &&
+      (Platform.isAndroid ||
+          Platform.isIOS ||
+          Platform.isMacOS ||
+          Platform.isWindows)) {
     await FlutterDownloader.initialize(debug: true);
   }
 
   await _initializeNotifications();
-  
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -138,12 +144,16 @@ void main() async {
           create: (context) => LoginBloc(loginRepository: LoginRepository()),
         ),
         BlocProvider(
-            create: (context) => SubcategoryBloc(SubcategoryRepository()))
+            create: (context) => SubcategoryBloc(SubcategoryRepository())),
+        BlocProvider(
+            create: (context) => MoodboardBloc(MoodboardsRepository())),
       ],
       child: MyApp(),
     ),
   );
 }
+
+class MoodboardRepository {}
 
 Future<void> _initializeNotifications() async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -167,10 +177,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // Set the global key here
       theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme( // Use GoogleFonts Poppins throughout the app
+        textTheme: GoogleFonts.poppinsTextTheme(
+          // Use GoogleFonts Poppins throughout the app
           Theme.of(context).textTheme,
         ),
-        
       ),
       home: StartScreen(),
       debugShowCheckedModeBanner: false,

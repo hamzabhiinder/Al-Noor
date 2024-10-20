@@ -3,12 +3,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:alnoor/blocs/moodboard_bloc.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class FourImageScreen extends StatefulWidget {
   @override
@@ -19,10 +24,21 @@ class _FourImageScreenState extends State<FourImageScreen> {
   List<String?> images = List.generate(4, (index) => null);
   Timer? _timer;
   bool _isVisible = true;
+  String moodboardName = "";
+  bool isGuestUser = true;
+
+  Future<void> _loadUserStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      print("nineteen");
+      isGuestUser = prefs.getBool('isGuestUser') ?? true;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    moodboardName = ImageManager().getName(4) ?? "";
     images[0] = ImageManager().getImage(3);
     images[1] = ImageManager().getImage(4);
     images[2] = ImageManager().getImage(5);
@@ -33,6 +49,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
       });
       globals.freshLogin = 'false';
     });
+    _loadUserStatus();
   }
 
   @override
@@ -50,6 +67,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
           images[1],
           images[2],
           images[3],
+          moodboardName,
         ]);
         return false;
       },
@@ -66,6 +84,34 @@ class _FourImageScreenState extends State<FourImageScreen> {
             itemBuilder: (context, index) {
               return _buildDraggableImageContainer(context, index);
             },
+          ),
+          Positioned(
+            top: 15,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width / 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Center(
+                        child: Text(
+                          ImageManager().getName(4) ?? "",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                          softWrap: true,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           Positioned(
             top: 20,
@@ -95,28 +141,35 @@ class _FourImageScreenState extends State<FourImageScreen> {
                       )) // Replace with your GIF asset path
                   : Container(), // Empty container when GIF is not visible
             ),
-          Center(
-            child: GestureDetector(
-                onTap: () {
-                  _showSaveDialog(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height / 7),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                    ),
-                  ),
-                )),
-          ),
+          ((!isGuestUser &&
+                  ((images[0] != null && images[0] != "") ||
+                      (images[1] != null && images[1] != "") ||
+                      (images[2] != null && images[2] != "") ||
+                      (images[3] != null && images[3] != "")))
+              ? Center(
+                  child: GestureDetector(
+                      onTap: () {
+                        _showSaveDialog(context);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height / 7),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        ),
+                      )),
+                )
+              : SizedBox.shrink()),
         ],
       )),
     );
@@ -202,8 +255,51 @@ class _FourImageScreenState extends State<FourImageScreen> {
     );
   }
 
+  // Function to determine whether the link is a URL or a local path and handle it accordingly
+  Future<File?> getFileFromLink(String link) async {
+    if (link.startsWith('http://') || link.startsWith('https://')) {
+      return await _downloadFile(link);
+    } else {
+      return _getLocalFile(link);
+    }
+  }
+
+// Function to download the file if it's a URL
+  Future<File?> _downloadFile(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final directory = await getTemporaryDirectory();
+        final filePath = '${directory.path}/${url.split('/').last}';
+        final file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+        return file;
+      } else {
+        print('Failed to download file. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error downloading file: $e');
+    }
+    return null;
+  }
+
+// Function to get the file if it's a local file path
+  File? _getLocalFile(String filePath) {
+    final file = File(filePath);
+
+    if (file.existsSync()) {
+      return file;
+    } else {
+      print('Local file does not exist at the specified path.');
+      return null;
+    }
+  }
+
   void _showSaveDialog(BuildContext context) {
-    String moodboardName = '';
+    final moodboardBloc = BlocProvider.of<MoodboardBloc>(context);
+    final TextEditingController textController =
+        TextEditingController(text: moodboardName);
 
     showDialog(
       context: context,
@@ -216,9 +312,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
                 TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05),
           ),
           content: TextField(
-            onChanged: (value) {
-              moodboardName = value;
-            },
+            controller: textController,
             decoration: InputDecoration(
               hintText: 'My Moodboard',
             ),
@@ -231,11 +325,28 @@ class _FourImageScreenState extends State<FourImageScreen> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                // Save the moodboard with the name 'moodboardName'
-                // Add your save logic here
-
-                Navigator.of(context).pop(); // Close the dialog
+              onPressed: () async {
+                if (textController.text == "") {
+                  // Show a Snackbar with an error message if the moodboard name is empty
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Moodboard name cannot be empty'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } else {
+                  if (textController.text != ImageManager().getName(4)) {
+                    ImageManager().setId("");
+                  }
+                  (moodboardBloc.add(AddMoodboard(
+                      image1: await getFileFromLink(images[0] ?? ""),
+                      image2: await getFileFromLink(images[1] ?? ""),
+                      image3: await getFileFromLink(images[2] ?? ""),
+                      image4: await getFileFromLink(images[3] ?? ""),
+                      name: textController.text)));
+                  ImageManager().setName(4, textController.text);
+                  Navigator.of(context).pop();
+                } // Close the dialog
               },
               child: Text('Save'),
             ),

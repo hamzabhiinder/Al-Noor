@@ -9,6 +9,9 @@ class ImageManager {
   ValueNotifier<String?> image4 = ValueNotifier<String?>(null);
   ValueNotifier<String?> image5 = ValueNotifier<String?>(null);
   ValueNotifier<String?> image6 = ValueNotifier<String?>(null);
+  ValueNotifier<String?> moodboard2Name = ValueNotifier<String?>("");
+  ValueNotifier<String?> moodboard4Name = ValueNotifier<String?>("");
+  ValueNotifier<String?> moodboardId = ValueNotifier<String?>("");
 
   factory ImageManager() {
     return _instance;
@@ -32,6 +35,10 @@ class ImageManager {
     } else {
       image1.value = path;
     }
+  }
+
+  void setId(String id) {
+    moodboardId.value = id;
   }
 
   void setImage(int index, dynamic path) {
@@ -59,6 +66,21 @@ class ImageManager {
     }
   }
 
+  void setName(int index, String name) {
+    switch (index) {
+      case 2:
+        moodboard2Name.value = name;
+        break;
+      case 4:
+        moodboard4Name.value = name;
+        break;
+    }
+  }
+
+  ValueNotifier<String?> getMoodboardIdNotifier() {
+    return moodboardId;
+  }
+
   ValueNotifier<String?> getImageNotifier(int index) {
     switch (index) {
       case 1:
@@ -75,6 +97,28 @@ class ImageManager {
         return image6;
       default:
         return image1;
+    }
+  }
+
+  ValueNotifier<String?> getNameNotifier(int index) {
+    switch (index) {
+      case 2:
+        return moodboard2Name;
+      default:
+        return moodboard4Name;
+    }
+  }
+
+  String? getId() {
+    return moodboardId.value;
+  }
+
+  String? getName(int index) {
+    switch (index) {
+      case 2:
+        return moodboard2Name.value;
+      default:
+        return moodboard4Name.value;
     }
   }
 
