@@ -40,7 +40,7 @@ class _FourImageDisplayState extends State<FourImageDisplay> {
         ImageManager().setImage(5, widget.imageUrl3);
         ImageManager().setImage(6, widget.imageUrl4);
         ImageManager().setName(4, widget.name);
-        ImageManager().setId(widget.id);
+        ImageManager().setId(4, widget.id);
         await Navigator.push(
           context,
           MaterialPageRoute(

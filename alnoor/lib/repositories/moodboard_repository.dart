@@ -37,13 +37,13 @@ class MoodboardsRepository {
   }
 
   Future<void> addMoodboard(
+    String? moodboardId,
     String name,
     File? image1,
     File? image2,
     File? image3,
     File? image4,
   ) async {
-    var moodboardId = ImageManager().getId();
     var isNew = moodboardId == "" || moodboardId == null;
     final url = isNew
         ? Uri.parse('https://alnoormdf.com/alnoor/create-moodboard')
@@ -79,10 +79,28 @@ class MoodboardsRepository {
 
     try {
       final response = await request.send();
+
+      // Convert the streamed response to a readable response
+      final responseBody = await response.stream.bytesToString();
+
       if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(responseBody);
+        final message = jsonResponse['message'];
+        final moodboardId = jsonResponse['moodboard_id'];
+
         print('Moodboard added successfully');
+        print('Message: $message');
+        print('Moodboard ID: $moodboardId');
+        if (isNew) {
+          if (globals.openedTab == 2) {
+            ImageManager().setId(2, moodboardId.toString());
+          } else {
+            ImageManager().setId(4, moodboardId.toString());
+          }
+        }
       } else {
         print('Moodboard update failed with status: ${response.statusCode}');
+        print('Error Body: $responseBody');
       }
     } catch (e) {
       print('Failed to add to moodboards: $e');

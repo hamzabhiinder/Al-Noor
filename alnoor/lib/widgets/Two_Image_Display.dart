@@ -33,7 +33,7 @@ class _TwoImageDisplayState extends State<TwoImageDisplay> {
         ImageManager().setImage(1, widget.imageUrl1);
         ImageManager().setImage(2, widget.imageUrl2);
         ImageManager().setName(2, widget.name);
-        ImageManager().setId(widget.id);
+        ImageManager().setId(2, widget.id);
         Navigator.push(
           context,
           MaterialPageRoute(

@@ -299,58 +299,96 @@ class _FourImageScreenState extends State<FourImageScreen> {
   void _showSaveDialog(BuildContext context) {
     final moodboardBloc = BlocProvider.of<MoodboardBloc>(context);
     final TextEditingController textController =
-        TextEditingController(text: moodboardName);
+        TextEditingController(text: ImageManager().getName(4));
+    var loader = false;
 
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevents dismissing the dialog when loading
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Save As',
-            textAlign: TextAlign.center,
-            style:
-                TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05),
-          ),
-          content: TextField(
-            controller: textController,
-            decoration: InputDecoration(
-              hintText: 'My Moodboard',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (textController.text == "") {
-                  // Show a Snackbar with an error message if the moodboard name is empty
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Moodboard name cannot be empty'),
-                      backgroundColor: Colors.red,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                loader ? '' : 'Save As',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                ),
+              ),
+              content: loader
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Saving...'),
+                      ],
+                    )
+                  : TextField(
+                      controller: textController,
+                      decoration: InputDecoration(
+                        hintText: 'My Moodboard',
+                      ),
                     ),
-                  );
-                } else {
-                  if (textController.text != ImageManager().getName(4)) {
-                    ImageManager().setId("");
-                  }
-                  (moodboardBloc.add(AddMoodboard(
-                      image1: await getFileFromLink(images[0] ?? ""),
-                      image2: await getFileFromLink(images[1] ?? ""),
-                      image3: await getFileFromLink(images[2] ?? ""),
-                      image4: await getFileFromLink(images[3] ?? ""),
-                      name: textController.text)));
-                  ImageManager().setName(4, textController.text);
-                  Navigator.of(context).pop();
-                } // Close the dialog
-              },
-              child: Text('Save'),
-            ),
-          ],
+              actions: loader
+                  ? [] // No actions when loading
+                  : [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          if (textController.text.isEmpty) {
+                            // Show a Snackbar with an error message if the moodboard name is empty
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Moodboard name cannot be empty'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              loader = true;
+                            });
+
+                            if (textController.text !=
+                                ImageManager().getName(4)) {
+                              ImageManager().setId(4, "");
+                            }
+                            globals.openedTab = 4;
+
+                            var image1 = await getFileFromLink(images[0] ?? "");
+                            var image2 = await getFileFromLink(images[1] ?? "");
+                            var image3 = await getFileFromLink(images[2] ?? "");
+                            var image4 = await getFileFromLink(images[3] ?? "");
+
+                            moodboardBloc.add(AddMoodboard(
+                              moodboardId: ImageManager().getId(4) ?? "",
+                              image1: image1,
+                              image2: image2,
+                              image3: image3,
+                              image4: image4,
+                              name: textController.text,
+                            ));
+
+                            ImageManager().setName(4, textController.text);
+
+                            setState(() {
+                              loader = false;
+                            });
+
+                            Navigator.of(context).pop(); // Close the dialog
+                          }
+                        },
+                        child: Text('Save'),
+                      ),
+                    ],
+            );
+          },
         );
       },
     );

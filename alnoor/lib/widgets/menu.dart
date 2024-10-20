@@ -118,6 +118,21 @@ class HamburgerMenu extends StatelessWidget {
               ),
             if (!isGuestUser)
               _buildMenuItem(
+                icon: Icons.storefront_outlined,
+                title: 'Dealors',
+                onTap: () {
+                  onMenuToggle(); // Close the menu when a menu item is tapped
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AboutUsPage(
+                              isGuestUser: isGuestUser,
+                            )),
+                  );
+                },
+              ),
+            if (!isGuestUser)
+              _buildMenuItem(
                 icon: Icons.logout,
                 title: 'Logout',
                 onTap: () {

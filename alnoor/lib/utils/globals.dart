@@ -10,3 +10,4 @@ List<Product> products = [];
 bool done = false;
 List<dynamic> categories = [];
 List<dynamic> selectedSubcategories = [];
+int openedTab = 0;

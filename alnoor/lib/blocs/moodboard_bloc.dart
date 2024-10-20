@@ -15,6 +15,7 @@ class LoadMoodboards extends MoodboardEvent {
 }
 
 class AddMoodboard extends MoodboardEvent {
+  final String moodboardId;
   final String name;
   final File? image1;
   final File? image2;
@@ -22,6 +23,7 @@ class AddMoodboard extends MoodboardEvent {
   final File? image4;
 
   AddMoodboard({
+    required this.moodboardId,
     required this.name,
     required this.image1,
     required this.image2,
@@ -106,6 +108,7 @@ class MoodboardBloc extends Bloc<MoodboardEvent, MoodboardState> {
     emit(MoodboardLoading());
     try {
       await repository.addMoodboard(
+        event.moodboardId,
         event.name,
         event.image1,
         event.image2,

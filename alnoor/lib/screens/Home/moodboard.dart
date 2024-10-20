@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:path_provider/path_provider.dart';
 
 class TwoImageScreen extends StatefulWidget {
@@ -304,65 +305,93 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
   void _showSaveDialog(BuildContext context) {
     final moodboardBloc = BlocProvider.of<MoodboardBloc>(context);
     final TextEditingController textController =
-        TextEditingController(text: moodboardName);
+        TextEditingController(text: ImageManager().getName(2));
+    var loader = false;
 
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevents dismissing the dialog when loading
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
               title: Text(
-                'Save As',
+                loader ? '' : 'Save As',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.05),
-              ),
-              content: TextField(
-                controller: textController,
-                decoration: InputDecoration(
-                  hintText: 'My Moodboard',
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    if (textController.text == "") {
-                      // Show a Snackbar with an error message if the moodboard name is empty
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Moodboard name cannot be empty'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    } else {
-                      if (textController.text != ImageManager().getName(2)) {
-                        ImageManager().setId("");
-                      }
-                      var image1 = await getFileFromLink(
-                          ImageManager().getImage(1) ?? "");
-                      var image2 = await getFileFromLink(
-                          ImageManager().getImage(2) ?? "");
-                      moodboardBloc.add(AddMoodboard(
-                        image1: image1,
-                        image2: image2,
-                        image3: null,
-                        image4: null,
-                        name: textController.text,
-                      ));
-                      ImageManager().setName(2, textController.text);
-                      Navigator.of(context).pop(); // Close the dialog
-                    }
-                  },
-                  child: Text('Save'),
-                ),
-              ],
+              content: loader
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Saving...'),
+                      ],
+                    )
+                  : TextField(
+                      controller: textController,
+                      decoration: InputDecoration(
+                        hintText: 'My Moodboard',
+                      ),
+                    ),
+              actions: loader
+                  ? [] // No actions when loading
+                  : [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          setState(() {
+                            loader = true;
+                          });
+
+                          if (textController.text.isEmpty) {
+                            // Show a Snackbar with an error message if the moodboard name is empty
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Moodboard name cannot be empty'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            setState(() {
+                              loader = false;
+                            });
+                          } else {
+                            globals.openedTab = 2;
+                            if (textController.text !=
+                                ImageManager().getName(2)) {
+                              ImageManager().setId(2, "");
+                            }
+                            var image1 = await getFileFromLink(
+                                ImageManager().getImage(1) ?? "");
+                            var image2 = await getFileFromLink(
+                                ImageManager().getImage(2) ?? "");
+                            moodboardBloc.add(AddMoodboard(
+                              moodboardId: ImageManager().getId(2) ?? "",
+                              image1: image1,
+                              image2: image2,
+                              image3: null,
+                              image4: null,
+                              name: textController.text,
+                            ));
+                            ImageManager().setName(2, textController.text);
+                            setState(() {
+                              loader = false;
+                            });
+
+                            Navigator.of(context).pop(); // Close the dialog
+                          }
+                        },
+                        child: Text('Save'),
+                      ),
+                    ],
             );
           },
         );
