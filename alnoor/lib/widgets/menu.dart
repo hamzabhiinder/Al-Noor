@@ -1,3 +1,4 @@
+import 'package:alnoor/screens/Home/dealors.dart';
 import 'package:alnoor/screens/Home/view_moodboards.dart';
 import 'package:alnoor/screens/Landing_Screen/About_Us.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,7 @@ class HamburgerMenu extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AboutUsPage(
+                        builder: (context) => DealorsPage(
                               isGuestUser: isGuestUser,
                             )),
                   );
