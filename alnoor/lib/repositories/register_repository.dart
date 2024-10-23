@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 
 import '../models/user.dart';
 import '../services/user_dao.dart';
@@ -137,5 +138,40 @@ class RegisterRepository {
     } else {
       print('No internet connection. Cannot sync users.');
     }
+  }
+
+  // Add conflict logs mechanism
+  void _logConflict(String message) {
+    print('Conflict Log: $message');
+    // You can also save this log to a file or database for auditing purposes
+  }
+
+  // Implement user intervention for conflict resolution
+  Future<void> resolveConflict(User localUser, User remoteUser) async {
+    // Prompt user for conflict resolution
+    print('Conflict detected for user: ${localUser.email}');
+    _logConflict('Conflict detected for user: ${localUser.email}');
+
+    // Example: Prompt user to choose between local and remote data
+    bool useLocalData = await _promptUserForConflictResolution(localUser, remoteUser);
+
+    if (useLocalData) {
+      // Use local data
+      print('User chose to use local data for: ${localUser.email}');
+      _logConflict('User chose to use local data for: ${localUser.email}');
+      await userDao.insertOrUpdateUser(localUser);
+    } else {
+      // Use remote data
+      print('User chose to use remote data for: ${remoteUser.email}');
+      _logConflict('User chose to use remote data for: ${remoteUser.email}');
+      await userDao.insertOrUpdateUser(remoteUser);
+    }
+  }
+
+  // Example method to prompt user for conflict resolution
+  Future<bool> _promptUserForConflictResolution(User localUser, User remoteUser) async {
+    // Implement your user interface for conflict resolution here
+    // For simplicity, we'll assume the user always chooses local data
+    return true;
   }
 }

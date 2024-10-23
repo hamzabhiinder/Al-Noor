@@ -1,5 +1,3 @@
-// repositories/category_repository.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:alnoor/models/category.dart';
@@ -65,5 +63,23 @@ class CategoryRepository {
     }
 
     return categories.take(8).toList();
+  }
+
+  // Implement timestamp-based conflict resolution
+  Future<void> resolveConflicts(List<Category> localCategories, List<Category> remoteCategories) async {
+    for (var localCategory in localCategories) {
+      var remoteCategory = remoteCategories.firstWhere(
+        (category) => category.id == localCategory.id,
+        orElse: () => localCategory,
+      );
+
+      if (localCategory.updatedAt.compareTo(remoteCategory.updatedAt) > 0) {
+        // Local category is more recent
+        await categoryDao.insertOrUpdateCategories([localCategory]);
+      } else {
+        // Remote category is more recent
+        await categoryDao.insertOrUpdateCategories([remoteCategory]);
+      }
+    }
   }
 }
