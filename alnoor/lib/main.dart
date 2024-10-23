@@ -31,7 +31,18 @@ void main() async {
   }
 
   await _initializeNotifications();
-  
+
+  // Sync unsynced users when the app initializes
+  RegisterRepository registerRepository = RegisterRepository();
+  await registerRepository.syncUsers();
+
+  // Fetch products when the app initializes
+  ProductRepository productRepository = ProductRepository();
+  await productRepository.fetchProducts("", [], []);
+
+  // Download products in the background when the app initializes
+  await productRepository.downloadProductsInBackground();
+
   runApp(
     MultiBlocProvider(
       providers: [

@@ -1,5 +1,3 @@
-// repositories/product_repository.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:alnoor/models/product.dart';
@@ -88,5 +86,22 @@ class ProductRepository {
     List<Product> products = await productDao.getProducts();
     globals.products = products;
     return products;
+  }
+
+  // Download products in the background one at a time
+  Future<void> downloadProductsInBackground() async {
+    bool isConnected = await _isConnected();
+    if (isConnected) {
+      // Fetch products from API
+      List<Product> products = await fetchProducts("", [], []);
+      for (var product in products) {
+        // Store each product locally one at a time
+        await productDao.insertOrUpdateProducts([product]);
+        // Fetch the product from the local database
+        await _fetchProductsFromLocal();
+      }
+    } else {
+      print('No internet connection. Cannot download products.');
+    }
   }
 }
