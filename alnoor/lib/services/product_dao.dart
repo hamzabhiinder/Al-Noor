@@ -1,5 +1,3 @@
-// services/product_dao.dart
-
 import 'package:sqflite/sqflite.dart';
 import '../models/product.dart';
 import 'database_helper.dart';

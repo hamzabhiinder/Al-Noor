@@ -1,5 +1,3 @@
-// services/subcategory_dao.dart
-
 import 'package:sqflite/sqflite.dart';
 import '../models/subcategory.dart';
 import 'database_helper.dart';
