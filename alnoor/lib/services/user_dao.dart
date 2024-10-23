@@ -1,5 +1,3 @@
-// services/user_dao.dart
-
 import 'package:sqflite/sqflite.dart';
 import '../models/user.dart';
 import '../services/database_helper.dart';
@@ -64,5 +62,29 @@ class UserDao {
     return List.generate(maps.length, (i) {
       return User.fromMap(maps[i]);
     });
+  }
+
+  // Get all users
+  Future<List<User>> getAllUsers() async {
+    print('Fetching all users');
+    Database db = await dbHelper.database;
+    List<Map<String, dynamic>> maps = await db.query('users');
+    print('Total users count: ${maps.length}');
+    return List.generate(maps.length, (i) {
+      return User.fromMap(maps[i]);
+    });
+  }
+
+  // Delete user by email
+  Future<int> deleteUserByEmail(String email) async {
+    print('Deleting user by email: $email');
+    Database db = await dbHelper.database;
+    int count = await db.delete(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    print('Deleted user: $email, Rows affected: $count');
+    return count;
   }
 }
