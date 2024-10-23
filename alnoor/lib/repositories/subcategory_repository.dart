@@ -1,5 +1,3 @@
-// repositories/subcategory_repository.dart
-
 import 'dart:convert';
 import 'package:alnoor/models/subcategory.dart';
 import 'package:http/http.dart' as http;
