@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
 import '../models/product.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 
 class ProductRepository {
   Future<List<Product>> fetchProducts(search, categories, subcategories) async {
     var response = null;
+    var box = Hive.box('productsBox');
     if (search != "") {
       response = await http
           .get(Uri.parse("https://alnoormdf.com/alnoor/search/${search}"))
@@ -44,9 +46,17 @@ class ProductRepository {
         ...globals.products,
         ...productsJson.map((product) => Product.fromJson(product)).toList()
       ];
+      await box.put('products', productsJson); // Save fetched data to Hive
       return globals.products;
     } else {
-      throw Exception('Failed to load products');
+      if (box.containsKey('products')) {
+        final cachedProducts = box.get('products') as List<dynamic>;
+        return cachedProducts
+            .map((item) => Product.fromJson(item))
+            .toList();
+      } else {
+        throw Exception('Failed to load products');
+      }
     }
   }
 }

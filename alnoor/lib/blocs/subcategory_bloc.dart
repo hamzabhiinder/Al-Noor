@@ -1,9 +1,8 @@
-// subcategory_bloc.dart
-
-// Events
 import 'package:alnoor/repositories/subcategory_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
+// Events
 abstract class SubcategoryEvent {}
 
 class LoadSubcategories extends SubcategoryEvent {}
@@ -37,10 +36,17 @@ class SubcategoryBloc extends Bloc<SubcategoryEvent, SubcategoryState> {
       LoadSubcategories event, Emitter<SubcategoryState> emit) async {
     emit(SubcategoryLoading());
     try {
-      final categories = await repository.fetchSubcategories();
-      emit(SubcategoryLoaded(categories));
+      final subcategories = await repository.fetchSubcategories();
+      emit(SubcategoryLoaded(subcategories));
     } catch (e) {
-      emit(SubcategoryError('Failed to load categories'));
+      // Load subcategories from Hive if offline
+      var box = Hive.box('subcategoriesBox');
+      if (box.containsKey('subcategories')) {
+        final cachedSubcategories = box.get('subcategories') as List<dynamic>;
+        emit(SubcategoryLoaded(cachedSubcategories));
+      } else {
+        emit(SubcategoryError('Failed to load subcategories'));
+      }
     }
   }
 }

@@ -1,8 +1,7 @@
-// category_bloc.dart
-
 import 'package:alnoor/models/category.dart';
 import 'package:alnoor/repositories/category_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 // Events
 abstract class CategoryEvent {}
@@ -41,7 +40,17 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       final categories = await repository.fetchCategories();
       emit(CategoryLoaded(categories));
     } catch (e) {
-      emit(CategoryError('Failed to load categories'));
+      // Load categories from Hive if offline
+      var box = Hive.box('categoriesBox');
+      if (box.containsKey('categories')) {
+        final cachedCategories = box.get('categories') as List<dynamic>;
+        final categories = cachedCategories
+            .map((item) => Category.fromJson(item))
+            .toList();
+        emit(CategoryLoaded(categories));
+      } else {
+        emit(CategoryError('Failed to load categories'));
+      }
     }
   }
 }
