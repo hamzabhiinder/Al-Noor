@@ -1,7 +1,8 @@
+// category_bloc.dart
+
 import 'package:alnoor/models/product.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 
 // Events
 abstract class ProductEvent {}
@@ -72,17 +73,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           event.search, event.categories, event.subcategories);
       emit(ProductLoaded(products));
     } catch (e) {
-      // Load products from Hive if offline
-      var box = Hive.box('productsBox');
-      if (box.containsKey('products')) {
-        final cachedProducts = box.get('products') as List<dynamic>;
-        final products = cachedProducts
-            .map((item) => Product.fromJson(item))
-            .toList();
-        emit(ProductLoaded(products));
-      } else {
-        emit(ProductError('Failed to load products'));
-      }
+      emit(ProductError('Failed to load categories'));
     }
   }
 }
