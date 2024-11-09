@@ -126,7 +126,7 @@ class HamburgerMenu extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DealorsPage(
+                        builder: (context) => DealersPage(
                               isGuestUser: isGuestUser,
                             )),
                   );

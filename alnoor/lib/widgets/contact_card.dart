@@ -3,17 +3,13 @@ import 'package:flutter/material.dart';
 class ContactCard extends StatelessWidget {
   final String heading;
   final String address;
-  final String email;
   final String phone1;
-  final String phone2;
 
   const ContactCard({
     Key? key,
     required this.heading,
     required this.address,
-    required this.email,
     required this.phone1,
-    required this.phone2,
   }) : super(key: key);
 
   @override
@@ -75,26 +71,6 @@ class ContactCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Email row with email icon
-            Row(
-              children: [
-                const Icon(
-                  Icons.alternate_email,
-                  color: Colors.grey,
-                  size: 18,
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    email,
-                    style: TextStyle(fontSize: dynamicFontSize(9)),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
             // Phone numbers column with phone icon
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,11 +88,7 @@ class ContactCard extends StatelessWidget {
                       phone1,
                       style: TextStyle(fontSize: dynamicFontSize(9)),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      phone2,
-                      style: TextStyle(fontSize: dynamicFontSize(9)),
-                    ),
+                  
                   ],
                 ),
               ],
