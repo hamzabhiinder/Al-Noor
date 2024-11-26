@@ -11,138 +11,115 @@ import '../screens/Landing_Screen/Splash_Screen.dart';
 
 class HamburgerMenu extends StatelessWidget {
   final bool isGuestUser;
-  final bool isMenuVisible; // Add this line to accept the state
-  final VoidCallback onMenuToggle; // Add this to toggle the menu
+  final bool isMenuVisible;
+  final VoidCallback onMenuToggle;
+  final num variant;
 
   HamburgerMenu({
     required this.isGuestUser,
     required this.isMenuVisible,
     required this.onMenuToggle,
+    required this.variant,
   });
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 1.0,
-      borderRadius: BorderRadius.circular(8.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width *
-            0.4, // Adjust the width to fit your needs
-        padding: EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isGuestUser)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Guest',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+      color: Colors.transparent,
+      child: Transform.translate(
+          offset: Offset(variant == 1 ? -5 : 5, variant == 1 ? -41 : -37),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.6,
+            padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[850],
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(0.0),
+                bottomRight: Radius.circular(20.0),
+                bottomLeft: Radius.circular(20.0),
+                topLeft: Radius.circular(20.0),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildMenuItem(
+                  icon: Icons.home,
+                  title: 'Home',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
+                  },
                 ),
-              ),
-            if (!isGuestUser) // Only show if not a guest user
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Hello, ${globals.userName}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.favorite,
+                  title: 'Favorites',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Favourites(index: 0)),
+                    );
+                  },
                 ),
-              ),
-            if (!isGuestUser)
-              Divider(), // Show divider only if userName is shown
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.home,
-                title: 'Home',
-                onTap: () {
-                  onMenuToggle(); // Close the menu when a menu item is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                },
-              ),
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.favorite,
-                title: 'Favorites',
-                onTap: () {
-                  onMenuToggle(); // Close the menu when a menu item is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Favourites(index: 0)),
-                  );
-                },
-              ),
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.info_outline,
-                title: 'About Us',
-                onTap: () {
-                  onMenuToggle(); // Close the menu when a menu item is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AboutUsPage(
-                              isGuestUser: isGuestUser,
-                            )),
-                  );
-                },
-              ),
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.format_paint,
-                title: 'Moodboards',
-                onTap: () {
-                  onMenuToggle(); // Close the menu when a menu item is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Moodboards(
-                              isGuestUser: isGuestUser,
-                              index: 0,
-                            )),
-                  );
-                },
-              ),
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.storefront_outlined,
-                title: 'Dealors',
-                onTap: () {
-                  onMenuToggle(); // Close the menu when a menu item is tapped
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DealersPage(
-                              isGuestUser: isGuestUser,
-                            )),
-                  );
-                },
-              ),
-            if (!isGuestUser)
-              _buildMenuItem(
-                icon: Icons.logout,
-                title: 'Logout',
-                onTap: () {
-                  _logout(context);
-                },
-              ),
-          ],
-        ),
-      ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.menu_book,
+                  title: 'About',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AboutUsPage(isGuestUser: isGuestUser)),
+                    );
+                  },
+                ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.color_lens,
+                  title: 'Moodboard',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Moodboards(index: 0)),
+                    );
+                  },
+                ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.store,
+                  title: 'Dealers',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              DealersPage(isGuestUser: isGuestUser)),
+                    );
+                  },
+                ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  onTap: () {
+                    _logout(context);
+                  },
+                ),
+              ],
+            ),
+          )),
     );
   }
 
@@ -153,15 +130,30 @@ class HamburgerMenu extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Row(
           children: [
-            Icon(icon, size: 20),
-            SizedBox(width: 10),
-            Text(title),
+            Icon(icon, color: Colors.white, size: 24),
+            SizedBox(width: 15),
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      color: Colors.white,
+      thickness: 2,
+      height: 10,
     );
   }
 
@@ -171,31 +163,25 @@ class HamburgerMenu extends StatelessWidget {
         Uri.parse('https://alnoormdf.com/alnoor/logout'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer ${globals.token}', // Assuming the token is stored globally
+          'Authorization': 'Bearer ${globals.token}',
         },
-        body: jsonEncode({}), // Add any required body parameters if needed
+        body: jsonEncode({}),
       );
-      print('API Response Status Code: ${response.statusCode}');
-      print('API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Successfully logged out, clear user session and navigate to StartScreen
-        globals.token = ''; // Clear the user token or any other session data
-        globals.userName = ''; // Clear the user name or any other session data
+        globals.token = '';
+        globals.userName = '';
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => StartScreen()),
         );
       } else {
-        // Handle errors here
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Logout failed. Please try again.')),
         );
       }
     } catch (e) {
-      // Handle any exceptions here
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred. Please try again.')),
       );

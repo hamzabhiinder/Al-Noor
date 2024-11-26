@@ -795,19 +795,24 @@ class _HomeScreenState extends State<HomeScreen>
                 if (!isGuestUser)
                   Padding(
                     padding: EdgeInsets.only(right: screenSize.width * 0.02),
-                    child: IconButton(
-                      icon: SvgPicture.asset(
-                        'assets/images/menu.svg',
-                        width: screenSize.width *
-                            0.065, // Responsive menu icon size
-                        height: screenSize.width *
-                            0.065, // Responsive menu icon size
-                      ),
-                      onPressed: () {
-                        _isMenuVisibleNotifier.value =
-                            !_isMenuVisibleNotifier.value;
-                      },
-                    ),
+                    child: ValueListenableBuilder<bool>(
+                        valueListenable: _isMenuVisibleNotifier,
+                        builder: (context, isVisible, child) {
+                          return IconButton(
+                            icon: SvgPicture.asset(
+                              isVisible
+                                  ? 'assets/images/menu_white.svg'
+                                  : 'assets/images/menu.svg',
+                              width: screenSize.width *
+                                  0.065, // Responsive menu icon size
+                              height: screenSize.width * 0.065,
+                            ),
+                            onPressed: () {
+                              _isMenuVisibleNotifier.value =
+                                  !_isMenuVisibleNotifier.value;
+                            },
+                          );
+                        }),
                   ),
                 if (isGuestUser)
                   Padding(
@@ -845,6 +850,7 @@ class _HomeScreenState extends State<HomeScreen>
                               right: screenSize.width *
                                   0.03, // Adjust the right position
                               child: HamburgerMenu(
+                                variant: 1,
                                 isGuestUser: isGuestUser,
                                 isMenuVisible: isVisible,
                                 onMenuToggle: _toggleMenu,

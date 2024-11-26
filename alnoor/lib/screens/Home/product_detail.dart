@@ -115,6 +115,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 },
                               ),
                             ),
+                            ValueListenableBuilder<bool>(
+                                valueListenable: _isMenuVisibleNotifier,
+                                builder: (context, isVisible, child) {
+                                  return (isVisible && !isGuestUser)
+                                      ? Positioned(
+                                          top: constraints.maxHeight * 0.09,
+                                          right: 20,
+                                          child: HamburgerMenu(
+                                            variant: 2,
+                                            isGuestUser: isGuestUser,
+                                            isMenuVisible: isVisible,
+                                            onMenuToggle: _toggleMenu,
+                                          ),
+                                        )
+                                      : SizedBox.shrink();
+                                }),
                             Positioned(
                               top: 0,
                               left: 0,
@@ -140,17 +156,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       },
                                     ),
                                     if (!isGuestUser) // Show the menu icon only if not a guest user
-                                      IconButton(
-                                        icon: SvgPicture.asset(
-                                          'assets/images/menu.svg',
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                        onPressed: () {
-                                          _isMenuVisibleNotifier.value =
-                                              !_isMenuVisibleNotifier.value;
-                                        },
-                                      ),
+                                      ValueListenableBuilder<bool>(
+                                          valueListenable:
+                                              _isMenuVisibleNotifier,
+                                          builder: (context, isVisible, child) {
+                                            return IconButton(
+                                              icon: SvgPicture.asset(
+                                                isVisible
+                                                    ? 'assets/images/menu_white.svg'
+                                                    : 'assets/images/menu.svg',
+                                                width: screenWidth * 0.065,
+                                                height: screenWidth * 0.065,
+                                              ),
+                                              onPressed: () {
+                                                _isMenuVisibleNotifier.value =
+                                                    !_isMenuVisibleNotifier
+                                                        .value;
+                                              },
+                                            );
+                                          }),
                                   ],
                                 ),
                               ),
@@ -264,21 +288,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ],
                     ),
                   ),
-                  ValueListenableBuilder<bool>(
-                      valueListenable: _isMenuVisibleNotifier,
-                      builder: (context, isVisible, child) {
-                        return (isVisible && !isGuestUser)
-                            ? Positioned(
-                                top: constraints.maxHeight * 0.09,
-                                right: 30,
-                                child: HamburgerMenu(
-                                  isGuestUser: isGuestUser,
-                                  isMenuVisible: isVisible,
-                                  onMenuToggle: _toggleMenu,
-                                ),
-                              )
-                            : SizedBox.shrink();
-                      }),
                 ],
               );
             },

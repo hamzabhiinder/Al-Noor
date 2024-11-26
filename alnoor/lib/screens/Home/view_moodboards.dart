@@ -108,18 +108,24 @@ class _MoodboardsState extends State<Moodboards> {
                 .isGuestUser) // Show menu button only if the user is not a guest
               Padding(
                 padding: EdgeInsets.only(
-                    right: screenWidth * 0.02), // Adjust the value as needed
-                child: IconButton(
-                  icon: SvgPicture.asset(
-                    'assets/images/menu.svg',
-                    width: screenWidth * 0.065,
-                    height: screenWidth * 0.065,
-                  ),
-                  onPressed: () {
-                    _isMenuVisibleNotifier.value =
-                        !_isMenuVisibleNotifier.value;
-                  },
-                ),
+                    right: screenWidth * 0.015), // Adjust the value as needed
+                child: ValueListenableBuilder<bool>(
+                    valueListenable: _isMenuVisibleNotifier,
+                    builder: (context, isVisible, child) {
+                      return IconButton(
+                        icon: SvgPicture.asset(
+                          isVisible
+                              ? 'assets/images/menu_white.svg'
+                              : 'assets/images/menu.svg',
+                          width: screenWidth * 0.065,
+                          height: screenWidth * 0.065,
+                        ),
+                        onPressed: () {
+                          _isMenuVisibleNotifier.value =
+                              !_isMenuVisibleNotifier.value;
+                        },
+                      );
+                    }),
               ),
           ],
         ),
@@ -134,6 +140,7 @@ class _MoodboardsState extends State<Moodboards> {
                           top: screenHeight * 0.002, // Adjust the top position
                           right: 10, // Adjust the right position
                           child: HamburgerMenu(
+                            variant: 1,
                             isGuestUser: widget.isGuestUser,
                             isMenuVisible: isVisible,
                             onMenuToggle: _toggleMenu,

@@ -56,8 +56,8 @@ class _DealersPageState extends State<DealersPage> {
                   Positioned.fill(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 8.0 : 16.0,
-                        vertical: isSmallScreen ? 12.0 : 16.0,
+                        horizontal: 16.0,
+                        vertical: 16.0,
                       ),
                       child: Column(
                         children: [
@@ -67,60 +67,74 @@ class _DealersPageState extends State<DealersPage> {
                               IconButton(
                                 icon: SvgPicture.asset(
                                   'assets/images/Logo_Black.svg',
-                                  width: isSmallScreen ? 35 : 47,
-                                  height: isSmallScreen ? 35 : 47,
+                                  width: 47,
+                                  height: 47,
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                               ),
                               if (!widget.isGuestUser)
-                                IconButton(
-                                  icon: SvgPicture.asset(
-                                    'assets/images/menu.svg',
-                                    width: isSmallScreen ? 25 : 30,
-                                    height: isSmallScreen ? 25 : 30,
-                                  ),
-                                  onPressed: _toggleMenu,
-                                ),
+                                ValueListenableBuilder<bool>(
+                                    valueListenable: _isMenuVisibleNotifier,
+                                    builder: (context, isVisible, child) {
+                                      return IconButton(
+                                        icon: SvgPicture.asset(
+                                          isVisible
+                                              ? 'assets/images/menu_white.svg'
+                                              : 'assets/images/menu.svg',
+                                          width: screenWidth * 0.065,
+                                          height: screenWidth * 0.065,
+                                        ),
+                                        onPressed: _toggleMenu,
+                                      );
+                                    }),
                             ],
                           ),
                           SizedBox(height: screenHeight * 0.02),
-                          ContactCard(
-                            heading: "Karachi Design Studio",
-                            address:
-                                "24-C, 7th Commercial Lane, Main Khayaban-e-Bahria, Phase IV, Dha, Karachi.",
-                            phone1: "+92 21 372 372 05",
-                          ),
-                          SizedBox(height: screenHeight * 0.02),
-                          ContactCard(
-                            heading: "Lahore Design Studio",
-                            address: "7-AI Sector XX, Phase 3, DHA, Lahore.",
-                            phone1: "+92 21 372 372 05",
-                          ),
-                          Spacer(),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await EasyLauncher.url(
-                                  url: "https://alnoormdf.com/dealers");
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xff464444),
-                              padding: EdgeInsets.symmetric(
-                                vertical: isSmallScreen ? 12.0 : 16.0,
-                                horizontal: isSmallScreen ? 24.0 : 32.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "Find A Dealer",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isSmallScreen ? 14 : 16,
-                              ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ContactCard(
+                                  heading: "Karachi Design Studio",
+                                  address:
+                                      "24-C, 7th Commercial Lane, Main Khayaban-e-Bahria, Phase IV, Dha, Karachi.",
+                                  phone1: "+92 21 372 372 05",
+                                ),
+                                SizedBox(height: screenHeight * 0.02),
+                                ContactCard(
+                                  heading: "Lahore Design Studio",
+                                  address:
+                                      "7-AI Sector XX, Phase 3, DHA, Lahore.",
+                                  phone1: "+92 21 372 372 05",
+                                ),
+                                SizedBox(height: screenHeight * 0.06),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await EasyLauncher.url(
+                                        url: "https://alnoormdf.com/dealers");
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xff464444),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                      horizontal: 32.0,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Find A Dealer",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -132,14 +146,33 @@ class _DealersPageState extends State<DealersPage> {
                     builder: (context, isVisible, child) {
                       return (isVisible && !widget.isGuestUser)
                           ? Positioned(
-                              top: constraints.maxHeight * 0.09,
-                              right: 20,
+                              top: constraints.maxHeight * 0.083,
+                              right: 29,
                               child: HamburgerMenu(
+                                variant: 2,
                                 isGuestUser: widget.isGuestUser,
                                 isMenuVisible: isVisible,
                                 onMenuToggle: _toggleMenu,
                               ),
                             )
+                          : Container();
+                    },
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _isMenuVisibleNotifier,
+                    builder: (context, isVisible, child) {
+                      return (isVisible && !widget.isGuestUser)
+                          ? Positioned(
+                              top: constraints.maxHeight * 0.028,
+                              right: 16,
+                              child: IconButton(
+                                icon: SvgPicture.asset(
+                                  'assets/images/menu_white.svg',
+                                  width: screenWidth * 0.065,
+                                  height: screenWidth * 0.065,
+                                ),
+                                onPressed: _toggleMenu,
+                              ))
                           : Container();
                     },
                   ),
