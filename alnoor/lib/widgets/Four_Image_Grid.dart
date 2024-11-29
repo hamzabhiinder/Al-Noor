@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/models/product.dart';
 import 'package:flutter/material.dart';
 import '../screens/Home/four_image_moodboard.dart';
 
@@ -35,12 +36,12 @@ class _FourImageDragTargetContainerState
           ImageManager().setImage(6, images[3]);
         }
       },
-      child: DragTarget<String>(
+      child: DragTarget<Product>(
         onWillAccept: (data) {
           return true;
         },
-        onAcceptWithDetails: (DragTargetDetails<String> details) {
-          final String newImageUrl = details.data;
+        onAcceptWithDetails: (DragTargetDetails<Product> details) {
+          final String newImageUrl = details.data.thumbnailImage;
           if (ImageManager().getImage(3) == null ||
               ImageManager().getImage(3) == "") {
             ImageManager().setImage(3, newImageUrl);
@@ -57,7 +58,7 @@ class _FourImageDragTargetContainerState
             ImageManager().setImage(3, newImageUrl);
           }
         },
-        builder: (BuildContext context, List<String?> candidateData,
+        builder: (BuildContext context, List<Product?> candidateData,
             List<dynamic> rejectedData) {
           return Container(
             width: containerSize,

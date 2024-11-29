@@ -5,6 +5,7 @@ import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:alnoor/widgets/Image_Collection.dart';
 import 'package:alnoor/widgets/Product_Grid.dart';
+import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -45,10 +46,24 @@ class _FavouritesState extends State<Favourites> {
   int filterIndex = 0;
   late ValueNotifier<bool> _isMenuVisibleNotifier;
   TextEditingController _textController = TextEditingController();
+  late ValueNotifier<bool> _isDraggingNotifier;
+  late ValueNotifier<int?> _draggingIndexNotifier;
+
+  void setIsDragging(bool value) {
+    print("hiiiiiiiiii");
+    print(value);
+    _isDraggingNotifier.value = value;
+  }
+
+  void setDraggingIndex(int? value) {
+    _draggingIndexNotifier.value = value;
+  }
 
   @override
   void initState() {
     super.initState();
+    _isDraggingNotifier = ValueNotifier<bool>(false);
+    _draggingIndexNotifier = ValueNotifier<int?>(null);
     _isMenuVisibleNotifier = ValueNotifier<bool>(false);
     _focusNode.addListener(() {
       setState(() {
@@ -76,6 +91,8 @@ class _FavouritesState extends State<Favourites> {
 
   @override
   void dispose() {
+    _isDraggingNotifier.dispose();
+    _draggingIndexNotifier.dispose();
     _pageController.dispose();
     _focusNode.dispose();
     _isMenuVisibleNotifier.dispose();
@@ -189,222 +206,169 @@ class _FavouritesState extends State<Favourites> {
   Widget _buildMainContent(
       double screenWidth, double screenHeight, BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: screenHeight * 0.035,
-                child: TextField(
-                  controller: _textController,
-                  focusNode: _focusNode,
-                  onChanged: (text) {
-                    if (_textController.text.isEmpty) {
-                      _onSearchSubmit();
-                    }
-                  },
-                  onSubmitted: (text) {
-                    _onSearchSubmit();
-                  },
-                  decoration: InputDecoration(
-                    suffixIcon: _textController.text.isNotEmpty
-                        ? IconButton(
-                            icon: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
-                              child: Icon(
-                                Icons.close,
-                                size: screenSize.width * 0.03,
-                                color: Colors.black,
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _textController.text = "";
-                              });
-                              _onSearchSubmit(); // Optionally call this if you want to trigger the search when clearing the text
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: Color(0xFFEFEFEF),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.038),
-                  ),
-                  style: TextStyle(fontSize: screenHeight * 0.015),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              if (!_focusNode.hasFocus && _textController.text.isEmpty)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.search,
-                        color: Colors.grey, size: screenHeight * 0.02),
-                    SizedBox(width: screenWidth * 0.02),
-                    Text(
-                      'Search Your Decor Here',
-                      style: GoogleFonts.poppins(
-                        fontSize: screenHeight * 0.012,
-                        color: Color(0xFF9A9A9A),
-                      ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          SizedBox(height: screenHeight * 0.011),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(
-              'Favourites',
-              style: GoogleFonts.poppins(
-                fontSize: screenHeight * 0.022,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            )
-          ]),
-          SizedBox(height: screenHeight * 0.012),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Stack(
+              alignment: Alignment.center,
               children: [
-                SizedBox(
-                  height: screenHeight * 0.17,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            _focusNode.unfocus();
-                          },
-                          child: OverlappingImagesWidget(
-                            imageUrls: [
-                              'assets/images/Kitchen2.jpg',
-                              'assets/images/Kitchen3.jpg',
-                              'assets/images/Kitchen1.jpg'
-                            ],
-                            text: 'MY KITCHEN',
-                            index: 0,
-                            selected: filterIndex == 0,
-                            productId: "-1",
-                            isFavourites: true,
-                            setFilter: setFilterIndex,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            _focusNode.unfocus();
-                          },
-                          child: OverlappingImagesWidget(
-                              imageUrls: [
-                                'assets/images/Bedroom2.jpg',
-                                'assets/images/Bedroom3.jpg',
-                                'assets/images/Bedroom1.jpg'
-                              ],
-                              text: 'MY BEDROOM',
-                              index: 1,
-                              productId: "-1",
-                              setFilter: setFilterIndex,
-                              selected: filterIndex == 1,
-                              isFavourites: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: screenHeight * 0.17,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            _focusNode.unfocus();
-                          },
-                          child: OverlappingImagesWidget(
-                              imageUrls: [
-                                'assets/images/Bedroom2.jpg',
-                                'assets/images/Bedroom3.jpg',
-                                'assets/images/Bedroom1.jpg'
-                              ],
-                              text: 'MY LOUNGE',
-                              index: 2,
-                              productId: "-1",
-                              setFilter: setFilterIndex,
-                              selected: filterIndex == 2,
-                              isFavourites: true),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            _focusNode.unfocus();
-                          },
-                          child: OverlappingImagesWidget(
-                              imageUrls: [
-                                'assets/images/Kitchen2.jpg',
-                                'assets/images/Kitchen3.jpg',
-                                'assets/images/Kitchen1.jpg'
-                              ],
-                              text: 'MY IDEAS',
-                              index: 3,
-                              productId: "-1",
-                              setFilter: setFilterIndex,
-                              selected: filterIndex == 3,
-                              isFavourites: true),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                Expanded(
-                  child: BlocBuilder<FavouriteBloc, FavouriteState>(
-                    builder: (context, state) {
-                      if (state is FavouriteLoading ||
-                          state is UploadImageLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (state is FavouriteError) {
-                        return Center(child: Text(state.message));
-                      } else if (state is FavouriteLoaded) {
-                        if (state.favourites[filterIndex].length == 0) {
-                          return Center(
-                              child: Text("No Items In This Collection "));
-                        }
-                        return ProductGrid(
-                          isGuestUser: widget.isGuestUser,
-                          isFavourites: true,
-                          products: filterIndex == 0
-                              ? state.favourites[0]
-                              : filterIndex == 1
-                                  ? state.favourites[1]
-                                  : filterIndex == 2
-                                      ? state.favourites[2]
-                                      : state.favourites[3],
-                        );
-                      } else {
-                        return SizedBox.shrink();
+                Container(
+                  height: screenHeight * 0.035,
+                  child: TextField(
+                    controller: _textController,
+                    focusNode: _focusNode,
+                    onChanged: (text) {
+                      if (_textController.text.isEmpty) {
+                        _onSearchSubmit();
                       }
                     },
+                    onSubmitted: (text) {
+                      _onSearchSubmit();
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon: _textController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  size: screenSize.width * 0.03,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _textController.text = "";
+                                });
+                                _onSearchSubmit(); // Optionally call this if you want to trigger the search when clearing the text
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: Color(0xFFEFEFEF),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.038),
+                    ),
+                    style: TextStyle(fontSize: screenHeight * 0.015),
+                    textAlign: TextAlign.left,
                   ),
                 ),
+                if (!_focusNode.hasFocus && _textController.text.isEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.search,
+                          color: Colors.grey, size: screenHeight * 0.02),
+                      SizedBox(width: screenWidth * 0.02),
+                      Text(
+                        'Search Your Decor Here',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenHeight * 0.012,
+                          color: Color(0xFF9A9A9A),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
-          )
+            SizedBox(height: screenHeight * 0.011),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                'Favourites',
+                style: GoogleFonts.poppins(
+                  fontSize: screenHeight * 0.022,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              )
+            ]),
+            SizedBox(height: screenHeight * 0.012),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * 0.01),
+                  Expanded(
+                    child: BlocBuilder<FavouriteBloc, FavouriteState>(
+                      builder: (context, state) {
+                        if (state is FavouriteLoading ||
+                            state is UploadImageLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (state is FavouriteError) {
+                          return Center(child: Text(state.message));
+                        } else if (state is FavouriteLoaded) {
+                          if (state.favourites[filterIndex].length == 0) {
+                            return Center(
+                                child: Text("No Items In This Collection "));
+                          }
+                          return ProductGrid(
+                            setIsDragging: (value) =>
+                                _isDraggingNotifier.value = value,
+                            setDraggingIndex: (value) =>
+                                _draggingIndexNotifier.value = value,
+                            isGuestUser: widget.isGuestUser,
+                            isFavourites: true,
+                            products: filterIndex == 0
+                                ? state.favourites[0]
+                                : filterIndex == 1
+                                    ? state.favourites[1]
+                                    : filterIndex == 2
+                                        ? state.favourites[2]
+                                        : state.favourites[3],
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+          ValueListenableBuilder<bool>(
+            valueListenable: _isDraggingNotifier,
+            builder: (context, isDragging, child) {
+              return isDragging
+                  ? Align(
+                      alignment: Alignment.bottomCenter,
+                      child: DragTarget<String>(
+                        onWillAccept: (data) => true,
+                        onAccept: (moodboard) {
+                          _isDraggingNotifier.value = false;
+                          _draggingIndexNotifier.value = null;
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 40.0),
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(40.0),
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: 24.0,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );

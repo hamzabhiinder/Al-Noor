@@ -519,7 +519,7 @@ class _FourImageScreenState extends State<FourImageScreen> {
                 const SizedBox(height: 10),
                 _buildButton(
                   context,
-                  "Select From Decor",
+                  "Select From Library",
                   Colors.white,
                   Colors.black,
                   () async {
