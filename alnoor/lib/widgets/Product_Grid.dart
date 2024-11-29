@@ -32,6 +32,7 @@ class ProductGrid extends StatefulWidget {
 
 class _ProductGridState extends State<ProductGrid> {
   late ScrollController _scrollController;
+  Map<String, ImageProvider> _imageCache = {};
 
   @override
   void initState() {
@@ -70,9 +71,13 @@ class _ProductGridState extends State<ProductGrid> {
   }
 
   Future<ImageProvider> loadImage(String url) async {
+    if (_imageCache.containsKey(url)) {
+      return _imageCache[url]!;
+    }
     try {
       final image = NetworkImage(url);
       await precacheImage(image, context);
+      _imageCache[url] = image; // Cache the loaded image
       return image;
     } catch (e) {
       return AssetImage('assets/images/Logo.png');
