@@ -1,4 +1,5 @@
 import 'package:alnoor/screens/Home/dealors.dart';
+import 'package:alnoor/screens/Home/uploads.dart';
 import 'package:alnoor/screens/Home/view_moodboards.dart';
 import 'package:alnoor/screens/Landing_Screen/About_Us.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,19 @@ class HamburgerMenu extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => Favourites(index: 0)),
+                    );
+                  },
+                ),
+                _buildDivider(),
+                _buildMenuItem(
+                  icon: Icons.upload,
+                  title: 'Uploads',
+                  onTap: () {
+                    onMenuToggle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Uploads(index: 3)),
                     );
                   },
                 ),

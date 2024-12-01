@@ -2,7 +2,6 @@ import 'package:alnoor/widgets/contact_card.dart';
 import 'package:alnoor/widgets/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_url_launcher/easy_url_launcher.dart';
 
 class DealersPage extends StatefulWidget {
@@ -17,7 +16,6 @@ class DealersPage extends StatefulWidget {
 class _DealersPageState extends State<DealersPage> {
   late ValueNotifier<bool> _isMenuVisibleNotifier;
   FocusNode _focusNode = FocusNode();
-  TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -41,7 +39,6 @@ class _DealersPageState extends State<DealersPage> {
     // Get the screen size and apply scaling factors
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final isSmallScreen = screenWidth < 600;
 
     return SafeArea(
       child: GestureDetector(

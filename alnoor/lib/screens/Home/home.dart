@@ -681,6 +681,7 @@ import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/blocs/subcategory_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
+import 'package:alnoor/screens/Home/uploads.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -1370,7 +1371,7 @@ class _HomeScreenState extends State<HomeScreen>
           .add(UploadImage(imageFile: imageFile, collectionName: "MY IDEAS")));
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Favourites(index: 3)),
+        MaterialPageRoute(builder: (context) => Uploads(index: 3)),
       );
     }
   }

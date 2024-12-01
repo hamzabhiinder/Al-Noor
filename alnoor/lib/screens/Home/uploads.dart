@@ -2,7 +2,6 @@
 
 import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
-import 'package:alnoor/models/product.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:alnoor/widgets/Product_Grid.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Favourites(
+      home: Uploads(
         index: 0,
         isGuestUser: false, // Change this to true if testing as a guest user
       ),
@@ -28,21 +27,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Favourites extends StatefulWidget {
+class Uploads extends StatefulWidget {
   final int index;
   final bool isGuestUser; // Pass this flag to determine if the user is a guest
 
-  Favourites({required this.index, this.isGuestUser = false});
+  Uploads({required this.index, this.isGuestUser = false});
 
   @override
-  _FavouritesState createState() => _FavouritesState();
+  _UploadsState createState() => _UploadsState();
 }
 
-class _FavouritesState extends State<Favourites> {
+class _UploadsState extends State<Uploads> {
   FocusNode _focusNode = FocusNode();
   int currentPage = 0;
   late PageController _pageController;
-  int filterIndex = 0;
+  int filterIndex = 3;
   late ValueNotifier<bool> _isMenuVisibleNotifier;
   TextEditingController _textController = TextEditingController();
   late ValueNotifier<bool> _isDraggingNotifier;
@@ -78,7 +77,7 @@ class _FavouritesState extends State<Favourites> {
   void _onSearchSubmit() {
     setState(() {
       print("seven");
-      filterIndex = 0;
+      filterIndex = 3;
     });
     context
         .read<FavouriteBloc>()
@@ -202,91 +201,14 @@ class _FavouritesState extends State<Favourites> {
 
   Widget _buildMainContent(
       double screenWidth, double screenHeight, BuildContext context) {
-    List<Product> prods = [];
-    final screenSize = MediaQuery.of(context).size;
-    void _deleteFavourite(Product product) {
-      final favouritesBloc = BlocProvider.of<FavouriteBloc>(context);
-      favouritesBloc.add(DeleteFavourites(id: product.id ?? ''));
-    }
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
       child: Stack(
         children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  height: screenHeight * 0.035,
-                  child: TextField(
-                    controller: _textController,
-                    focusNode: _focusNode,
-                    onChanged: (text) {
-                      if (_textController.text.isEmpty) {
-                        _onSearchSubmit();
-                      }
-                    },
-                    onSubmitted: (text) {
-                      _onSearchSubmit();
-                    },
-                    decoration: InputDecoration(
-                      suffixIcon: _textController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
-                                child: Icon(
-                                  Icons.close,
-                                  size: screenSize.width * 0.03,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _textController.text = "";
-                                });
-                                _onSearchSubmit(); // Optionally call this if you want to trigger the search when clearing the text
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: Color(0xFFEFEFEF),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.038),
-                    ),
-                    style: TextStyle(fontSize: screenHeight * 0.015),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                if (!_focusNode.hasFocus && _textController.text.isEmpty)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.search,
-                          color: Colors.grey, size: screenHeight * 0.02),
-                      SizedBox(width: screenWidth * 0.02),
-                      Text(
-                        'Search Your Decor Here',
-                        style: GoogleFonts.poppins(
-                          fontSize: screenHeight * 0.012,
-                          color: Color(0xFF9A9A9A),
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-            SizedBox(height: screenHeight * 0.011),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(
-                'Favourites',
+                'Uploads',
                 style: GoogleFonts.poppins(
                   fontSize: screenHeight * 0.022,
                   fontWeight: FontWeight.bold,
@@ -314,7 +236,6 @@ class _FavouritesState extends State<Favourites> {
                             return Center(
                                 child: Text("No Items In This Collection "));
                           }
-                          prods = state.favourites[0];
                           return ProductGrid(
                             setIsDragging: (value) =>
                                 _isDraggingNotifier.value = value,
@@ -322,7 +243,14 @@ class _FavouritesState extends State<Favourites> {
                                 _draggingIndexNotifier.value = value,
                             isGuestUser: widget.isGuestUser,
                             isFavourites: true,
-                            products: prods,
+                            isUpload: true,
+                            products: filterIndex == 0
+                                ? state.favourites[0]
+                                : filterIndex == 1
+                                    ? state.favourites[1]
+                                    : filterIndex == 2
+                                        ? state.favourites[2]
+                                        : state.favourites[3],
                           );
                         } else {
                           return SizedBox.shrink();
@@ -334,42 +262,6 @@ class _FavouritesState extends State<Favourites> {
               ),
             ),
           ]),
-          ValueListenableBuilder<bool>(
-            valueListenable: _isDraggingNotifier,
-            builder: (context, isDragging, child) {
-              return isDragging
-                  ? Align(
-                      alignment: Alignment.bottomCenter,
-                      child: DragTarget<Product>(
-                        onWillAccept: (data) => true,
-                        onAccept: (product) {
-                          setState(() {
-                            prods.removeAt(_draggingIndexNotifier.value ?? 0);
-                          });
-                          _isDraggingNotifier.value = false;
-                          _draggingIndexNotifier.value = null;
-                          _deleteFavourite(product);
-                        },
-                        builder: (context, candidateData, rejectedData) {
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 40.0),
-                            padding: const EdgeInsets.all(16.0),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(40.0),
-                            ),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 24.0,
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : SizedBox.shrink();
-            },
-          ),
         ],
       ),
     );

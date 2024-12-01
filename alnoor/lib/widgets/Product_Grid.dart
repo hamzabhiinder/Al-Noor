@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/models/product.dart';
-import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:vibration/vibration.dart';
@@ -17,6 +16,7 @@ class ProductGrid extends StatefulWidget {
   final bool isGuestUser;
   final void Function(bool)? setIsDragging;
   final void Function(int?)? setDraggingIndex;
+  final bool? isUpload;
 
   ProductGrid({
     required this.products,
@@ -24,6 +24,7 @@ class ProductGrid extends StatefulWidget {
     required this.isGuestUser,
     this.setIsDragging,
     this.setDraggingIndex,
+    this.isUpload,
   });
 
   @override
@@ -105,8 +106,12 @@ class _ProductGridState extends State<ProductGrid> {
             itemCount: widget.products.length,
             itemBuilder: (context, index) {
               var product = widget.products[index];
-              return LongPressDraggable<String>(
-                data: product.thumbnailImage,
+              return LongPressDraggable<Product>(
+                data: product,
+                childWhenDragging:
+                    (widget.isFavourites && !(widget.isUpload == true))
+                        ? Container()
+                        : null,
                 onDragStarted: () async {
                   if (widget.isFavourites) {
                     widget.setDraggingIndex?.call(index);
