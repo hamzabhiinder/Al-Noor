@@ -54,8 +54,11 @@ dependencies:
   cached_network_image: ^3.4.1
   get_it: ^8.0.2
   flutter_cache_manager: ^3.4.1
-  webview_flutter: ^4.10.0
+  webview_flutter: ^4.8.0
   easy_url_launcher: ^0.0.7
+  connectivity_plus: ^6.1.0
+  # webview_flutter: ^4.10.0
+  # easy_url_launcher: ^0.0.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

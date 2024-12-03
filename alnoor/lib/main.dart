@@ -84,6 +84,7 @@
 //   }
 // }
 import 'dart:developer';
+import 'package:alnoor/utils/globals.dart' as globals;
 
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/favorites_bloc.dart';
@@ -192,13 +193,25 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: getTokenData() == null ? StartScreen() : HomeScreen(),
+      home: FutureBuilder(
+        future: getTokenData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasData && snapshot.data != null) {
+            globals.token = snapshot.data!;
+            return HomeScreen();
+          } else {
+            return StartScreen();
+          }
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-getTokenData() async {
+Future<String?> getTokenData() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('token');
 }

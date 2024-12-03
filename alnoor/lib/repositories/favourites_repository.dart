@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:alnoor/services/favourite_service.dart';
+import 'package:alnoor/utils/internet_connectivity.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:mime/mime.dart';
@@ -18,6 +21,8 @@ class FavouritesRepository {
         },
       ).timeout(Duration(seconds: 60));
     } else {
+      print('Bearer ${globals.token}');
+
       response = await http.get(
         Uri.parse('https://alnoormdf.com/alnoor/favourites'),
         headers: {
@@ -72,6 +77,35 @@ class FavouritesRepository {
       throw Exception('Failed to load products');
     }
   }
+
+// Add favourites function with offline handling
+  // Future<void> addFavourites(String productId, String collectionName) async {
+  //   if (await isConnected()) {
+  //     try {
+  //       var response = await http.post(
+  //         Uri.parse('https://alnoormdf.com/alnoor/favourites/add'),
+  //         headers: {
+  //           'Authorization': 'Bearer ${globals.token}',
+  //         },
+  //         body: {
+  //           'product_id': productId,
+  //           'collection_name': collectionName,
+  //         },
+  //       ).timeout(Duration(seconds: 60));
+
+  //       if (response.statusCode != 200) {
+  //         throw Exception('Failed to add to favourites');
+  //       }
+  //       await SharedPrefsHelper().saveFavourite(productId, collectionName);
+  //     } catch (e) {
+  //       print('Error adding favourite online: $e');
+  //       throw Exception('Failed to add to favourites');
+  //     }
+  //   } else {
+  //     // Save favourite locally if offline
+  //     await SharedPrefsHelper().saveFavourite(productId, collectionName);
+  //   }
+  // }
 
   Future<void> addFavourites(String productId, String collectionName) async {
     var response = await http.post(

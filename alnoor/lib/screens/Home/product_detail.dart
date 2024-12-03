@@ -95,7 +95,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               width: double.infinity,
                               child: Hero(
                                 tag:
-                                    'product-thumbnail-${widget.product.productId}',
+                                    'product-thumbnail-${widget.product.thumbnailImage}',
                                 child: CachedNetworkImage(
                                   imageUrl: widget.product.thumbnailImage,
                                   // "https://alnoormdf.com/" +

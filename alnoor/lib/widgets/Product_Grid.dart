@@ -107,6 +107,7 @@ class _ProductGridState extends State<ProductGrid> {
             ),
             itemCount: widget.products.length,
             itemBuilder: (context, index) {
+              log(' widget.products.length  ${widget.products.length}');
               var product = widget.products[index];
               return LongPressDraggable<Product>(
                 data: //"https://alnoormdf.com/" + product.productImage,
@@ -135,7 +136,7 @@ class _ProductGridState extends State<ProductGrid> {
                 feedback: Opacity(
                   opacity: 0.7,
                   child: Hero(
-                    tag: 'product-thumbnail-${product.productId}',
+                    tag: 'product-thumbnail-${product.thumbnailImage}',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
                       child: CachedNetworkImage(
@@ -213,7 +214,7 @@ class _ProductGridState extends State<ProductGrid> {
                         }
                       },
                       child: Hero(
-                        tag: 'product-thumbnail-${product.productId}',
+                        tag: 'product-thumbnail-${product.thumbnailImage}',
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.0),
                           child: CachedNetworkImage(
