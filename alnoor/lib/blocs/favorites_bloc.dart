@@ -21,6 +21,12 @@ class AddFavourites extends FavouritesEvent {
   AddFavourites({required this.productId, required this.collectionName});
 }
 
+class DeleteFavourites extends FavouritesEvent {
+  final String id;
+
+  DeleteFavourites({required this.id});
+}
+
 class UploadImage extends FavouritesEvent {
   final File imageFile;
   final String collectionName;
@@ -34,6 +40,8 @@ abstract class FavouriteState {}
 class FavouriteInitial extends FavouriteState {}
 
 class FavouriteLoading extends FavouriteState {}
+
+class FavouriteDeleted extends FavouriteState {}
 
 class FavouriteLoaded extends FavouriteState {
   final List<List<Product>> favourites;
@@ -72,6 +80,7 @@ class FavouriteBloc extends Bloc<FavouritesEvent, FavouriteState> {
     on<LoadFavourites>(_onLoadFavourites);
     on<AddFavourites>(_onAddFavourites);
     on<UploadImage>(_onUploadImage);
+    on<DeleteFavourites>(_onDeleteFavourites);
   }
 
   Future<void> _onLoadFavourites(
@@ -109,6 +118,17 @@ class FavouriteBloc extends Bloc<FavouritesEvent, FavouriteState> {
       emit(FavouriteLoaded(favourites));
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> _onDeleteFavourites(
+      DeleteFavourites event, Emitter<FavouriteState> emit) async {
+    try {
+      await repository.deleteFavourites(event.id);
+      // final favourites = await repository.fetchFavourites("");
+      // emit(FavouriteLoaded(favourites));
+    } catch (e) {
+      emit(FavouriteError('Failed to delete favourite'));
     }
   }
 }

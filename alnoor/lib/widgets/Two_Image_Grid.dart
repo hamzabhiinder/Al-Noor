@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/utils/reusable_cache_image.dart';
+import 'package:alnoor/models/product.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/Home/moodboard.dart';
@@ -32,12 +33,12 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
           ImageManager().setImage(2, result[1]);
         }
       },
-      child: DragTarget<String>(
+      child: DragTarget<Product>(
         onWillAccept: (data) {
           return true;
         },
-        onAcceptWithDetails: (DragTargetDetails<String> details) {
-          final String newImageUrl = details.data;
+        onAcceptWithDetails: (DragTargetDetails<Product> details) {
+          final String newImageUrl = details.data.thumbnailImage;
           if (ImageManager().getImage(1) == null) {
             ImageManager().setImage(1, newImageUrl);
           } else if (ImageManager().getImage(2) == null) {
@@ -46,7 +47,7 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
             ImageManager().setImage(1, newImageUrl);
           }
         },
-        builder: (BuildContext context, List<String?> candidateData,
+        builder: (BuildContext context, List<Product?> candidateData,
             List<dynamic> rejectedData) {
           return Container(
             width: containerSize,

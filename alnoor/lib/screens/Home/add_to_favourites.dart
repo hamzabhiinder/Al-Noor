@@ -77,16 +77,22 @@ class _AddToFavouritesState extends State<AddToFavourites> {
         actions: [
           Padding(
             padding: EdgeInsets.only(
-                right: screenWidth * 0.02), // Adjust the value as needed
-            child: IconButton(
-              icon: SvgPicture.asset(
-                'assets/images/menu.svg',
-                width: screenWidth * 0.065,
-                height: screenWidth * 0.065,
-              ),
-              onPressed: _toggleMenu,
-            ),
-          ),
+                right: screenWidth * 0.015), // Adjust the value as needed
+            child: ValueListenableBuilder<bool>(
+                valueListenable: _isMenuVisibleNotifier,
+                builder: (context, isVisible, child) {
+                  return IconButton(
+                    icon: SvgPicture.asset(
+                      isVisible
+                          ? 'assets/images/menu_white.svg'
+                          : 'assets/images/menu.svg',
+                      width: screenWidth * 0.065,
+                      height: screenWidth * 0.065,
+                    ),
+                    onPressed: _toggleMenu,
+                  );
+                }),
+          )
         ],
       ),
       body: Stack(
@@ -224,6 +230,7 @@ class _AddToFavouritesState extends State<AddToFavourites> {
                           isGuestUser: false,
                           isMenuVisible: isVisible,
                           onMenuToggle: _toggleMenu,
+                          variant: 1,
                         ),
                       )
                     : SizedBox.shrink();

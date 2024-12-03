@@ -3,14 +3,16 @@ import 'dart:developer';
 import 'package:alnoor/main.dart';
 import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:alnoor/blocs/favorites_bloc.dart';
+import 'package:alnoor/screens/Home/favourites.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/models/product.dart';
-import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:vibration/vibration.dart';
 import '../screens/Home/show_product.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 
@@ -18,11 +20,17 @@ class ProductGrid extends StatefulWidget {
   final List<Product> products;
   final bool isFavourites;
   final bool isGuestUser;
+  final void Function(bool)? setIsDragging;
+  final void Function(int?)? setDraggingIndex;
+  final bool? isUpload;
 
   ProductGrid({
     required this.products,
     required this.isFavourites,
     required this.isGuestUser,
+    this.setIsDragging,
+    this.setDraggingIndex,
+    this.isUpload,
   });
 
   @override
@@ -31,6 +39,7 @@ class ProductGrid extends StatefulWidget {
 
 class _ProductGridState extends State<ProductGrid> {
   late ScrollController _scrollController;
+  Map<String, ImageProvider> _imageCache = {};
 
   @override
   void initState() {
@@ -80,14 +89,13 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final favouriteBloc = BlocProvider.of<FavouriteBloc>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final itemWidth = constraints.maxWidth / 2;
-          final itemHeight = widget.isFavourites
-              ? (constraints.maxHeight - 10) / 2
-              : (constraints.maxHeight - 20) / (4);
+          final itemHeight = (constraints.maxHeight - 20) / (4);
 
           return GridView.builder(
             controller: _scrollController,
@@ -100,9 +108,30 @@ class _ProductGridState extends State<ProductGrid> {
             itemCount: widget.products.length,
             itemBuilder: (context, index) {
               var product = widget.products[index];
-              return LongPressDraggable<String>(
-                data://"https://alnoormdf.com/" + product.productImage, 
-               product.thumbnailImage,
+              return LongPressDraggable<Product>(
+                data: //"https://alnoormdf.com/" + product.productImage,
+                    product,
+                childWhenDragging:
+                    (widget.isFavourites && !(widget.isUpload == true))
+                        ? Container()
+                        : null,
+                onDragStarted: () async {
+                  if (widget.isFavourites) {
+                    widget.setDraggingIndex?.call(index);
+                    widget.setIsDragging?.call(true);
+                  }
+
+                  if (await Vibration.hasVibrator() ?? false) {
+                    Vibration.vibrate(
+                        duration: 100); // Vibrate for 100 milliseconds
+                  }
+                },
+                onDragEnd: (_) {
+                  if (widget.isFavourites) {
+                    widget.setDraggingIndex?.call(null);
+                    widget.setIsDragging?.call(false);
+                  }
+                },
                 feedback: Opacity(
                   opacity: 0.7,
                   child: Hero(
@@ -111,8 +140,8 @@ class _ProductGridState extends State<ProductGrid> {
                       borderRadius: BorderRadius.circular(12.0),
                       child: CachedNetworkImage(
                         cacheManager: getIt<CacheManager>(),
-                        imageUrl://"https://alnoormdf.com/" + product.productImage,
-                          product.thumbnailImage,
+                        imageUrl: //"https://alnoormdf.com/" + product.productImage,
+                            product.thumbnailImage,
                         placeholder: (context, url) => ImageSkeleton(
                           width: itemWidth,
                           height: itemHeight,
@@ -189,7 +218,7 @@ class _ProductGridState extends State<ProductGrid> {
                           borderRadius: BorderRadius.circular(12.0),
                           child: CachedNetworkImage(
                             imageUrl: //"https://alnoormdf.com/" + product.productImage,
-                            product.thumbnailImage,
+                                product.thumbnailImage,
                             cacheManager: getIt<CacheManager>(),
                             placeholder: (context, url) => ImageSkeleton(
                               width: itemWidth,
@@ -275,14 +304,16 @@ class _ProductGridState extends State<ProductGrid> {
                         right: 10,
                         child: GestureDetector(
                           onTap: () => {
+                            (favouriteBloc.add(AddFavourites(
+                                productId: product.productId,
+                                collectionName: 'MY KITCHEN'))),
                             Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddToFavourites(
-                                  productId: product.productId,
-                                ),
-                              ),
-                            )
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Favourites(
+                                    index: 0,
+                                  ),
+                                ))
                           },
                           child: Icon(
                             Icons.add_circle_outline,

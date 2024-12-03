@@ -681,6 +681,7 @@ import 'package:alnoor/blocs/product_bloc.dart';
 import 'package:alnoor/blocs/subcategory_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/favourites.dart';
+import 'package:alnoor/screens/Home/uploads.dart';
 import 'package:alnoor/widgets/Add_To_Compare_Row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -795,19 +796,24 @@ class _HomeScreenState extends State<HomeScreen>
                 if (!isGuestUser)
                   Padding(
                     padding: EdgeInsets.only(right: screenSize.width * 0.02),
-                    child: IconButton(
-                      icon: SvgPicture.asset(
-                        'assets/images/menu.svg',
-                        width: screenSize.width *
-                            0.065, // Responsive menu icon size
-                        height: screenSize.width *
-                            0.065, // Responsive menu icon size
-                      ),
-                      onPressed: () {
-                        _isMenuVisibleNotifier.value =
-                            !_isMenuVisibleNotifier.value;
-                      },
-                    ),
+                    child: ValueListenableBuilder<bool>(
+                        valueListenable: _isMenuVisibleNotifier,
+                        builder: (context, isVisible, child) {
+                          return IconButton(
+                            icon: SvgPicture.asset(
+                              isVisible
+                                  ? 'assets/images/menu_white.svg'
+                                  : 'assets/images/menu.svg',
+                              width: screenSize.width *
+                                  0.065, // Responsive menu icon size
+                              height: screenSize.width * 0.065,
+                            ),
+                            onPressed: () {
+                              _isMenuVisibleNotifier.value =
+                                  !_isMenuVisibleNotifier.value;
+                            },
+                          );
+                        }),
                   ),
                 if (isGuestUser)
                   Padding(
@@ -845,6 +851,7 @@ class _HomeScreenState extends State<HomeScreen>
                               right: screenSize.width *
                                   0.03, // Adjust the right position
                               child: HamburgerMenu(
+                                variant: 1,
                                 isGuestUser: isGuestUser,
                                 isMenuVisible: isVisible,
                                 onMenuToggle: _toggleMenu,
@@ -1364,7 +1371,7 @@ class _HomeScreenState extends State<HomeScreen>
           .add(UploadImage(imageFile: imageFile, collectionName: "MY IDEAS")));
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Favourites(index: 3)),
+        MaterialPageRoute(builder: (context) => Uploads(index: 3)),
       );
     }
   }

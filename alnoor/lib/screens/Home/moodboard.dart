@@ -483,7 +483,7 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                 const SizedBox(height: 10),
                 _buildButton(
                   context,
-                  "Select From Decor",
+                  "Select From Library",
                   Colors.white,
                   Colors.black,
                   () async {

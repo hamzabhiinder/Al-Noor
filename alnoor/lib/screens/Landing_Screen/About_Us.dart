@@ -74,6 +74,23 @@ class _AboutUsPageState extends State<AboutUsPage> {
                   ),
                 ),
               ),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isMenuVisibleNotifier,
+                builder: (context, isVisible, child) {
+                  return (isVisible && !widget.isGuestUser)
+                      ? Positioned(
+                          top: constraints.maxHeight * 0.09,
+                          right: 20,
+                          child: HamburgerMenu(
+                            variant: 2,
+                            isGuestUser: widget.isGuestUser,
+                            isMenuVisible: isVisible,
+                            onMenuToggle: _toggleMenu,
+                          ),
+                        )
+                      : Container();
+                },
+              ),
               // Top bar with logo and menu icon
               Positioned(
                 top: 0,
@@ -100,38 +117,28 @@ class _AboutUsPageState extends State<AboutUsPage> {
                         },
                       ),
                       if (!widget.isGuestUser)
-                        IconButton(
-                          icon: SvgPicture.asset(
-                            'assets/images/menu.svg',
-                            width: 30,
-                            height: 30,
-                          ),
-                          onPressed: () {
-                            _isMenuVisibleNotifier.value =
-                                !_isMenuVisibleNotifier.value;
-                          },
-                        ),
+                        ValueListenableBuilder<bool>(
+                            valueListenable: _isMenuVisibleNotifier,
+                            builder: (context, isVisible, child) {
+                              return IconButton(
+                                icon: SvgPicture.asset(
+                                  isVisible
+                                      ? 'assets/images/menu_white.svg'
+                                      : 'assets/images/menu.svg',
+                                  width: screenWidth * 0.065,
+                                  height: screenWidth * 0.065,
+                                ),
+                                onPressed: () {
+                                  _isMenuVisibleNotifier.value =
+                                      !_isMenuVisibleNotifier.value;
+                                },
+                              );
+                            }),
                     ],
                   ),
                 ),
               ),
               // Hamburger menu overlay
-              ValueListenableBuilder<bool>(
-                valueListenable: _isMenuVisibleNotifier,
-                builder: (context, isVisible, child) {
-                  return (isVisible && !widget.isGuestUser)
-                      ? Positioned(
-                          top: constraints.maxHeight * 0.09,
-                          right: 20,
-                          child: HamburgerMenu(
-                            isGuestUser: widget.isGuestUser,
-                            isMenuVisible: isVisible,
-                            onMenuToggle: _toggleMenu,
-                          ),
-                        )
-                      : Container();
-                },
-              ),
             ],
           );
         },

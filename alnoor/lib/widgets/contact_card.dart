@@ -3,17 +3,13 @@ import 'package:flutter/material.dart';
 class ContactCard extends StatelessWidget {
   final String heading;
   final String address;
-  final String email;
   final String phone1;
-  final String phone2;
 
   const ContactCard({
     Key? key,
     required this.heading,
     required this.address,
-    required this.email,
     required this.phone1,
-    required this.phone2,
   }) : super(key: key);
 
   @override
@@ -35,8 +31,8 @@ class ContactCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Container(
-        width: screenWidth / 2 - 32, // Takes half of the screen width
-        height: screenWidth * 0.4,
+        width: screenWidth * 0.6, // Takes half of the screen width
+        height: screenWidth * 0.5,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F8F8), // Customize background color
@@ -46,49 +42,34 @@ class ContactCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Heading
-            Text(
-              heading,
-              style: TextStyle(
-                fontSize: dynamicFontSize(12), // Adjusted font size
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 44),
+                child: Text(
+                  heading,
+                  style: TextStyle(
+                    fontSize: dynamicFontSize(16), // Adjusted font size
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                )),
             const SizedBox(height: 10),
 
             // Address row with location icon
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.location_on,
                   color: Colors.grey,
-                  size: 18,
+                  size: 24,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
                     address,
-                    style: TextStyle(fontSize: dynamicFontSize(9)),
+                    style: TextStyle(fontSize: dynamicFontSize(12)),
                     maxLines: null, // Allow the text to have unlimited lines
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            // Email row with email icon
-            Row(
-              children: [
-                const Icon(
-                  Icons.alternate_email,
-                  color: Colors.grey,
-                  size: 18,
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    email,
-                    style: TextStyle(fontSize: dynamicFontSize(9)),
-                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
@@ -97,12 +78,13 @@ class ContactCard extends StatelessWidget {
 
             // Phone numbers column with phone icon
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.phone,
                   color: Colors.grey,
-                  size: 18,
+                  size: 24,
                 ),
                 const SizedBox(width: 4),
                 Column(
@@ -110,12 +92,8 @@ class ContactCard extends StatelessWidget {
                   children: [
                     Text(
                       phone1,
-                      style: TextStyle(fontSize: dynamicFontSize(9)),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      phone2,
-                      style: TextStyle(fontSize: dynamicFontSize(9)),
+                      style: TextStyle(fontSize: dynamicFontSize(12)),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
