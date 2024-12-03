@@ -83,6 +83,8 @@
 //     );
 //   }
 // }
+import 'dart:developer';
+
 import 'package:alnoor/blocs/category_bloc.dart';
 import 'package:alnoor/blocs/favorites_bloc.dart';
 import 'package:alnoor/blocs/moodboard_bloc.dart';
@@ -97,19 +99,24 @@ import 'package:alnoor/repositories/product_repository.dart';
 import 'package:alnoor/repositories/register_repository.dart';
 import 'package:alnoor/repositories/login_repository.dart';
 import 'package:alnoor/repositories/subcategory_repository.dart';
+import 'package:alnoor/screens/Home/home.dart';
+import 'package:alnoor/utils/flutter_cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart'; // Import the Google Fonts package
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/Landing_Screen/Splash_Screen.dart';
 import 'services/notification_service.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:get_it/get_it.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
-
+final GetIt getIt = GetIt.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -121,6 +128,9 @@ void main() async {
           Platform.isWindows)) {
     await FlutterDownloader.initialize(debug: true);
   }
+
+  getIt
+      .registerLazySingleton<CacheManager>(() => OntImageCacheManager.instance);
 
   await _initializeNotifications();
 
@@ -173,7 +183,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NotificationService.initialize(context);
-
+    log(' getTokenData() ${getTokenData()}');
     return MaterialApp(
       scaffoldMessengerKey: scaffoldMessengerKey, // Set the global key here
       theme: ThemeData(
@@ -182,8 +192,13 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: StartScreen(),
+      home: getTokenData() == null ? StartScreen() : HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
+}
+
+getTokenData() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('token');
 }

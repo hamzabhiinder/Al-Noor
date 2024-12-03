@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/Home/moodboard.dart';
@@ -63,11 +64,16 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
                       return imagePath != null
                           ? (Uri.parse(imagePath).isAbsolute &&
                                   imagePath.startsWith('http'))
-                              ? Image.network(
-                                  imagePath,
-                                  fit: BoxFit.cover,
+                              ? ReusableCachedImage(
+                                  imageUrl: imagePath,
                                   height: double.infinity,
                                 )
+
+                              // Image.network(
+                              //     imagePath,
+                              //     fit: BoxFit.cover,
+                              //     height: double.infinity,
+                              //   )
                               : Image.file(
                                   File(imagePath),
                                   fit: BoxFit.cover,
@@ -88,11 +94,15 @@ class _DragTargetContainerState extends State<DragTargetContainer1> {
                       return imagePath != null
                           ? (Uri.parse(imagePath).isAbsolute &&
                                   imagePath.startsWith('http'))
-                              ? Image.network(
-                                  imagePath,
-                                  fit: BoxFit.cover,
+                              ? ReusableCachedImage(
+                                  imageUrl: imagePath,
                                   height: double.infinity,
                                 )
+                              // Image.network(
+                              //   imagePath,
+                              //   fit: BoxFit.cover,
+                              //   height: double.infinity,
+                              // )
                               : Image.file(
                                   File(imagePath),
                                   fit: BoxFit.cover,

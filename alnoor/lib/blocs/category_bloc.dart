@@ -1,5 +1,7 @@
 // category_bloc.dart
 
+import 'dart:developer';
+
 import 'package:alnoor/models/category.dart';
 import 'package:alnoor/repositories/category_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +43,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       final categories = await repository.fetchCategories();
       emit(CategoryLoaded(categories));
     } catch (e) {
+      log('Failed _onLoadCategories load categories $e');
       emit(CategoryError('Failed to load categories'));
     }
   }

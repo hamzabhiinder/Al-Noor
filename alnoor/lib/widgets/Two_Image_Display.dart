@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../screens/Home/moodboard.dart';
@@ -59,17 +60,22 @@ class _TwoImageDisplayState extends State<TwoImageDisplay> {
                 ),
                 child: (Uri.parse(widget.imageUrl1).isAbsolute &&
                         widget.imageUrl1.startsWith('http'))
-                    ? Image.network(
-                        widget.imageUrl1,
-                        fit: BoxFit.cover,
+                    ? ReusableCachedImage(
+                        imageUrl: widget.imageUrl1,
                         height: double.infinity,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return _buildShimmer();
-                        },
+                        placeholder: (p0, p1) => _buildShimmer(),
                       )
+                    //  Image.network(
+                    //     widget.imageUrl1,
+                    //     fit: BoxFit.cover,
+                    //     height: double.infinity,
+                    //     loadingBuilder: (context, child, loadingProgress) {
+                    //       if (loadingProgress == null) {
+                    //         return child;
+                    //       }
+                    //       return _buildShimmer();
+                    //     },
+                    //   )
                     : Image.file(
                         File(widget.imageUrl1),
                         fit: BoxFit.cover,
@@ -89,17 +95,24 @@ class _TwoImageDisplayState extends State<TwoImageDisplay> {
                 ),
                 child: (Uri.parse(widget.imageUrl2).isAbsolute &&
                         widget.imageUrl2.startsWith('http'))
-                    ? Image.network(
-                        widget.imageUrl2,
-                        fit: BoxFit.cover,
+                    ?
+                     ReusableCachedImage(
+                        imageUrl: widget.imageUrl2,
                         height: double.infinity,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return _buildShimmer();
-                        },
+                        placeholder: (p0, p1) => _buildShimmer(),
                       )
+                    
+                    //  Image.network(
+                    //     widget.imageUrl2,
+                    //     fit: BoxFit.cover,
+                    //     height: double.infinity,
+                    //     loadingBuilder: (context, child, loadingProgress) {
+                    //       if (loadingProgress == null) {
+                    //         return child;
+                    //       }
+                    //       return _buildShimmer();
+                    //     },
+                    //   )
                     : Image.file(
                         File(widget.imageUrl2),
                         fit: BoxFit.cover,

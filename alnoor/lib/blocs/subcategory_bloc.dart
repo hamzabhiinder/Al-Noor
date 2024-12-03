@@ -1,6 +1,8 @@
 // subcategory_bloc.dart
 
 // Events
+import 'dart:developer';
+
 import 'package:alnoor/repositories/subcategory_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,6 +42,7 @@ class SubcategoryBloc extends Bloc<SubcategoryEvent, SubcategoryState> {
       final categories = await repository.fetchSubcategories();
       emit(SubcategoryLoaded(categories));
     } catch (e) {
+      log('_onLoadSubcategories load categories $e');
       emit(SubcategoryError('Failed to load categories'));
     }
   }

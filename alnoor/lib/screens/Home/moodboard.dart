@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:alnoor/blocs/moodboard_bloc.dart';
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -71,16 +72,21 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                       if (ImageManager().getImage(1) != null)
                         (Uri.parse(ImageManager().getImage(1)!).isAbsolute &&
                                 ImageManager().getImage(1)!.startsWith('http'))
-                            ? Image.network(
-                                ImageManager().getImage(1)!,
-                                fit: BoxFit.cover,
+                            ? ReusableCachedImage(
                                 width: double.infinity,
                                 height: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Center(
-                                      child: Text('Failed to load image'));
-                                },
-                              )
+                                imageUrl: ImageManager().getImage(1)!)
+
+                            //  Image.network(
+                            //     ImageManager().getImage(1)!,
+                            //     fit: BoxFit.cover,
+                            //     width: double.infinity,
+                            //     height: double.infinity,
+                            //     errorBuilder: (context, error, stackTrace) {
+                            //       return Center(
+                            //           child: Text('Failed to load image'));
+                            //     },
+                            //   )
                             : Image.file(
                                 File(ImageManager().getImage(1)!),
                                 fit: BoxFit.cover,
@@ -122,16 +128,20 @@ class _TwoImageScreenState extends State<TwoImageScreen> {
                       if (ImageManager().getImage(2) != null)
                         (Uri.parse(ImageManager().getImage(2)!).isAbsolute &&
                                 ImageManager().getImage(2)!.startsWith('http'))
-                            ? Image.network(
-                                ImageManager().getImage(2)!,
-                                fit: BoxFit.cover,
+                            ? ReusableCachedImage(
                                 width: double.infinity,
                                 height: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Center(
-                                      child: Text('Failed to load image'));
-                                },
-                              )
+                                imageUrl: ImageManager().getImage(2)!)
+                            //  Image.network(
+                            //     ImageManager().getImage(2)!,
+                            //     fit: BoxFit.cover,
+                            //     width: double.infinity,
+                            //     height: double.infinity,
+                            //     errorBuilder: (context, error, stackTrace) {
+                            //       return Center(
+                            //           child: Text('Failed to load image'));
+                            //     },
+                            //   )
                             : Image.file(
                                 File(ImageManager().getImage(2)!),
                                 fit: BoxFit.cover,

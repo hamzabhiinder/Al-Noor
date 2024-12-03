@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../screens/Home/four_image_moodboard.dart';
@@ -119,21 +120,29 @@ class _FourImageDisplayState extends State<FourImageDisplay> {
 
   Widget _displayImage(String imageUrl) {
     return (imageUrl.startsWith('http') || imageUrl.startsWith('https'))
-        ? Image.network(
-            imageUrl,
+        ? ReusableCachedImage(
+            imageUrl: imageUrl,
             width: double.infinity,
             height: double.infinity,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              }
+            placeholder: (p0, p1) {
               return _buildShimmer();
             },
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(child: Text('Failed to load image'));
-            },
           )
+        //  Image.network(
+        //     imageUrl,
+        //     width: double.infinity,
+        //     height: double.infinity,
+        //     fit: BoxFit.cover,
+        //     loadingBuilder: (context, child, loadingProgress) {
+        //       if (loadingProgress == null) {
+        //         return child;
+        //       }
+        //       return _buildShimmer();
+        //     },
+        //     errorBuilder: (context, error, stackTrace) {
+        //       return const Center(child: Text('Failed to load image'));
+        //     },
+        //   )
         : Image.file(
             File(imageUrl),
             width: double.infinity,

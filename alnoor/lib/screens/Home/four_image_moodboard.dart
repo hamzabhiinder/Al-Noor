@@ -7,6 +7,7 @@ import 'package:alnoor/blocs/moodboard_bloc.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 import 'package:alnoor/classes/image_manager.dart';
 import 'package:alnoor/screens/Home/home.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -207,14 +208,15 @@ class _FourImageScreenState extends State<FourImageScreen> {
                   child: images[index] != null
                       ? (Uri.parse(images[index]!).isAbsolute &&
                               images[index]!.startsWith('http'))
-                          ? Image.network(
-                              images[index]!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Center(
-                                    child: Text('Failed to load image'));
-                              },
-                            )
+                          ? ReusableCachedImage(imageUrl: images[index]!)
+                          // Image.network(
+                          //     images[index]!,
+                          //     fit: BoxFit.cover,
+                          //     errorBuilder: (context, error, stackTrace) {
+                          //       return Center(
+                          //           child: Text('Failed to load image'));
+                          //     },
+                          //   )
                           : Image.file(
                               File(images[index]!),
                               fit: BoxFit.cover,
@@ -403,13 +405,15 @@ class _FourImageScreenState extends State<FourImageScreen> {
           height: double.infinity,
           child: imageUrl != null
               ? (Uri.parse(imageUrl).isAbsolute && imageUrl.startsWith('http'))
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(child: Text('Failed to load image'));
-                      },
-                    )
+                  ? ReusableCachedImage(imageUrl: imageUrl)
+
+                  // Image.network(
+                  //     imageUrl,
+                  //     fit: BoxFit.cover,
+                  //     errorBuilder: (context, error, stackTrace) {
+                  //       return Center(child: Text('Failed to load image'));
+                  //     },
+                  //   )
                   : Image.file(
                       File(imageUrl),
                       fit: BoxFit.cover,

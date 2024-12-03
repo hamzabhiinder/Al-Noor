@@ -1,5 +1,7 @@
 // category_bloc.dart
 
+import 'dart:developer';
+
 import 'package:alnoor/models/product.dart';
 import 'package:alnoor/repositories/product_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,6 +75,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           event.search, event.categories, event.subcategories);
       emit(ProductLoaded(products));
     } catch (e) {
+      log('Error From _onLoadProducts $e');
       emit(ProductError('Failed to load categories'));
     }
   }

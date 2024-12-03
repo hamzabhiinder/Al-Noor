@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/main.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,27 +52,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _imageFuture =
-        _loadImage("https://alnoormdf.com/" + widget.product.productImage);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   _imageFuture =
+  //       _loadImage("https://alnoormdf.com/" + widget.product.productImage);
+  // }
 
-  Future<ImageProvider> _loadImage(String url) async {
-    try {
-      final image = NetworkImage(url);
-      await precacheImage(image, context);
-      return image;
-    } catch (e) {
-      return AssetImage('assets/images/Logo.png');
-    }
-  }
+  // Future<ImageProvider> _loadImage(String url) async {
+  //   try {
+  //     final image = CachedNetworkImageProvider(url); // NetworkImage(url);
+  //     await precacheImage(image, context);
+  //     return image;
+  //   } catch (e) {
+  //     return AssetImage('assets/images/Logo.png');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
+    log('image ${"https://alnoormdf.com/" + widget.product.productImage}');
     return GestureDetector(
       onTap: () {
         _isMenuVisibleNotifier.value = false;
@@ -87,33 +93,60 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             Container(
                               height: constraints.maxHeight * 0.5,
                               width: double.infinity,
-                              child: FutureBuilder<ImageProvider>(
-                                future: _imageFuture,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    if (snapshot.hasError) {
-                                      return Image.asset(
-                                        'assets/images/Logo.png',
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                      );
-                                    }
-                                    return Image(
-                                      image: snapshot.data!,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    );
-                                  } else {
-                                    return ImageSkeleton(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                    );
-                                  }
-                                },
+                              child: Hero(
+                                tag:
+                                    'product-thumbnail-${widget.product.productId}',
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.product.thumbnailImage,
+                                  // "https://alnoormdf.com/" +
+                                  //     widget.product.productImage,
+                                  width: double.infinity,
+                                  cacheManager: getIt<CacheManager>(),
+
+                                  height: constraints.maxHeight *
+                                      0.5, // Adjust as per your layout
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Image.asset(
+                                    'assets/images/Logo.png',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+
+                                  errorWidget: (context, url, error) {
+                                    return const Center(
+                                        child: Text('Failed to load image'));
+                                  },
+                                ),
                               ),
+
+                              //  FutureBuilder<ImageProvider>(
+                              //   future: _imageFuture,
+                              //   builder: (context, snapshot) {
+                              //     if (snapshot.connectionState ==
+                              //         ConnectionState.done) {
+                              //       if (snapshot.hasError) {
+                              //         return Image.asset(
+                              //           'assets/images/Logo.png',
+                              //           fit: BoxFit.cover,
+                              //           width: double.infinity,
+                              //           height: double.infinity,
+                              //         );
+                              //       }
+                              //       return Image(
+                              //         image: snapshot.data!,
+                              //         fit: BoxFit.cover,
+                              //         width: double.infinity,
+                              //         height: double.infinity,
+                              //       );
+                              //     } else {
+                              //       return ImageSkeleton(
+                              //         width: double.infinity,
+                              //         height: double.infinity,
+                              //       );
+                              //     }
+                              //   },
+                              // ),
                             ),
                             Positioned(
                               top: 0,

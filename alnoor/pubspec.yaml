@@ -51,6 +51,9 @@ dependencies:
   open_file: ^3.4.0
   vibration: ^2.0.1
   url_launcher: ^6.3.1
+  cached_network_image: ^3.4.1
+  get_it: ^8.0.2
+  flutter_cache_manager: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

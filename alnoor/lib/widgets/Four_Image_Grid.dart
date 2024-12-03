@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:alnoor/classes/image_manager.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
 import 'package:flutter/material.dart';
 import '../screens/Home/four_image_moodboard.dart';
 
@@ -135,15 +136,20 @@ class _FourImageDragTargetContainerState
     if (imageUrl == null || imageUrl.isEmpty) {
       return Container();
     } else if (imageUrl.startsWith('http') || imageUrl.startsWith('https')) {
-      return Image.network(
-        imageUrl,
+      return ReusableCachedImage(
+        imageUrl: imageUrl,
         width: double.infinity,
         height: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Center(child: Text('Failed to load image'));
-        },
       );
+      // Image.network(
+      //   imageUrl,
+      //   width: double.infinity,
+      //   height: double.infinity,
+      //   fit: BoxFit.cover,
+      //   errorBuilder: (context, error, stackTrace) {
+      //     return Center(child: Text('Failed to load image'));
+      //   },
+      // );
     } else {
       return Image.file(
         File(imageUrl),

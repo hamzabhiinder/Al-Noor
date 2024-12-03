@@ -1,3 +1,8 @@
+import 'dart:developer';
+
+import 'package:alnoor/main.dart';
+import 'package:alnoor/utils/reusable_cache_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:alnoor/blocs/product_bloc.dart';
@@ -5,6 +10,7 @@ import 'package:alnoor/models/product.dart';
 import 'package:alnoor/screens/Home/add_to_favourites.dart';
 import 'package:alnoor/screens/Home/product_detail.dart';
 import 'package:alnoor/widgets/Image_Skeleton.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../screens/Home/show_product.dart';
 import 'package:alnoor/utils/globals.dart' as globals;
 
@@ -62,15 +68,15 @@ class _ProductGridState extends State<ProductGrid> {
     }
   }
 
-  Future<ImageProvider> loadImage(String url) async {
-    try {
-      final image = NetworkImage(url);
-      await precacheImage(image, context);
-      return image;
-    } catch (e) {
-      return AssetImage('assets/images/Logo.png');
-    }
-  }
+  // Future<ImageProvider> loadImage(String url) async {
+  //   try {
+  //     final image = CachedNetworkImageProvider(url); // NetworkImage(url);
+  //     await precacheImage(image, context);
+  //     return image;
+  //   } catch (e) {
+  //     return AssetImage('assets/images/Logo.png');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -95,36 +101,59 @@ class _ProductGridState extends State<ProductGrid> {
             itemBuilder: (context, index) {
               var product = widget.products[index];
               return LongPressDraggable<String>(
-                data: product.thumbnailImage,
+                data://"https://alnoormdf.com/" + product.productImage, 
+               product.thumbnailImage,
                 feedback: Opacity(
                   opacity: 0.7,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: FutureBuilder<ImageProvider>(
-                      future: loadImage(product.thumbnailImage),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return Image.asset(
-                              'assets/images/Logo.png',
-                              fit: BoxFit.cover,
-                              width: itemWidth,
-                              height: itemHeight,
-                            );
-                          }
-                          return Image(
-                            image: snapshot.data!,
-                            fit: BoxFit.cover,
-                            width: itemWidth,
-                            height: itemHeight,
-                          );
-                        } else {
-                          return ImageSkeleton(
-                            width: itemWidth,
-                            height: itemHeight,
-                          );
-                        }
-                      },
+                  child: Hero(
+                    tag: 'product-thumbnail-${product.productId}',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: CachedNetworkImage(
+                        cacheManager: getIt<CacheManager>(),
+                        imageUrl://"https://alnoormdf.com/" + product.productImage,
+                          product.thumbnailImage,
+                        placeholder: (context, url) => ImageSkeleton(
+                          width: itemWidth,
+                          height: itemHeight,
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/Logo.png',
+                          fit: BoxFit.cover,
+                          width: itemWidth,
+                          height: itemHeight,
+                        ),
+                        fit: BoxFit.cover,
+                        width: itemWidth,
+                        height: itemHeight,
+                      ),
+
+                      // FutureBuilder<ImageProvider>(
+                      //   future: loadImage(product.thumbnailImage),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.connectionState == ConnectionState.done) {
+                      //       if (snapshot.hasError) {
+                      //         return Image.asset(
+                      //           'assets/images/Logo.png',
+                      //           fit: BoxFit.cover,
+                      //           width: itemWidth,
+                      //           height: itemHeight,
+                      //         );
+                      //       }
+                      //       return Image(
+                      //         image: snapshot.data!,
+                      //         fit: BoxFit.cover,
+                      //         width: itemWidth,
+                      //         height: itemHeight,
+                      //       );
+                      //     } else {
+                      //       return ImageSkeleton(
+                      //         width: itemWidth,
+                      //         height: itemHeight,
+                      //       );
+                      //     }
+                      //   },
+                      // ),
                     ),
                   ),
                 ),
@@ -132,6 +161,8 @@ class _ProductGridState extends State<ProductGrid> {
                   children: [
                     GestureDetector(
                       onTap: () async {
+                        log('image ${product.thumbnailImage} ${"https://alnoormdf.com/" + product.productImage}');
+
                         final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -141,6 +172,7 @@ class _ProductGridState extends State<ProductGrid> {
                             ),
                           ),
                         );
+
                         if (result != null &&
                             result['snackbarMessage'] != null) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -151,34 +183,55 @@ class _ProductGridState extends State<ProductGrid> {
                           });
                         }
                       },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: FutureBuilder<ImageProvider>(
-                          future: loadImage(product.thumbnailImage),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasError) {
-                                return Image.asset(
-                                  'assets/images/Logo.png',
-                                  fit: BoxFit.cover,
-                                  width: itemWidth,
-                                  height: itemHeight,
-                                );
-                              }
-                              return Image(
-                                image: snapshot.data!,
-                                fit: BoxFit.cover,
-                                width: itemWidth,
-                                height: itemHeight,
-                              );
-                            } else {
-                              return ImageSkeleton(
-                                width: itemWidth,
-                                height: itemHeight,
-                              );
-                            }
-                          },
+                      child: Hero(
+                        tag: 'product-thumbnail-${product.productId}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: CachedNetworkImage(
+                            imageUrl: //"https://alnoormdf.com/" + product.productImage,
+                            product.thumbnailImage,
+                            cacheManager: getIt<CacheManager>(),
+                            placeholder: (context, url) => ImageSkeleton(
+                              width: itemWidth,
+                              height: itemHeight,
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/Logo.png',
+                              fit: BoxFit.cover,
+                              width: itemWidth,
+                              height: itemHeight,
+                            ),
+                            fit: BoxFit.cover,
+                            width: itemWidth,
+                            height: itemHeight,
+                          ),
+                          //  FutureBuilder<ImageProvider>(
+                          //   future: loadImage(product.thumbnailImage),
+                          //   builder: (context, snapshot) {
+                          //     if (snapshot.connectionState ==
+                          //         ConnectionState.done) {
+                          //       if (snapshot.hasError) {
+                          //         return Image.asset(
+                          //           'assets/images/Logo.png',
+                          //           fit: BoxFit.cover,
+                          //           width: itemWidth,
+                          //           height: itemHeight,
+                          //         );
+                          //       }
+                          //       return Image(
+                          //         image: snapshot.data!,
+                          //         fit: BoxFit.cover,
+                          //         width: itemWidth,
+                          //         height: itemHeight,
+                          //       );
+                          //     } else {
+                          //       return ImageSkeleton(
+                          //         width: itemWidth,
+                          //         height: itemHeight,
+                          //       );
+                          //     }
+                          //   },
+                          // ),
                         ),
                       ),
                     ),
@@ -250,6 +303,7 @@ class _ProductGridState extends State<ProductGrid> {
                             size: 15,
                           ),
                           onPressed: () {
+                            log('showProduct');
                             Navigator.push(
                               context,
                               MaterialPageRoute(
