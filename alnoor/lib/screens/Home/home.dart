@@ -778,15 +778,17 @@ class _HomeScreenState extends State<HomeScreen>
               toolbarHeight: screenSize.width *
                   0.125, // Adjust toolbar height based on screen width
               elevation: 0,
+              
               backgroundColor: Colors.transparent,
+              leadingWidth:80,
               leading: GestureDetector(
                 onTap: () {},
                 child: Padding(
                   padding: EdgeInsets.only(left: screenSize.width * 0.03),
                   child: SvgPicture.asset(
                     'assets/images/Logo_Black.svg',
-                    width: screenSize.width * 0.14, // Responsive logo size
-                    height: screenSize.width * 0.14, // Responsive logo size
+                    width: screenSize.width * 0.18, // Responsive logo size
+                    height: screenSize.width * 0.18, // Responsive logo size
                     fit: BoxFit
                         .contain, // Ensures the logo scales proportionally
                   ),
